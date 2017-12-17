@@ -19,7 +19,6 @@ lib/
 lib64/
 parts/
 sdist/
-var/
 wheels/
 *.egg-info/
 .installed.cfg
@@ -99,3 +98,12 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+.virtualenv
+GenealogyMaps/settings_local.py
+var/logs/*
+var/tmp/*
+!var/logs/.gitkeep
+!var/tmp/.gitkeep
+.project
+.pydevproject
