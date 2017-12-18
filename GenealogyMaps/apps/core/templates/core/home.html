@@ -1,0 +1,31 @@
+home
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+   integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+   crossorigin=""/>
+ <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+   integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+   crossorigin=""></script>
+   
+<div id="mapid"></div>
+
+<style>
+#mapid { height: 500px; }
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var map = L.map('mapid').setView([50.505, 20.09], 6);
+	L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+   		subdomains: ['a','b','c']
+	}).addTo( map );
+	console.log('done');
+};
+</script>
+
+@todo http://leafletjs.com/examples/choropleth/
+@todo http://leafletjs.com/examples/layers-control/
+
+clustering:
+https://github.com/SINTEF-9012/PruneCluster
+https://github.com/Leaflet/Leaflet.markercluster
