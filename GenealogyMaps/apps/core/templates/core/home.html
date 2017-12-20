@@ -1,11 +1,14 @@
-home
+<html>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
    crossorigin=""/>
+   <link rel="stylesheet" href="/static/libs/LeafletStyleSheet.css"/>
+   
  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
    crossorigin=""></script>
+   <script src="/static/libs/PruneCluster.js"></script>
    
 <div id="mapid"></div>
 
@@ -19,7 +22,25 @@ window.onload = function(){
     	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
    		subdomains: ['a','b','c']
 	}).addTo( map );
-	console.log('done');
+	
+	var pruneCluster = new PruneClusterForLeaflet();
+	
+	//var marker = new PruneCluster.Marker(22.8854, 51.3055);
+	//pruneCluster.RegisterMarker(marker);
+	
+	var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
+	pruneCluster.RegisterMarker(marker2);
+	
+	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.7400, 19.4600));
+	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.6500, 17.9500));
+	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.7300, 17.9000));
+	
+	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.6298511, 18.1797114));
+	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.8243286, 17.923561));
+	pruneCluster.RegisterMarker(new PruneCluster.Marker(53.1242956, 18.4180691));
+	
+	map.addLayer(pruneCluster);
+	
 };
 </script>
 
@@ -29,3 +50,5 @@ window.onload = function(){
 clustering:
 https://github.com/SINTEF-9012/PruneCluster
 https://github.com/Leaflet/Leaflet.markercluster
+
+</html>
