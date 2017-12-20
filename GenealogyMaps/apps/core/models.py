@@ -26,8 +26,8 @@ class Parish(models.Model):
 
 
 class ParishUser(models.Model):
-    parish = models.ForeignKey(Parish)
-    user = models.ForeignKey(User)
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     note = models.TextField(blank=True)
 
 
@@ -47,8 +47,8 @@ DOCUMENT_GROUP_TYPE = (
 
 
 class DocumentGroup(models.Model):
-    parish = models.ForeignKey(Parish)
-    parish_ref = models.ForeignKey(ParishRef, null=True)
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
+    parish_ref = models.ForeignKey(ParishRef, null=True, on_delete=models.DO_NOTHING)
     type = models.IntegerField(choices=DOCUMENT_GROUP_TYPE)
     type_b = models.BooleanField()
     type_d = models.BooleanField()

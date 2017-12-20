@@ -107,3 +107,5 @@ var/tmp/*
 !var/tmp/.gitkeep
 .project
 .pydevproject
+db.sqlite3
+
