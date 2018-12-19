@@ -43,3 +43,17 @@ Data sources
 - http://www.genealodzy.czestochowa.pl/zasoby/biblioteka/Indeksy-zbior%C3%B3w-metrykalnych
 - http://turze.net/genbaza.html
 - http://feefhs.org/resource/poland
+
+Parafie źródła
+==============
+- http://mapy.lubgens.eu/polska.html
+  http://mapy.lubgens.eu/rzk-r.xml?uid=1543173210186
+- http://mapy.lubgens.eu/polska2.html
+- http://mapy.lubgens.eu/1772.html
+- http://mapy.lubgens.eu/
+- http://www.basia.famula.pl/pl/skany
+- https://www.google.com/maps/d/u/0/viewer?mid=1zwYwcXHsVgUW5cDUiPBnALYGkvE
+- http://metryki.genealodzy.pl/gmapa.php
+  http://metryki.genealodzy.pl/rejestry.php
+- https://geneteka.genealodzy.pl/rejestry.php?lang=pol
+- http://poznan-project.psnc.pl/page.php?page=content
