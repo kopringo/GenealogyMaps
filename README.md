@@ -50,7 +50,7 @@ Parafie źródła
   http://mapy.lubgens.eu/rzk-r.xml?uid=1543173210186
 - http://mapy.lubgens.eu/polska2.html
 - http://mapy.lubgens.eu/1772.html
-- http://mapy.lubgens.eu/
+- http://mapy.lubgens.eu/ [w kodzie strony wszystko!]
 - http://www.basia.famula.pl/pl/skany
 - https://www.google.com/maps/d/u/0/viewer?mid=1zwYwcXHsVgUW5cDUiPBnALYGkvE
 - http://metryki.genealodzy.pl/gmapa.php

@@ -102,6 +102,10 @@ class Parish(models.Model):
     def __unicode__(self):
         return u'%s' % self.name
 
+class ParishRawData(models.Model)
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
+    data_key = models.CharField(max_length=16)
+    data = models.TextField(blank=True)
 
 class ParishUser(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
