@@ -29,25 +29,29 @@ class Country(models.Model):
     def __str__(self):
         return self.__unicode__()
 
-class Province(models.Model)
+    class Meta:
+        verbose_name_plural = "countries"
+
+class Province(models.Model):
     """
     Województwo
     """
 
-    country = models.ForeignKey(Country, help_text='Kraj')
+    country = models.ForeignKey(Country, help_text='Kraj', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=32, help_text='Nazwa województwa')
+    short = models.CharField(max_length=2, blank=True)
 
     def __unicode__(self):
         return u'<%s>[%s]' % (self.name, self.country)
     def __str__(self):
         return self.__unicode__()
 
-class County(models.Model)
+class County(models.Model):
     """
     Powiat
     """
 
-    province = models.ForeignKey(Province, help_text='Województwo')
+    province = models.ForeignKey(Province, help_text='Województwo', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=32, help_text='Powiat')
 
     def __unicode__(self):
@@ -57,15 +61,19 @@ class County(models.Model)
 
 class Diocese(models.Model):
 
-    country = models.ForeignKey(Country)
+    country = models.ForeignKey(Country, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=64, help_text='Diecezja')
-    url = models.URLField(max_length=128, blank=True)
+    short = models.CharField(max_length=3, blank=True)
+    url = models.URLField(max_length=128, blank=True, null=True)
 
-class Deanery(models.Model)
+class Deanery(models.Model):
 
-    diocese = models.ForeignKey(Diocese)
+    diocese = models.ForeignKey(Diocese, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=64, help_text='Dekanat')
     url = models.URLField(max_length=128, blank=True)
+
+    class Meta:
+        verbose_name_plural = "deaneries"
 
 class Parish(models.Model):
 
@@ -76,9 +84,9 @@ class Parish(models.Model):
     access = models.IntegerField(default=0, choices=PARISH_ACCESS)
 
     # lokalizacja
-    country = models.ForeignKey(Country, null=True)
-    province = models.ForeignKey(Province, null=True)
-    county = models.ForeignKey(County, help_text='Powiat')
+    country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
+    province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING)
+    county = models.ForeignKey(County, help_text='Powiat', on_delete=models.DO_NOTHING)
     place = models.CharField(max_length=32, help_text='Miejscowość')
     postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')
     postal_place = models.CharField(max_length=32, help_text='Poczta')
@@ -86,23 +94,28 @@ class Parish(models.Model):
 
     # lokalizacja
     geo_lat = models.FloatField(blank=True)
-    geo_lon = models.FloatField(blank=True)
+    geo_lng = models.FloatField(blank=True)
 
     # podzial administracyjny koscielny
-    diocese = models.ForeignKey(Diocese)
-    deanery = models.ForeignKey(Deanery, null=True)
+    diocese = models.ForeignKey(Diocese, on_delete=models.DO_NOTHING)
+    deanery = models.ForeignKey(Deanery, null=True, on_delete=models.DO_NOTHING)
 
     # podzial ziem I RP.
     # @todo
 
     # kontakt
-    phone = models.CharField(max_length=32, help_text=16)
+    phone = models.CharField(max_length=32, help_text=16, blank=True)
     link = models.URLField(blank=True)
+
+    gen_id = models.IntegerField(default=0, unique=True)
 
     def __unicode__(self):
         return u'%s' % self.name
 
-class ParishRawData(models.Model)
+    class Meta:
+        verbose_name_plural = "parishes"
+
+class ParishRawData(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     data_key = models.CharField(max_length=16)
     data = models.TextField(blank=True)
@@ -112,6 +125,11 @@ class ParishUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     note = models.TextField(blank=True)
 
+class ParishPlace(models.Model):
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=32)
+    geo_lat = models.FloatField(blank=True)
+    geo_lon = models.FloatField(blank=True)
 
 class ParishRef(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)

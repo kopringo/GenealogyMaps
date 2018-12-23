@@ -2,8 +2,8 @@ Virtualenv setup
 ================
 
 ```bash
-python3 -m venv .virtualenv
-source .virtualenv/bin/activate
+python3 -m venv .env
+source .env/bin/activate
 ```
 
 Installation
@@ -12,7 +12,7 @@ Installation
 ```bash
 pip3.5 install -r requirements.txt
 python3.5 manage.py migrate
-ython3.5 manage.py createsuperuser
+python3.5 manage.py createsuperuser
 ```
 
 Data sources
