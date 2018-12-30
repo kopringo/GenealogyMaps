@@ -1,48 +1,11 @@
-<html>
+{% extends "base.html" %}
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
-   integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
-   crossorigin=""/>
-   <link rel="stylesheet" href="/static/libs/LeafletStyleSheet.css"/>
-   
- <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
-   integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
-   crossorigin=""></script>
-   <script src="/static/libs/PruneCluster.js"></script>
-   
-<div id="mapid"></div>
-
-<style>
-#mapid { height: 500px; }
-</style>
-<script type="text/javascript">
-window.onload = function(){
-	var map = L.map('mapid').setView([50.505, 20.09], 6);
-	L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-   		subdomains: ['a','b','c']
-	}).addTo( map );
-	
-	var pruneCluster = new PruneClusterForLeaflet();
-	
-	//var marker = new PruneCluster.Marker(22.8854, 51.3055);
-	//pruneCluster.RegisterMarker(marker);
-	
-	var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
-	pruneCluster.RegisterMarker(marker2);
-	
-	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.7400, 19.4600));
-	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.6500, 17.9500));
-	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.7300, 17.9000));
-	
-	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.6298511, 18.1797114));
-	pruneCluster.RegisterMarker(new PruneCluster.Marker(52.8243286, 17.923561));
-	pruneCluster.RegisterMarker(new PruneCluster.Marker(53.1242956, 18.4180691));
-	
-	map.addLayer(pruneCluster);
-	
-};
-</script>
+{% block content %}
+<div class="col-md-8" id="main-col-map">
+  <div id="mapid"></div>
+</div>
+<div class="col-md-4" id="main-col-details">
+    {% include "core/_root_list.html" %}
 
 @todo http://leafletjs.com/examples/choropleth/
 @todo http://leafletjs.com/examples/layers-control/
@@ -50,5 +13,93 @@ window.onload = function(){
 clustering:
 https://github.com/SINTEF-9012/PruneCluster
 https://github.com/Leaflet/Leaflet.markercluster
+</div>
+{% endblock %}
 
+{% block content_js %}
+<script type="text/javascript">
+$(function(){
+	var map = L.map('mapid').setView([51.505, 19.09], 7);
+	L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+   		subdomains: ['a','b','c']
+	}).addTo( map );
+
+	var pruneCluster = new PruneClusterForLeaflet();
+
+	//var marker = new PruneCluster.Marker(22.8854, 51.3055);
+	//pruneCluster.RegisterMarker(marker);
+
+	var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
+	pruneCluster.RegisterMarker(marker2);
+
+    $.ajax({
+        url: '/api2/parishes/?format=json',
+        dataType: 'json'
+    }).done(function(data){
+        for(parish_key in data){
+            var parish = data[parish_key];
+
+            var marker = new PruneCluster.Marker(parish['geo_lat'], parish['geo_lng']);
+            marker.data.name = '<h2>' + parish['name'] + '</h2>{{parish.place}}<br/>{{parish.province}}';
+            marker.data.ID = parish['id'];
+            pruneCluster.RegisterMarker(marker);
+        }
+        pruneCluster.ProcessView();
+    }).fail(function(jqXHR, textStatus){
+        alert('ajax error');
+    });
+
+	pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
+        //leafletMarker.setIcon(/*... */); // See http://leafletjs.com/reference.html#icon
+        //listeners can be applied to markers in this function
+        leafletMarker.on('click', function(){
+        //do click event logic here
+            alert('!');
+            alert(data);
+        });
+        // A popup can already be attached to the marker
+        // bindPopup can override it, but it's faster to update the content instead
+        if (leafletMarker.getPopup()) {
+            leafletMarker.setPopupContent(data.name);
+        } else {
+            leafletMarker.bindPopup(data.name);
+        }
+    };
+
+	map.addLayer(pruneCluster);
+
+});
+</script>
+{% endblock %}
+
+{% block content_css %}
+<style>
+#mapid{
+    height: 100%;
+}
+#main-col-map{
+    padding-right: 0px;
+}
+#main-col-details{
+    padding-top: 15px;
+    overflow-y: auto;
+}
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+                integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+                crossorigin=""></script>
+    <script src="/static/libs/PruneCluster.js"></script>
+  </body>
 </html>

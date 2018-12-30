@@ -26,11 +26,13 @@ class Country(models.Model):
 
     def __unicode__(self):
         return u'<%s>' % self.name
+
     def __str__(self):
         return self.__unicode__()
 
     class Meta:
         verbose_name_plural = "countries"
+
 
 class Province(models.Model):
     """
@@ -43,8 +45,10 @@ class Province(models.Model):
 
     def __unicode__(self):
         return u'<%s>[%s]' % (self.name, self.country)
+
     def __str__(self):
         return self.__unicode__()
+
 
 class County(models.Model):
     """
@@ -56,8 +60,10 @@ class County(models.Model):
 
     def __unicode__(self):
         return u'<%s>[%s]' % (self.name, self.province)
+
     def __str__(self):
         return self.__unicode__()
+
 
 class Diocese(models.Model):
 
@@ -65,6 +71,7 @@ class Diocese(models.Model):
     name = models.CharField(max_length=64, help_text='Diecezja')
     short = models.CharField(max_length=3, blank=True)
     url = models.URLField(max_length=128, blank=True, null=True)
+
 
 class Deanery(models.Model):
 
@@ -74,6 +81,7 @@ class Deanery(models.Model):
 
     class Meta:
         verbose_name_plural = "deaneries"
+
 
 class Parish(models.Model):
 
@@ -115,21 +123,25 @@ class Parish(models.Model):
     class Meta:
         verbose_name_plural = "parishes"
 
+
 class ParishRawData(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     data_key = models.CharField(max_length=16)
     data = models.TextField(blank=True)
+
 
 class ParishUser(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     note = models.TextField(blank=True)
 
+
 class ParishPlace(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=32)
     geo_lat = models.FloatField(blank=True)
     geo_lon = models.FloatField(blank=True)
+
 
 class ParishRef(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
@@ -138,6 +150,7 @@ class ParishRef(models.Model):
 
     def __unicode__(self):
         return u'%s' % self.name
+
 
 DOCUMENT_GROUP_TYPE = (
     (0, 'Documents'),
