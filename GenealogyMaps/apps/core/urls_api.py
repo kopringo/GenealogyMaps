@@ -1,7 +1,9 @@
 
 from django.urls import path, re_path
+from django.shortcuts import get_object_or_404
 from django.conf.urls import url, include
 
+from rest_framework.response import Response
 from rest_framework import routers, serializers, viewsets, generics
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, AdminRenderer, BrowsableAPIRenderer
 
@@ -38,10 +40,18 @@ class ParishDetails(generics.RetrieveAPIView):
     renderer_classes = (BrowsableAPIRenderer, JSONRenderer, AdminRenderer, TemplateHTMLRenderer)
     template_name = 'core/api/parish_detail.html'
 
+    def get22(self, request, pk):
+        obj = get_object_or_404(Parish, pk=pk)
+        serializer = ParishDetailSerializer(obj)
+        #serializer = {}
+        return Response({'serializer': serializer.data})#, 'obj': obj})
+
 # Routers provide an easy way of automatically determining the URL conf.
-#router = routers.DefaultRouter()
-#router.register(r'/parishes', ParishList.as_view())
+router = routers.DefaultRouter()
+router.register(r'/parishes', ParishList.as_view(), 'parishes')
+
 urlpatterns = [
     re_path(r'^parishes/$', ParishList.as_view()),
     path('parishes/<int:pk>/', ParishDetails.as_view()),
+    path('', include(router.urls)),
 ]

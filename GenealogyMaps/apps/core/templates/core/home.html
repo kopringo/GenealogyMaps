@@ -27,9 +27,6 @@ $(function(){
 
 	var pruneCluster = new PruneClusterForLeaflet();
 
-	//var marker = new PruneCluster.Marker(22.8854, 51.3055);
-	//pruneCluster.RegisterMarker(marker);
-
 	var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
 	pruneCluster.RegisterMarker(marker2);
 
@@ -54,9 +51,15 @@ $(function(){
         //leafletMarker.setIcon(/*... */); // See http://leafletjs.com/reference.html#icon
         //listeners can be applied to markers in this function
         leafletMarker.on('click', function(){
-        //do click event logic here
-            alert('!');
-            alert(data);
+
+            $.ajax({
+                url: '/api2/parishes/' + data.ID + '/?format=html'
+
+            }).done(function(data){
+                $('#main-col-details').html(data);
+            });
+
+
         });
         // A popup can already be attached to the marker
         // bindPopup can override it, but it's faster to update the content instead
