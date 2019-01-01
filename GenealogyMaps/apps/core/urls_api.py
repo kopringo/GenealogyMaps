@@ -7,33 +7,11 @@ from rest_framework.response import Response
 from rest_framework import routers, serializers, viewsets, generics
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, AdminRenderer, BrowsableAPIRenderer
 
+from .views_api import ParishViewSet, ProvinceViewSet, DioceseViewSet
+
 from .models import Parish
 
-
-# Serializers define the API representation.
-class ParishSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Parish
-        fields = ('id', 'name', 'geo_lat', 'geo_lng')
-
-
-class ParishDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Parish
-        fields = ('id', 'name', 'year', 'country', 'province', 'county', 'place', 'postal_code', 'postal_place', 'address', 'diocese', 'deanery')
-
-
-class ParishList(generics.ListAPIView):
-    queryset = Parish.objects.all()
-    serializer_class = ParishSerializer
-
-    """
-    def get_queryset(self):
-        username = self.kwargs['username']
-        return Purchase.objects.filter(purchaser__username=username)
-    """
-
-
+"""
 class ParishDetails(generics.RetrieveAPIView):
     queryset = Parish.objects.all()
     serializer_class = ParishDetailSerializer
@@ -45,13 +23,18 @@ class ParishDetails(generics.RetrieveAPIView):
         serializer = ParishDetailSerializer(obj)
         #serializer = {}
         return Response({'serializer': serializer.data})#, 'obj': obj})
+"""
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'/parishes', ParishList.as_view(), 'parishes')
+router.register(r'parishes', ParishViewSet)
+router.register(r'provinces', ProvinceViewSet)
+router.register(r'dioceses', DioceseViewSet)
 
+"""
 urlpatterns = [
     re_path(r'^parishes/$', ParishList.as_view()),
     path('parishes/<int:pk>/', ParishDetails.as_view()),
     path('', include(router.urls)),
 ]
+"""
