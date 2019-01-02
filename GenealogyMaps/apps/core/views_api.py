@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import routers, serializers, viewsets, generics
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, AdminRenderer, BrowsableAPIRenderer
+from rest_framework.decorators import action
 
 from .models import Parish, Diocese, Province
 
@@ -23,8 +24,41 @@ class ParishDetailSerializer(serializers.ModelSerializer):
         model = Parish
         fields = ('id', 'name', 'year', 'country', 'province', 'county', 'place', 'postal_code', 'postal_place', 'address', 'diocese', 'deanery')
 
+    def to_representation(self, instance):
+        """Convert `username` to lowercase."""
+        ret = super().to_representation(instance)
+        ret['diocese'] = {
+            'name': instance.diocese.name,
+            'id': instance.diocese.id,
+            #'uri': serializers.HyperlinkedIdentityField(
+            #            view_name='diocese',
+            #            lookup_field='id',
+            #        ).to_representation(instance.diocese)
+        }
+        ret['deanery'] = {
+            'name': instance.deanery.name,
+            'id': instance.deanery.id,
+        }
+        ret['country'] = {
+            'name': instance.country.name,
+            'id': instance.country.id,
+        }
+        ret['province'] = {
+            'name': instance.province.name,
+            'id': instance.province.id,
+        }
+        ret['county'] = {
+            'name': instance.county.name,
+            'id': instance.county.id,
+        }
+        ret['links'] = {
+            'places',
+            'document_groups',
+        }
+        return ret
 
-class ProvinceSerializer(serializers.ModelSerializer):
+
+class ProvinceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Province
         fields = ('id', 'name')
@@ -38,17 +72,17 @@ class ProvinceDetailSerializer(serializers.ModelSerializer):
 
 class DioceseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Province
+        model = Diocese
         fields = ('id', 'name')
 
 
 class DioceseDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Province
+        model = Diocese
         fields = ('id', 'name')
 
 
-class MultiSerializerViewSet(viewsets.ModelViewSet):
+class MultiSerializerViewSet(viewsets.ReadOnlyModelViewSet):
     serializers = {
         'default': None,
     }
@@ -84,6 +118,21 @@ class ProvinceViewSet(MultiSerializerViewSet):
         'list': ProvinceSerializer,
         'retrieve': ProvinceDetailSerializer,
     }
+
+    @action(detail=True, methods=['get'])
+    def deaneries(self, request, pk=None):
+        province = self.get_object()
+        """
+        serializer = PasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user.set_password(serializer.data['password'])
+            user.save()
+            return Response({'status': 'password set'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+        """
+        return Response({'status': 'password set'})
 
 
 class DioceseViewSet(MultiSerializerViewSet):

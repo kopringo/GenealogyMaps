@@ -15,6 +15,10 @@ python3.5 manage.py migrate
 python3.5 manage.py createsuperuser
 ```
 
+Screen
+======
+<img src="assets/screen1.png" width="100%">
+
 Data sources
 ============
 - https://www.familysearch.org/
