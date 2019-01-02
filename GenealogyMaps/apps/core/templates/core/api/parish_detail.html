@@ -5,8 +5,11 @@
 Miejscowość: {{ place }}
 </pre>
 <p>Year: {{ year }}</p>
-<p>{{ country.name }}, {{ province.name }}, {{ country.name }}</p>
-<p>{{ diocese.name }}, {{ deanery.name }}</p>
+<p> <a href="#" data-link="/api2/countries/{{ country.id }}/?format=html" class="panel_link">{{ country.name }}</a>,
+    <a href="#" data-link="/api2/provinces/{{ province.id }}/?format=html" class="panel_link">{{ province.name }}</a>,
+    <a href="#" data-link="/api2/counties/{{ county.id }}/?format=html" class="panel_link">{{ county.name }}</a>
+</p>
+<p><a href="#" data-link="" class="panel_link">{{ diocese.name }}</a>, <a href="#" data-link="" class="panel_link">{{ deanery.name }}</a></p>
 
 <hr>
 
