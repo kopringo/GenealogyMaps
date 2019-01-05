@@ -2,25 +2,49 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import DocumentSource, Parish, ParishRef, Country, DocumentGroup, Province, County, Diocese, Deanery
+from .models import DocumentSource, Parish, ParishRef, Country, DocumentGroup, Province, County, Diocese, Deanery, ParishUser
+
+
+class ParishUserInline(admin.TabularInline):
+    model = ParishUser
+    extra = 1
+
+
+class ParishRefInline(admin.TabularInline):
+    model = ParishRef
+    extra = 1
+
+
+class DocumentGroupInline(admin.TabularInline):
+    model = DocumentGroup
+    extra = 1
+
 
 class DocumentSourceAdmin(admin.ModelAdmin):
     fields = ('name', 'year', 'address')
 admin.site.register(DocumentSource, DocumentSourceAdmin)
 
+
 class DocumentGroupAdmin(admin.ModelAdmin):
     pass
 admin.site.register(DocumentGroup, DocumentGroupAdmin)
 
+
 class ParishAdmin(admin.ModelAdmin):
-    list_display = ['name', 'year', 'country', 'province', 'county', 'place', 'address', 'geo_lat', 'geo_lng', 'diocese', 'deanery', ]
+    list_display = ['name', 'year', 'country', 'province', 'county', 'place', 'address', 'geo_lat', 'geo_lng', 'diocese', 'deanery', 'access', ]
     list_filter = ['country', 'province', 'diocese', ]
+    list_editable = ('access', )
 
     fieldsets = [
         (None, {'fields': ['name', 'year']}),
         ('Location', {'fields': ['country', 'province', 'county', 'place', 'address', 'geo_lat', 'geo_lng']}),
         ('Location2', {'fields': ['diocese', 'deanery']})
     ]
+
+    inlines = [
+        ParishUserInline, DocumentGroupInline
+    ]
+
 admin.site.register(Parish, ParishAdmin)
 
 class ParishRefAdmin(admin.ModelAdmin):

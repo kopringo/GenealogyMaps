@@ -24,11 +24,8 @@ class Country(models.Model):
     code = models.CharField(max_length=2, help_text='2 literowy kod kraju')
     name = models.CharField(max_length=32, help_text='Nazwa kraju')
 
-    def __unicode__(self):
-        return u'<%s>' % self.name
-
     def __str__(self):
-        return self.__unicode__()
+        return u'%d. %s' % (self.id, self.name)
 
     class Meta:
         verbose_name_plural = "countries"
@@ -58,11 +55,8 @@ class County(models.Model):
     province = models.ForeignKey(Province, help_text='Województwo', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=32, help_text='Powiat')
 
-    def __unicode__(self):
-        return u'<%s>[%s]' % (self.name, self.province)
-
     def __str__(self):
-        return self.__unicode__()
+        return u'%d. %s' % (self.id, self.name)
 
 
 class Diocese(models.Model):
@@ -72,12 +66,18 @@ class Diocese(models.Model):
     short = models.CharField(max_length=3, blank=True)
     url = models.URLField(max_length=128, blank=True, null=True)
 
+    def __str__(self):
+        return u'%d. %s' % (self.id, self.name)
+
 
 class Deanery(models.Model):
 
     diocese = models.ForeignKey(Diocese, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=64, help_text='Dekanat')
     url = models.URLField(max_length=128, blank=True)
+
+    def __str__(self):
+        return u'%d. %s' % (self.id, self.name)
 
     class Meta:
         verbose_name_plural = "deaneries"
@@ -117,8 +117,8 @@ class Parish(models.Model):
 
     gen_id = models.IntegerField(default=0, unique=True)
 
-    def __unicode__(self):
-        return u'%s' % self.name
+    def __str__(self):
+        return u'%d. %s' % (self.id, self.name)
 
     class Meta:
         verbose_name_plural = "parishes"
@@ -179,17 +179,17 @@ class DocumentSource(models.Model):
 
 
 class DocumentGroup(models.Model):
-    name = models.CharField(max_length=32)
-    url = models.URLField(blank=True)
+    name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów')
+    url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
 
-    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
     parish_ref = models.ForeignKey(ParishRef, null=True, on_delete=models.DO_NOTHING)
-    type = models.IntegerField(choices=DOCUMENT_GROUP_TYPE)
+    type = models.IntegerField(choices=DOCUMENT_GROUP_TYPE, help_text='Typ dokumentów')
     type_b = models.BooleanField(default=False, help_text='Akty urodzenia')
     type_d = models.BooleanField(default=False, help_text='Akty zgonu')
     type_m = models.BooleanField(default=False, help_text='Akty małżeństwa')
     type_a = models.BooleanField(default=False, help_text='Alegaty')
-    date_from = models.DateField()
-    date_to = models.DateField()
-    date_excepts = models.TextField(blank=True)
-    note = models.TextField(blank=True)
+    date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
+    date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
+    date_excepts = models.TextField(blank=True, help_text='Lata pominięte')
+    note = models.TextField(blank=True, help_text='Notatka')
