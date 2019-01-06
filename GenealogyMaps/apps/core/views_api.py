@@ -2,13 +2,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 
+import os
+from django.urls import reverse
+
 from rest_framework.response import Response
-from rest_framework import routers, serializers, viewsets, generics
+from rest_framework import routers, serializers, viewsets, generics, relations
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, AdminRenderer, BrowsableAPIRenderer
 from rest_framework.decorators import action
 
 from .models import Parish, Diocese, Province
-
 
 ###############################################################################
 # Serializers
@@ -52,8 +54,10 @@ class ParishDetailSerializer(serializers.ModelSerializer):
             'id': instance.county.id,
         }
         ret['links'] = {
-            'places',
-            'document_groups',
+            'places': '%s://%s/api2/parishes/%d/places/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id),
+            'documents': '%s://%s/api2/parishes/%d/documents/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id),
+            'comments': '%s://%s/api2/parishes/%d/comments/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id)
+
         }
         return ret
 
@@ -110,6 +114,14 @@ class ParishViewSet(MultiSerializerViewSet):
     renderer_classes = (BrowsableAPIRenderer, JSONRenderer, AdminRenderer, TemplateHTMLRenderer)
     template_name = 'core/api/parish_detail.html'
 
+    @action(detail=True, methods=['get'])
+    def documents(self, request, pk=None):
+        return Response({}, template_name='core/api/parish_detail_documents.html')
+
+    @action(detail=True, methods=['get'])
+    def comments(self, request, pk=None):
+        return Response({}, template_name='core/api/parish_detail_comments.html')
+
 
 class ProvinceViewSet(MultiSerializerViewSet):
     model = Province
@@ -117,6 +129,17 @@ class ProvinceViewSet(MultiSerializerViewSet):
     serializers = {
         'list': ProvinceSerializer,
         'retrieve': ProvinceDetailSerializer,
+    }
+
+
+
+
+class DioceseViewSet(MultiSerializerViewSet):
+    model = Diocese
+    queryset = Diocese.objects.all()
+    serializers = {
+        'list': DioceseSerializer,
+        'retrieve': DioceseDetailSerializer,
     }
 
     @action(detail=True, methods=['get'])
@@ -133,15 +156,6 @@ class ProvinceViewSet(MultiSerializerViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         """
         return Response({'status': 'password set'})
-
-
-class DioceseViewSet(MultiSerializerViewSet):
-    model = Diocese
-    queryset = Diocese.objects.all()
-    serializers = {
-        'list': DioceseSerializer,
-        'retrieve': DioceseDetailSerializer,
-    }
 
 """
 def parishes__get(request):

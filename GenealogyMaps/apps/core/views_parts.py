@@ -4,16 +4,13 @@ from django.shortcuts import render
 from .models import Parish, Diocese, Province
 
 
-def home(request):
+def root(request):
     data = {}
-    #data['parishes'] = Parish.objects.all()[0:2000]
     data.update(_load_root_items())
-    return render(request, 'core/home.html', data)
+    return render(request, 'parts/root.html', data)
 
 
-def contact(request):
-    return render(request, 'core/contact.html')
-
+def
 
 def _load_root_items():
 
