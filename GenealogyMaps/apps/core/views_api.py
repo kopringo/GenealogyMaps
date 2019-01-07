@@ -11,6 +11,8 @@ from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, AdminRe
 from rest_framework.decorators import action
 
 from .models import Parish, Diocese, Province
+from .forms import DocumentGroupForm
+
 
 ###############################################################################
 # Serializers
@@ -18,7 +20,10 @@ from .models import Parish, Diocese, Province
 class ParishSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Parish
-        fields = ('id', 'name', 'geo_lat', 'geo_lng')
+        fields = ('id', 'name', 'geo_lat', 'geo_lng', )#'uri')
+
+    #def uri(self):
+    #    return '%s://%s/api2/parishes/%d/comments/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id)
 
 
 class ParishDetailSerializer(serializers.ModelSerializer):
@@ -29,6 +34,8 @@ class ParishDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Convert `username` to lowercase."""
         ret = super().to_representation(instance)
+        ret['geo_lat'] = instance.geo_lat
+        ret['geo_lng'] = instance.geo_lng
         ret['diocese'] = {
             'name': instance.diocese.name,
             'id': instance.diocese.id,
@@ -37,25 +44,34 @@ class ParishDetailSerializer(serializers.ModelSerializer):
             #            lookup_field='id',
             #        ).to_representation(instance.diocese)
         }
-        ret['deanery'] = {
-            'name': instance.deanery.name,
-            'id': instance.deanery.id,
-        }
-        ret['country'] = {
-            'name': instance.country.name,
-            'id': instance.country.id,
-        }
-        ret['province'] = {
-            'name': instance.province.name,
-            'id': instance.province.id,
-        }
-        ret['county'] = {
-            'name': instance.county.name,
-            'id': instance.county.id,
-        }
+        ret['deanery'] = None
+        if instance.deanery:
+            ret['deanery'] = {
+                'name': instance.deanery.name,
+                'id': instance.deanery.id,
+            }
+        ret['country'] = None
+        if instance.country:
+            ret['country'] = {
+                'name': instance.country.name,
+                'id': instance.country.id,
+            }
+        ret['province'] = None
+        if instance.province:
+            ret['province'] = {
+                'name': instance.province.name,
+                'id': instance.province.id,
+            }
+        ret['county'] = None
+        if instance.county:
+            ret['county'] = {
+                'name': instance.county.name,
+                'id': instance.county.id,
+            }
         ret['links'] = {
             'places': '%s://%s/api2/parishes/%d/places/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id),
             'documents': '%s://%s/api2/parishes/%d/documents/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id),
+            'documents': '%s://%s/api2/parishes/%d/documents_add/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id),
             'comments': '%s://%s/api2/parishes/%d/comments/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id)
 
         }
@@ -117,6 +133,17 @@ class ParishViewSet(MultiSerializerViewSet):
     @action(detail=True, methods=['get'])
     def documents(self, request, pk=None):
         return Response({}, template_name='core/api/parish_detail_documents.html')
+
+    @action(detail=True, methods=['get', 'post'])
+    def documents_add(self, request, pk=None):
+
+        form = DocumentGroupForm()
+        data = {'form': form}
+
+        if request.GET.get('format', None) != 'html':
+            data = {}
+
+        return Response(data, template_name='core/api/parish_detail_documents_add.html')
 
     @action(detail=True, methods=['get'])
     def comments(self, request, pk=None):

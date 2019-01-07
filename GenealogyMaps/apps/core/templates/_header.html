@@ -30,7 +30,7 @@
       {% endcomment %}
       {% if request.user.is_anonymous %}
       <li class="nav-item">
-        <a class="nav-link">Login</a>
+        <a class="nav-link" href="{% url "login" %}">Login</a>
       </li>
       {% else %}
         {% if request.user.is_superuser %}
@@ -39,7 +39,7 @@
         </li>
         {% endif %}
       <li class="nav-item">
-        <a class="nav-link" href="/">Logout</a>
+        <a class="nav-link" href="{% url "logout" %}">Logout</a>
       </li>
       {% endif %}
       <li class="nav-item">

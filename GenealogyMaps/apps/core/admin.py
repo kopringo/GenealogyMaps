@@ -21,7 +21,8 @@ class DocumentGroupInline(admin.TabularInline):
 
 
 class DocumentSourceAdmin(admin.ModelAdmin):
-    fields = ('name', 'year', 'address')
+    #fields = ('name', 'year', 'address')
+    pass
 admin.site.register(DocumentSource, DocumentSourceAdmin)
 
 

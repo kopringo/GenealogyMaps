@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="col-md-4" id="main-col-map">
+<div class="col-md-6" id="main-col-map">
   <div id="mapid"></div>
 </div>
-<div class="col-md-8" id="main-col-details">
-    {% include "core/_root_list.html" %}
+<div class="col-md-6" id="main-col-details">
+
 
 @todo http://leafletjs.com/examples/choropleth/
 @todo http://leafletjs.com/examples/layers-control/
@@ -18,8 +18,9 @@ https://github.com/Leaflet/Leaflet.markercluster
 
 {% block content_js %}
 <script type="text/javascript">
+var map = null;
 $(function(){
-	var map = L.map('mapid').setView([51.505, 19.09], 7);
+	map = L.map('mapid').setView([51.95, 19.08], 7);
 	map.on('moveend', function() {
         console.log('a');
     });
@@ -32,7 +33,7 @@ $(function(){
    		subdomains: ['a','b','c']
 	}).addTo( map );
 
-	var pruneCluster = new PruneClusterForLeaflet();
+	var pruneCluster = new PruneClusterForLeaflet(50);
 
 	var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
 	pruneCluster.RegisterMarker(marker2);
@@ -52,6 +53,12 @@ $(function(){
         pruneCluster.ProcessView();
     }).fail(function(jqXHR, textStatus){
         alert('ajax error');
+    });
+
+    $.ajax({
+        url: '/parts/root',
+    }).done(function(data){
+        $('#main-col-details').html(data);
     });
 
 	pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
@@ -80,9 +87,24 @@ $(function(){
 	map.addLayer(pruneCluster);
 
 
-	$(document).on('click', '.panel_link', function(){
-	    console.log('AAA');
+    // create a red polygon from an array of LatLng points
+var latlngs = [[51.3937, 19.9285], [51.3857, 19.9385], [51.6837, 19.9485], [51.7837, 19.9985],];
+var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
+// zoom the map to the polygon
+//map.fitBounds(polygon.getBounds());
+
+
+	$(document).on('click', '.ajax_link', function(){
+	    $.ajax({
+	        url: $(this).attr('href'),
+	    }).done(function(data){
+	        $('#main-col-details').html(data);
+	    });
 	    return false;
+	});
+
+	$(document).on('click', '#btn-add-document', function(){
+
 	});
 
 });

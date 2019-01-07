@@ -1,15 +1,16 @@
-<h3>Parafia: {{ name }}</h3>
+<h3>Parafia: {{ name }} <a href="/admin/core/parish/{{ id }}/change/" target="_blank">EDIT</a></h3>
 <pre>
 {{ address }}
 {{ postal_code }} {{ postal_place }}
 Miejscowość: {{ place }}
 </pre>
 <p>Year: {{ year }}</p>
-<p> <a href="#" data-link="/api2/countries/{{ country.id }}/?format=html" class="panel_link">{{ country.name }}</a>,
-    <a href="#" data-link="/api2/provinces/{{ province.id }}/?format=html" class="panel_link">{{ province.name }}</a>,
-    <a href="#" data-link="/api2/counties/{{ county.id }}/?format=html" class="panel_link">{{ county.name }}</a>
+<p> <a href="#" data-link="/parts/area?country={{ country.id }}" class="ajax_link">{{ country.name }}</a>,
+    <a href="#" data-link="/parts/area?province={{ province.id }}" class="ajax_link">{{ province.name }}</a>,
+    <a href="#" data-link="/parts/area?county={{ county.id }}" class="ajax_link">{{ county.name }}</a>
 </p>
-<p><a href="#" data-link="" class="panel_link">{{ diocese.name }}</a>, <a href="#" data-link="" class="panel_link">{{ deanery.name }}</a></p>
+<p> <a href="/parts/area?diocese={{diocese.id}}" class="ajax_link">{{ diocese.name }}</a>,
+    <a href="/parts/area?deanery={{deanery.id}}" class="ajax_link">{{ deanery.name }}</a></p>
 
 <hr>
 
@@ -84,17 +85,24 @@ Miejscowość: {{ place }}
 
   <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Sources</a>
+    <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Sources</a>
   </li>
   <li class="nav-item">
     <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Comments</a>
   </li>
 </ul>
 <div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-
+  <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel" aria-labelledby="tab-documents">
+    {% include "core/api/parish_detail_documents.html" %}
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
 </div>
 
 </div>
+
+<script type="text/javascript">
+    $(function(){
+        //var map = L.map('mapid');
+        map.setView([{{ geo_lat }}, {{ geo_lng }}]);
+    });
+</script>

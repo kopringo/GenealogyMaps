@@ -140,7 +140,7 @@ class ParishPlace(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=32)
     geo_lat = models.FloatField(blank=True)
-    geo_lon = models.FloatField(blank=True)
+    geo_lng = models.FloatField(blank=True)
 
 
 class ParishRef(models.Model):
@@ -153,9 +153,9 @@ class ParishRef(models.Model):
 
 
 DOCUMENT_GROUP_TYPE = (
-    (0, 'Documents'),
-    (1, 'Photos'),
-    (2, 'Indexes'),
+    (0, 'Documents'),   # fizyczne dokumenty
+    (1, 'Photos'),      # zdjecia cyfrowe
+    (2, 'Indexes'),     # indexy
 )
 
 
@@ -169,13 +169,15 @@ class DocumentSource(models.Model):
     5. poznan-project.psnc.pl
     6. basia.famula.pl
     7. lubgens.eu
+
+    8. księgi metrykalne analogowe
     """
 
     name = models.CharField(max_length=32)
     url = models.URLField(max_length=64, blank=True)
 
-    def __unicode__(self):
-        return u'%s' % self.name
+    def __str__(self):
+        return u'%s' % (self.name)
 
 
 class DocumentGroup(models.Model):
@@ -183,13 +185,17 @@ class DocumentGroup(models.Model):
     url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
-    parish_ref = models.ForeignKey(ParishRef, null=True, on_delete=models.DO_NOTHING)
+    #parish_ref = models.ForeignKey(ParishRef, null=True, on_delete=models.DO_NOTHING)
+    source = models.ForeignKey(DocumentSource, on_delete=models.DO_NOTHING)
+
     type = models.IntegerField(choices=DOCUMENT_GROUP_TYPE, help_text='Typ dokumentów')
     type_b = models.BooleanField(default=False, help_text='Akty urodzenia')
     type_d = models.BooleanField(default=False, help_text='Akty zgonu')
     type_m = models.BooleanField(default=False, help_text='Akty małżeństwa')
     type_a = models.BooleanField(default=False, help_text='Alegaty')
+
     date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
     date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
     date_excepts = models.TextField(blank=True, help_text='Lata pominięte')
+
     note = models.TextField(blank=True, help_text='Notatka')
