@@ -4,13 +4,16 @@
 {{ postal_code }} {{ postal_place }}
 Miejscowość: {{ place }}
 </pre>
-<p>Year: {{ year }}</p>
-<p> <a href="#" data-link="/parts/area?country={{ country.id }}" class="ajax_link">{{ country.name }}</a>,
-    <a href="#" data-link="/parts/area?province={{ province.id }}" class="ajax_link">{{ province.name }}</a>,
-    <a href="#" data-link="/parts/area?county={{ county.id }}" class="ajax_link">{{ county.name }}</a>
+<p class="nomargin">Data erygowania: {{ year }}</p>
+<p class="nomargin">
+    <a href="/parts/area?country={{ country.id }}" class="ajax_link">{{ country.name }}</a>,
+    <a href="/parts/area?province={{ province.id }}" class="ajax_link">{{ province.name }}</a>,
+    <a href="/parts/area?county={{ county.id }}" class="ajax_link">{{ county.name }}</a>
 </p>
-<p> <a href="/parts/area?diocese={{diocese.id}}" class="ajax_link">{{ diocese.name }}</a>,
-    <a href="/parts/area?deanery={{deanery.id}}" class="ajax_link">{{ deanery.name }}</a></p>
+<p class="nomargin">
+    <a href="/parts/area?diocese={{diocese.id}}" class="ajax_link">{{ diocese.name }}</a>,
+    <a href="/parts/area?deanery={{deanery.id}}" class="ajax_link">{{ deanery.name }}</a>
+</p>
 
 <hr>
 
@@ -21,8 +24,19 @@ Miejscowość: {{ place }}
     }
     .document_years td{
         width: 50px;
-        background: red;
+        background: #eee;
 
+    }
+
+    #tab-documents-content table th{
+        border-top: 0px;
+    }
+    .tab-content{
+        padding: 10px;
+        border-left: 1px solid #ddd;
+    }
+    p.nomargin{
+        margin: 0px;
     }
 </style>
 <table class="document_years" width="100%">
@@ -83,20 +97,21 @@ Miejscowość: {{ place }}
 <br/>
 <div>
 
-  <ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Sources</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Comments</a>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel" aria-labelledby="tab-documents">
-    {% include "core/api/parish_detail_documents.html" %}
-  </div>
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-</div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-controls="home" aria-selected="true">Sources</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tab-comments-content" role="tab" aria-controls="profile" aria-selected="false">Comments</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel" aria-labelledby="tab-documents">
+        {% include "core/api/parish_detail_documents.html" %}
+        </div>
+        <div class="tab-pane fade" id="tab-comments-content" role="tabpanel" aria-labelledby="profile-tab">...</div>
+    </div>
 
 </div>
 
