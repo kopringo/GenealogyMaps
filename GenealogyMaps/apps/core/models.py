@@ -199,3 +199,8 @@ class DocumentGroup(models.Model):
     date_excepts = models.TextField(blank=True, help_text='Lata pominięte')
 
     note = models.TextField(blank=True, help_text='Notatka')
+
+    date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
+    date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
+    user = models.ForeignKey(User, null=True, help_text='Autor rekordu', on_delete=models.DO_NOTHING)
+

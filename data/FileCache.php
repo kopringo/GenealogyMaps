@@ -48,10 +48,12 @@ class FileCache
         $lines    = file($file_name);
         $lifetime = array_shift($lines);
         $lifetime = (int) trim($lifetime);
+        /*
         if ($lifetime !== 0 && $lifetime < time()) {
             @unlink($file_name);
             return false;
         }
+        */
         $serialized = join('', $lines);
         $data       = unserialize($serialized);
         return $data;
