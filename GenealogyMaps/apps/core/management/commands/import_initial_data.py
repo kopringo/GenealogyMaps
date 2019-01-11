@@ -20,7 +20,7 @@ class Command(BaseCommand):
         if only_parishes:
             only_selected = True
 
-        with open('data/initial_data.json') as file:
+        with open('data/initial_data2.json') as file:
             data = file.read()
             json_data = json.loads(data)
 
@@ -157,10 +157,7 @@ class Command(BaseCommand):
                     parish.postal_place = parafia['postal_place']
 
                     try:
-                        print(parafia)
-                        print('save', parafia['lat'], parafia['lng'])
-                        print(' ')
-                        #parish.save()
+                        parish.save()
                     except Exception as e:
                         self.stdout.write(self.style.ERROR(e))
 
