@@ -6,7 +6,11 @@ Miejscowość: {{ place }}
 </pre>
 <p class="nomargin">Data erygowania: {{ year }}</p>
 <p class="nomargin">
+    {% if not country %}
     <a href="/parts/area?country={{ country.id }}" class="ajax_link">{{ country.name }}</a>,
+    {% else %}
+
+    {% endif %}
     <a href="/parts/area?province={{ province.id }}" class="ajax_link">{{ province.name }}</a>,
     <a href="/parts/area?county={{ county.id }}" class="ajax_link">{{ county.name }}</a>
 </p>
