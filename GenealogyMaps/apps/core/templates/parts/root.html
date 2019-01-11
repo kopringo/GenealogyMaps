@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="col-md-12">
+        <h3>Filtrowanie</h3>
+        <ul>
+            <li><input type="checkbox" id="before_1800"/><label for="before_1800">Przed 1800</label></li>
+            <li><input type="checkbox" id="between_1800_1900"/><label for="between_1800_1900">1800-1900</label></li>
+        </ul>
+
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h3>Województwa</h3>
+        <ul>
+            {% for wojewodztwo in provinces %}
+            <li><a href="/parts/area?province={{ wojewodztwo.id }}" class="ajax_link">{{ wojewodztwo.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h3>Diecezje</h3>
+        <ul>
+            {% for diecezja in dioceses %}
+            <li><a href="/parts/area?diocese={{ diecezja.id }}" class="ajax_link">{{ diecezja.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
