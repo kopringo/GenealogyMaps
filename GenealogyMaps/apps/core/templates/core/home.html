@@ -67,7 +67,7 @@ $(function(){
         leafletMarker.on('click', function(){
 
             $.ajax({
-                url: '/api2/parishes/' + data.ID + '/?format=html'
+                url: '/parts/parish?id=' + data.ID
 
             }).done(function(data){
                 $('#main-col-details').html(data);
@@ -106,6 +106,19 @@ var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
 	$(document).on('click', '#btn-add-document', function(){
 
 	});
+
+	$('body').on('click', '[data-toggle="modal"]', function(){
+        $($(this).data("target")+' .modal-body').load($(this).data("remote"));
+    });
+    $('body').on('click', '#btn-search', function(){
+        var text = $(this).prev().val();
+        $.ajax({
+            url: '/parts/search?text=' + text,
+        }).done(function(data){
+            $('#main-col-details').html(data);
+        });
+        return false;
+    });
 
 });
 </script>

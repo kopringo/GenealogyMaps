@@ -9,6 +9,13 @@
                 </tr>
             </thead>
             <tbody>
+                {% for document_group in document_groups %}
+                <tr>
+                    <td>Indexy</td>
+                    <td>1785-1910</td>
+                    <td><a href="">link</a>
+                </td>
+                {% endfor %}
                 <tr>
                     <td>Indexy</td>
                     <td>1785-1910</td>
@@ -29,6 +36,7 @@
         </table>
     </div>
     <div class="col-md-12">
-        <button type="button" id="btn-add-document" class="btn btn-primary">Dodaj</button>
+        <button type="button" id="btn-add-document" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-remote="/parts/document-add">Dodaj</button>
+
     </div>
 </div>
