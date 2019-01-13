@@ -54,7 +54,7 @@ def parish(request):
     parish = Parish.objects.get(pk=id)
     documents = DocumentGroup.objects.filter(parish=parish)
     #comments =
-    return render(request, 'parts/parish.html', {'parish': parish, 'documents': documents})
+    return render(request, 'parts/parish.html', {'parish': parish, 'document_groups': documents})
 
 def document_add(request):
     form = DocumentGroupForm()

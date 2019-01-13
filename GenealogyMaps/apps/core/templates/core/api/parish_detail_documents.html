@@ -3,35 +3,26 @@
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th>Typ</th>
-                    <th>Lata</th>
+                    <th>Typ danych</th>
+                    <th>Zakres lat</th>
                     <th>Notatki</th>
                 </tr>
             </thead>
             <tbody>
                 {% for document_group in document_groups %}
                 <tr>
-                    <td>Indexy</td>
-                    <td>1785-1910</td>
-                    <td><a href="">link</a>
+                    <td>[{{ document_group.type }}] {{ document_group.name }}</td>
+                    <td><span title="details...">{{ document_group.date_from }}-{{ document_group.date_to }}</span></td>
+                    <td>
+                        <a href="{{ document_group.link }}">Link</a>
+                        <a href="#">Edit</a>
                 </td>
                 {% endfor %}
+                {% if not document_groups %}
                 <tr>
-                    <td>Indexy</td>
-                    <td>1785-1910</td>
-                    <td><a href="">link</a>
-                </td>
+                    <td colspan="3">No details</td>
                 </tr>
-                <tr>
-                    <td>Metryki (familysearch)</td>
-                    <td>1815-1900</td>
-                    <td><a href="">link</a></td>
-                </tr>
-                    <tr>
-                    <td>Dokumenty (parafia)</td>
-                    <td>1650-1810</td>
-                    <td><a href="">note</a></td>
-                </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>

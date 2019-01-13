@@ -143,6 +143,14 @@ class ParishPlace(models.Model):
     geo_lng = models.FloatField(blank=True)
 
 
+class ParishComment(models.Model):
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
+    data = models.TextField(blank=True, help_text='Tresc komentarza')
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, help_text='Autor komentarza')
+    date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
+    visible = models.BooleanField(default=True, help_text='Widocznosc komentarza')
+
+
 class ParishRef(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     documents_group = models.ForeignKey('DocumentGroup', on_delete=models.DO_NOTHING)
