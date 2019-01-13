@@ -1,0 +1,10 @@
+<a href="/parts/root" class="ajax_link">Województwa i Diecezje</a>
+
+
+<p>Wyniki wyszukiwania:</p>
+<ul>
+    {% for item in items %}
+    <li><a href="{{ item.link }}" class="ajax_link">{{ item.name}}</a></li>
+    {% endfor %}
+
+</ul>

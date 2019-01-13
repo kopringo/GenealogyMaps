@@ -1,0 +1,127 @@
+<h3>Parafia: {{ parish.name }} <a href="/admin/core/parish/{{ id }}/change/" target="_blank">EDIT</a></h3>
+<pre>
+{{ parish.address }}
+{{ parish.postal_code }} {{ parish.postal_place }}
+Miejscowość: {{ parish.place }}
+</pre>
+<p class="nomargin">Data erygowania: {{ parish.year }}</p>
+<p class="nomargin">
+    {% if not parish.country %}
+    <a href="/parts/area?country={{ parish.country.id }}" class="ajax_link">{{ parish.country.name }}</a>,
+    {% else %}
+
+    {% endif %}
+    <a href="/parts/area?province={{ parish.province.id }}" class="ajax_link">{{ parish.province.name }}</a>,
+    <a href="/parts/area?county={{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a>
+</p>
+<p class="nomargin">
+    <a href="/parts/area?diocese={{ parish.diocese.id }}" class="ajax_link">{{ parish.diocese.name }}</a>,
+    <a href="/parts/area?deanary={{ parish.deanery.id }}" class="ajax_link">{{ parish.deanery.name }}</a>
+</p>
+
+<hr>
+
+
+<style>
+    .document_years{
+        border-collapse: separate;
+    }
+    .document_years td{
+        width: 50px;
+        background: #eee;
+
+    }
+
+    #tab-documents-content table th{
+        border-top: 0px;
+    }
+    .tab-content{
+        padding: 10px;
+        border-left: 1px solid #ddd;
+    }
+    p.nomargin{
+        margin: 0px;
+    }
+</style>
+<table class="document_years" width="100%">
+    <tr>
+        <th>1600</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <th>1700</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <th>1800</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <th>1900</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
+
+<br/>
+<div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-controls="home" aria-selected="true">Sources</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tab-comments-content" role="tab" aria-controls="profile" aria-selected="false">Comments</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel" aria-labelledby="tab-documents">
+        {% include "core/api/parish_detail_documents.html" %}
+        </div>
+        <div class="tab-pane fade" id="tab-comments-content" role="tabpanel" aria-labelledby="profile-tab">...</div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        //var map = L.map('mapid');
+        map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}]);
+    });
+</script>
