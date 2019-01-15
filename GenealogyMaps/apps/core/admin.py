@@ -2,7 +2,8 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import DocumentSource, Parish, ParishRef, Country, DocumentGroup, Province, County, Diocese, Deanery, ParishUser
+from .models import DocumentSource, Parish, ParishRef, Country, DocumentGroup, Province, County, Diocese, Deanery, \
+    ParishUser, ZiemiaIRP
 
 
 class ParishUserInline(admin.TabularInline):
@@ -71,3 +72,7 @@ admin.site.register(Diocese, DioceseAdmin)
 class DeaneryAdmin(admin.ModelAdmin):
     pass
 admin.site.register(Deanery, DeaneryAdmin)
+
+class ZiemiaIRPAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(ZiemiaIRP, ZiemiaIRPAdmin)

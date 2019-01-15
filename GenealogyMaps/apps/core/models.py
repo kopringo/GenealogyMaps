@@ -83,6 +83,18 @@ class Deanery(models.Model):
         verbose_name_plural = "deaneries"
 
 
+
+class ZiemiaIRP(models.Model):
+
+    name = models.CharField(max_length=64, help_text='Nazwa ziemi')
+
+    def __str__(self):
+        return u'%d. %s' % (self.id, self.name)
+
+    class Meta:
+        verbose_name_plural = "ziemie I RP"
+
+
 class Parish(models.Model):
 
     # nazwa parafii
@@ -109,7 +121,7 @@ class Parish(models.Model):
     deanery = models.ForeignKey(Deanery, null=True, on_delete=models.DO_NOTHING)
 
     # podzial ziem I RP.
-    # @todo
+    ziemia_i_rp = models.ForeignKey(ZiemiaIRP, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
 
     # kontakt
     phone = models.CharField(max_length=32, help_text=16, blank=True)
