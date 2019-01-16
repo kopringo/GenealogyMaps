@@ -123,5 +123,14 @@ Miejscowość: {{ parish.place }}
     $(function(){
         //var map = L.map('mapid');
         map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}]);
+
+        // create custom icon
+        var firefoxIcon = L.icon({
+            iconUrl: '/static/img/marker-icon2.png',
+            iconSize: [38, 38], // size of the icon
+        });
+
+        console.log(markers[{{parish.id}}]);
+        markers[{{parish.id}}].icon = firefoxIcon;
     });
 </script>

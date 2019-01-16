@@ -123,5 +123,7 @@ Miejscowość: {{ place }}
     $(function(){
         //var map = L.map('mapid');
         map.setView([{{ geo_lat }}, {{ geo_lng }}]);
+
+        console.log(markers[{{id}}]);
     });
 </script>

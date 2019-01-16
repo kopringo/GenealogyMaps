@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="col-md-6" id="main-col-map">
+<div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map">
   <div id="mapid"></div>
 </div>
-<div class="col-md-6" id="main-col-details">
+<div class="col-md-8 col-lg-7 col-xl-6" id="main-col-details">
 
 
 @todo http://leafletjs.com/examples/choropleth/
@@ -19,13 +19,14 @@ https://github.com/Leaflet/Leaflet.markercluster
 {% block content_js %}
 <script type="text/javascript">
 var map = null;
+var markers = {};
 $(function(){
 	map = L.map('mapid').setView([51.95, 19.08], 7);
 	map.on('moveend', function() {
-        console.log('a');
+        //console.log('a');
     });
     map.on('zoomend', function() {
-        console.log('b');
+        //console.log('b');
     });
 
 	L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -49,6 +50,7 @@ $(function(){
             marker.data.name = '<h2>' + parish['name'] + '</h2>{{parish.place}}<br/>{{parish.province}}';
             marker.data.ID = parish['id'];
             pruneCluster.RegisterMarker(marker);
+            markers[marker.data.ID] = marker;
         }
         pruneCluster.ProcessView();
     }).fail(function(jqXHR, textStatus){
