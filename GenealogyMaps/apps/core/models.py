@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import gettext as _
 
 # Create your models here.
 
@@ -28,7 +29,7 @@ class Country(models.Model):
         return u'%d. %s' % (self.id, self.name)
 
     class Meta:
-        verbose_name_plural = "countries"
+        verbose_name_plural = _("countries")
 
 
 class Province(models.Model):
@@ -40,11 +41,20 @@ class Province(models.Model):
     name = models.CharField(max_length=32, help_text='Nazwa województwa')
     short = models.CharField(max_length=2, blank=True)
 
+    def county_number(self):
+        return u'%s' % str(len(County.objects.filter(province=self)))
+
+    def parish_number(self):
+        return u'%s' % str(len(Parish.objects.filter(province=self)))
+
     def __unicode__(self):
         return u'<%s>[%s]' % (self.name, self.country)
 
     def __str__(self):
         return self.__unicode__()
+
+    class Meta:
+        verbose_name_plural = _("provinces")
 
 
 class County(models.Model):
@@ -54,6 +64,9 @@ class County(models.Model):
 
     province = models.ForeignKey(Province, help_text='Województwo', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=32, help_text='Powiat')
+
+    def parish_number(self):
+        return u'%s' % str(len(Parish.objects.filter(county=self)))
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
@@ -68,6 +81,9 @@ class Diocese(models.Model):
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
+
+    class Meta:
+        verbose_name_plural = _("dioceses")
 
 
 class Deanery(models.Model):

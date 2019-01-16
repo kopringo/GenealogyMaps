@@ -57,12 +57,14 @@ class CountryAdmin(admin.ModelAdmin):
     pass
 admin.site.register(Country, CountryAdmin)
 
+
 class ProvinceAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'country', 'county_number', 'parish_number']
 admin.site.register(Province, ProvinceAdmin)
 
 class CountyAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'province', 'parish_number', ]
+    list_filter = ['province', ]
 admin.site.register(County, CountyAdmin)
 
 class DioceseAdmin(admin.ModelAdmin):
@@ -73,6 +75,7 @@ class DeaneryAdmin(admin.ModelAdmin):
     pass
 admin.site.register(Deanery, DeaneryAdmin)
 
+
 class ZiemiaIRPAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name',]
 admin.site.register(ZiemiaIRP, ZiemiaIRPAdmin)
