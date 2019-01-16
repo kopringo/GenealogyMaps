@@ -122,7 +122,7 @@ Miejscowość: {{ parish.place }}
 <script type="text/javascript">
     $(function(){
         //var map = L.map('mapid');
-        map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}]);
+        map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}], 12);
 
         // create custom icon
         var firefoxIcon = L.icon({
@@ -131,6 +131,6 @@ Miejscowość: {{ parish.place }}
         });
 
         console.log(markers[{{parish.id}}]);
-        markers[{{parish.id}}].icon = firefoxIcon;
+        //markers[{{parish.id}}].setIcon(firefoxIcon);
     });
 </script>

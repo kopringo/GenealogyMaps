@@ -1,4 +1,4 @@
-<form method="post" action="">
+<form method="post" action="/parts/document-add" id="documents-add">
 
     <div class="form-row">
         <div class="form-group col-md-6">
@@ -64,5 +64,7 @@
 
         {{form.note}}
     </div>
+
+    {% csrf_token %}
 
 </form>
