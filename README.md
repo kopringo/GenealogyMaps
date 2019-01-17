@@ -56,6 +56,7 @@ Data sources
 - http://www.genealodzy.czestochowa.pl/zasoby/biblioteka/Indeksy-zbior%C3%B3w-metrykalnych
 - http://turze.net/genbaza.html
 - http://feefhs.org/resource/poland
+- https://indeksy.projektpodlasie.pl/
 
 Parafie źródła
 ==============
