@@ -50,7 +50,7 @@ $(function(){
             marker.data.name = '<h2>' + parish['name'] + '</h2>{{parish.place}}<br/>{{parish.province}}';
             marker.data.ID = parish['id'];
             pruneCluster.RegisterMarker(marker);
-            markers[marker.data.ID] = marker;
+            //markers[marker.data.ID] = marker;
         }
         pruneCluster.ProcessView();
     }).fail(function(jqXHR, textStatus){

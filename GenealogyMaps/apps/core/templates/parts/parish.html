@@ -1,3 +1,23 @@
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/parts/root" class="ajax_link">Strona główna</a></li>
+        <li class="breadcrumb-item"><a href="/parts/area?province={{ parish.province.id }}" class="ajax_link">{{ parish.province.name }}</a></li>
+        <li class="breadcrumb-item"><a href="/parts/area?county={{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
+
+
+
+
+        <li class="breadcrumb-item active" aria-current="page">{{ parish.name }}</li>
+    </ol>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/parts/area?diocese={{ group_obj.diocese.id }}" class="ajax_link">{{ group_obj.diocese.name }}</a></li>
+        <li class="breadcrumb-item"><a href="/parts/area?deanary={{ group_obj.deanary.id }}" class="ajax_link">{{ group_obj.deanary.name }}</a></li>
+    </ol>
+
+</nav>
+
+
 <h3>Parafia: {{ parish.name }} [<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank">edit</a>]</h3>
 <pre>
 {{ parish.address }}
@@ -5,19 +25,6 @@
 Miejscowość: {{ parish.place }}
 </pre>
 <p class="nomargin">Data erygowania: {{ parish.year }}</p>
-<p class="nomargin">
-    {% if not parish.country %}
-    <a href="/parts/area?country={{ parish.country.id }}" class="ajax_link">{{ parish.country.name }}</a>,
-    {% else %}
-
-    {% endif %}
-    <a href="/parts/area?province={{ parish.province.id }}" class="ajax_link">{{ parish.province.name }}</a>,
-    <a href="/parts/area?county={{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a>
-</p>
-<p class="nomargin">
-    <a href="/parts/area?diocese={{ parish.diocese.id }}" class="ajax_link">{{ parish.diocese.name }}</a>,
-    <a href="/parts/area?deanary={{ parish.deanery.id }}" class="ajax_link">{{ parish.deanery.name }}</a>
-</p>
 
 <hr>
 

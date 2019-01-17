@@ -15,6 +15,15 @@ python3.5 manage.py migrate
 python3.5 manage.py createsuperuser
 ```
 
+Lokalizacja
+
+```bash
+python3 manage.py makemessages -l en
+python3 manage.py makemessages -l pl
+python3 manage.py compilemessages
+
+```
+
 Screen
 ======
 <img src="assets/screen1.png" width="100%">

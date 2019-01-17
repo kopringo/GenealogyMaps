@@ -14,7 +14,9 @@
         <h3>Województwa</h3>
         <ul class="inline">
             {% for wojewodztwo in provinces %}
-            <li><a href="/parts/area?province={{ wojewodztwo.id }}" class="ajax_link">{{ wojewodztwo.name }}</a></li>
+                {% if wojewodztwo.name %}
+                <li><a href="/parts/area?province={{ wojewodztwo.id }}" class="ajax_link">{{ wojewodztwo.name }}</a>, </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
@@ -22,7 +24,9 @@
         <h3>Diecezje</h3>
         <ul class="inline">
             {% for diecezja in dioceses %}
-            <li><a href="/parts/area?diocese={{ diecezja.id }}" class="ajax_link">{{ diecezja.name }}</a></li>
+                {% if diecezja.name %}
+                <li><a href="/parts/area?diocese={{ diecezja.id }}" class="ajax_link">{{ diecezja.name }}</a>, </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>

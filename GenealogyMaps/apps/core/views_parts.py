@@ -18,35 +18,45 @@ def area(request):
     deanary_id = request.GET.get('deanary', None)
 
     items = []
+    group_obj = None
+    group_type = None
 
     try:
         province = Province.objects.get(pk=province_id)
         items = list(map(lambda x: {'name': x.name, 'link': '/parts/area?county=%d' % x.id}, County.objects.filter(province=province)))
+        group_type = 'province'
+        group_obj = province
     except Province.DoesNotExist:
         pass
 
     try:
         county = County.objects.get(pk=county_id)
         items = list(map(lambda x: {'name': '%s, %s' % (x.place, x.name), 'link': '/parts/parish?id=%d' % x.id}, Parish.objects.filter(county=county)))
+        group_type = 'county'
+        group_obj = county
     except County.DoesNotExist:
         pass
 
     try:
         diocese = Diocese.objects.get(pk=diocese_id)
         items = list(map(lambda x: {'name': x.name, 'link': '/parts/area?diocese=' % x.id}, Deanery.objects.filter(diocese=diocese)))
+        group_type = 'diocese'
+        group_obj = diocese
     except Diocese.DoesNotExist:
         pass
 
     try:
         deanary = Deanery.objects.get(pk=deanary_id)
         items = list(map(lambda x: {'name': '%s, %s' % (x.place, x.name), 'link': '/parts/parish?id=%d' % x.id}, Parish.objects.filter(deanery=deanary)))
+        group_type = 'deanary'
+        group_obj = deanary
     except Deanery.DoesNotExist:
         pass
 
     if len(items) == 0:
         return root(request)
 
-    return render(request, 'parts/area.html', {'items': items})
+    return render(request, 'parts/area.html', {'items': items, 'group_type': group_type, 'group_obj': group_obj})
 
 
 def parish(request):
