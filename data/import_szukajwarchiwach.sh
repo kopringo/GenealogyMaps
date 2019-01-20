@@ -95,6 +95,14 @@
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 17 18 21 24 26  27 28 29 30 31 32 33 34 35 36 37 38 39 41 42 45 48 49 50 \
     51 52 53 54 55 56 58 59 60 62 63 64 65 66 67 68 69 71 72 73 75 76 78 79 82 83 84 85 86 88 89 92 93; do
 
-    wget "https://szukajwarchiwach.pl/$i/str/1/100?sort=tytul" > cache/szwa_zasob;
-
+    if [[ ! -f cache/szwa_zasob_$i ]]; then
+        wget "https://szukajwarchiwach.pl/$i/str/1/100?sort=tytul" --no-check-certificate -q -O cache/szwa_zasob_$i;
+    fi
+    MAX_ID=`cat cache/szwa_zasob_$i | grep "=tytul#tabZasoby" | tail -n 1 | sed -e 's/.*Zasoby..//g' | sed -e 's/<.*//g'`
+    echo "$i MAX_ID $MAX_ID";
+    for page in `seq 1 $MAX_ID`; do
+        if [[ ! -f cache/szwa_zasob_$i"_"$page ]]; then
+            wget "https://szukajwarchiwach.pl/$i/str/$page/100?sort=tytul" --no-check-certificate -q -O cache/szwa_zasob_$i"_"$page;
+        fi
+    done
 done
