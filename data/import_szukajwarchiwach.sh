@@ -104,5 +104,16 @@ for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 17 18 21 24 26  27 28 29 30 31 32 3
         if [[ ! -f cache/szwa_zasob_$i"_"$page ]]; then
             wget "https://szukajwarchiwach.pl/$i/str/$page/100?sort=tytul" --no-check-certificate -q -O cache/szwa_zasob_$i"_"$page;
         fi
+
+        LINES=`grep -n "<tr class=" cache/szwa_zasob_$i"_"$page | awk '{print $1}' | sed -e 's/://g'`;
+        for LINE in $LINES; do
+            cat cache/szwa_zasob_$i"_"$page | tail -n +$LINE | head -n 6 > cache/szwa_zasob_single;
+            cat cache/szwa_zasob_single | sed -e "s/<\/a><\/td>//g" | sed -e "s/<\/span><\/td>//g" | sed -e "s/.*>//g" > cache/szwa_zasob_single2;
+            NUMBER=`cat cache/szwa_zasob_single2 | head -n 2 | tail -n 1`
+            TITLE=`cat cache/szwa_zasob_single2 | head -n 3 | tail -n 1`
+            YEARS=`cat cache/szwa_zasob_single2 | head -n 4 | tail -n 1`
+            PHOTOS=`cat cache/szwa_zasob_single2 | head -n 5 | tail -n 1`
+            echo "$NUMBER; $TITLE; $YEARS; $PHOTOS";
+        done
     done
 done
