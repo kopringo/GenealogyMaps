@@ -11,6 +11,7 @@ urlpatterns = [
     path('api2/', include(urls_api.router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('contact', views.contact),
+    path('accounts/profile', views.profile, name='accounts_profile'),
 
     path('', views.home, name='home'),
     path('parts/root', views_parts.root, name='parts_root'),

@@ -24,6 +24,10 @@ def contact(request):
     return render(request, 'core/contact.html')
 
 
+def profile(request):
+    return render(request, 'accounts/profile.html')
+
+
 def _load_root_items():
 
     data = {
