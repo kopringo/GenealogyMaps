@@ -17,38 +17,29 @@
         <a class="nav-link" href="/contact">Contact</a>
       </li>
 
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Profil
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-      </li>
-
       {% if request.user.is_anonymous %}
       <li class="nav-item">
         <a class="nav-link" href="{% url "login" %}">Login</a>
       </li>
       {% else %}
-        {% if request.user.is_superuser %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url "accounts_profile" %}">Profil</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Profil
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="nav-link" href="{% url "accounts_profile" %}">Profil</a>
+
+
+            {% if request.user.is_superuser %}
+            <a class="nav-link text-danger" href="/admin">Admin panel</a>
+            {% endif %}
+
+            <div class="dropdown-divider"></div>
+            <a class="nav-link" href="{% url "logout" %}">Logout</a>
+          </div>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/admin">Admin panel</a>
-        </li>
-        {% endif %}
-      <li class="nav-item">
-        <a class="nav-link" href="{% url "logout" %}">Logout</a>
-      </li>
+
       {% endif %}
 
     </ul>

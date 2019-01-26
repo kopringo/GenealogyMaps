@@ -39,7 +39,7 @@ def area(request):
 
     try:
         diocese = Diocese.objects.get(pk=diocese_id)
-        items = list(map(lambda x: {'name': x.name, 'link': '/parts/area?diocese=' % x.id}, Deanery.objects.filter(diocese=diocese)))
+        items = list(map(lambda x: {'name': x.name, 'link': '/parts/area?deanary=%d' % x.id}, Deanery.objects.filter(diocese=diocese)))
         group_type = 'diocese'
         group_obj = diocese
     except Diocese.DoesNotExist:

@@ -40,6 +40,7 @@ class Province(models.Model):
     country = models.ForeignKey(Country, help_text='Kraj', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=32, help_text='Nazwa województwa')
     short = models.CharField(max_length=2, blank=True)
+    public = models.BooleanField(default=False)
 
     def county_number(self):
         return u'%s' % str(len(County.objects.filter(province=self)))
@@ -78,6 +79,7 @@ class Diocese(models.Model):
     name = models.CharField(max_length=64, help_text='Diecezja')
     short = models.CharField(max_length=3, blank=True)
     url = models.URLField(max_length=128, blank=True, null=True)
+    public = models.BooleanField(default=False)
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
