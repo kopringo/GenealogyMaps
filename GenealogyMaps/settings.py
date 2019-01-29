@@ -154,6 +154,19 @@ DECIMAL_SEPARATOR = '.'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 
+AUTH_PASSWORD_VALIDATORS = [{
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    }, {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,
+    }}, #{
+#        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+#    }, {
+#        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+#    },
+]
+
 DEFAULT_FROM_EMAIL = 'noreply@parafie.k37.ovh'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
