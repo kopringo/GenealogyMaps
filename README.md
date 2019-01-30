@@ -28,6 +28,8 @@ Screen
 ======
 <img src="assets/screen1.png" width="100%">
 
+<img src="assets/screen2.png" width="100%">
+
 Data sources
 ============
 - https://www.familysearch.org/
