@@ -27,6 +27,7 @@ Miejscowość: {{ parish.place }}
 <p class="nomargin">Data erygowania: {{ parish.year }}</p>
 <br/>
 
+
 <style>
     .document_years{
         border-collapse: separate;
@@ -48,6 +49,7 @@ Miejscowość: {{ parish.place }}
         margin: 0px;
     }
 </style>
+<!--
 <table class="document_years" width="100%">
     <tr>
         <th>1600</th>
@@ -102,6 +104,7 @@ Miejscowość: {{ parish.place }}
         <td></td>
     </tr>
 </table>
+-->
 
 <br/>
 <div>
@@ -119,7 +122,7 @@ Miejscowość: {{ parish.place }}
         <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel" aria-labelledby="tab-documents">
         {% include "core/api/parish_detail_documents.html" %}
         </div>
-        <div class="tab-pane fade" id="tab-comments-content" role="tabpanel" aria-labelledby="profile-tab">...</div>
+        <div class="tab-pane fade" id="tab-comments-content" role="tabpanel" aria-labelledby="profile-tab">@todo</div>
     </div>
 
 </div>

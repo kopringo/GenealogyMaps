@@ -86,6 +86,8 @@ def document_add(request):
             document_group.user = request.user
             document_group.save()
 
+            parish.refresh_summary()
+
             saved = True
 
     return render(request, 'parts/document_add.html', {'form': form, 'saved': saved, 'parish': parish})

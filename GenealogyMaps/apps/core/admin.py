@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 
 from .models import DocumentSource, Parish, ParishRef, Country, DocumentGroup, Province, County, Diocese, Deanery, \
-    ParishUser, ZiemiaIRP
+    ParishUser, ZiemiaIRP, ParishRawData
 
 
 class ParishUserInline(admin.TabularInline):
@@ -79,3 +79,9 @@ admin.site.register(Deanery, DeaneryAdmin)
 class ZiemiaIRPAdmin(admin.ModelAdmin):
     list_display = ['name',]
 admin.site.register(ZiemiaIRP, ZiemiaIRPAdmin)
+
+
+class ParishRawDataAdmin(admin.ModelAdmin):
+    list_display = ['data_source', 'data_key', 'parish', ]
+    list_filter = ['data_source', ]
+admin.site.register(ParishRawData, ParishRawDataAdmin)

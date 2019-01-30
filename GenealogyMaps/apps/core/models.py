@@ -29,7 +29,8 @@ class Country(models.Model):
         return u'%d. %s' % (self.id, self.name)
 
     class Meta:
-        verbose_name_plural = _("countries")
+        verbose_name = 'Kraj'
+        verbose_name_plural = 'Kraje'#_("countries")
 
 
 class Province(models.Model):
@@ -55,7 +56,8 @@ class Province(models.Model):
         return self.__unicode__()
 
     class Meta:
-        verbose_name_plural = _("provinces")
+        verbose_name = 'Województwo'
+        verbose_name_plural = 'Region - Województwa'#_("provinces")
 
 
 class County(models.Model):
@@ -72,6 +74,10 @@ class County(models.Model):
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
 
+    class Meta:
+        verbose_name = 'Powiat'
+        verbose_name_plural = 'Region - Powiaty'
+
 
 class Diocese(models.Model):
 
@@ -85,7 +91,8 @@ class Diocese(models.Model):
         return u'%d. %s' % (self.id, self.name)
 
     class Meta:
-        verbose_name_plural = _("dioceses")
+        verbose_name = 'Diecezja'
+        verbose_name_plural = 'Region - Diecezje'#_("dioceses")
 
 
 class Deanery(models.Model):
@@ -98,8 +105,8 @@ class Deanery(models.Model):
         return u'%d. %s' % (self.id, self.name)
 
     class Meta:
-        verbose_name_plural = "deaneries"
-
+        verbose_name = 'Dekanat'
+        verbose_name_plural = 'Region - Dekanaty'#"deaneries"
 
 
 class ZiemiaIRP(models.Model):
@@ -150,20 +157,36 @@ class Parish(models.Model):
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
 
+    def refresh_summary(self):
+        pass
+
     class Meta:
-        verbose_name_plural = "parishes"
+        verbose_name = 'Parafia'
+        verbose_name_plural = 'Parafie'#"parishes"
 
 
 class ParishRawData(models.Model):
-    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
+    """
+    Surowe dane na temat parafii
+
+    """
+    parish = models.ForeignKey(Parish, blank=True, null=True, on_delete=models.DO_NOTHING)
+    parish_documentgroup = models.ForeignKey('DocumentGroup', blank=True, null=True, on_delete=models.DO_NOTHING)
+    data_source = models.CharField(max_length=16, blank=True)
     data_key = models.CharField(max_length=16)
     data = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = (('data_source', 'data_key'), )
+        verbose_name = 'Parafia - dane surowe'
+        verbose_name_plural = 'Parafie - dane surowe'  # "parishes"
 
 
 class ParishUser(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     note = models.TextField(blank=True)
+    #favorite = models.BooleanField(default=False, help_text='Czy parafia nalezy do ulubionych')
 
 
 class ParishPlace(models.Model):
@@ -242,3 +265,5 @@ class DocumentGroup(models.Model):
     date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
     user = models.ForeignKey(User, null=True, help_text='Autor rekordu', on_delete=models.DO_NOTHING)
 
+    def __str__(self):
+        return u'%s' % (self.name)
