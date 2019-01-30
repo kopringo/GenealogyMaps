@@ -1,17 +1,20 @@
 <form method="post" action="/parts/document-add" id="document-group-add">
 
     <div class="form-row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-6 {% if form.name.errors %}is-invalid{% endif %}">
             <label for="id_name">Nazwa grupy dokumentów</label>
             {{form.name}}
+            <small class="text-danger">{% for error in form.name.errors %}{{error}} {% endfor %}</small>
         </div>
         <div class="form-group col-md-3">
             <label for="id_source">Źródło</label>
             {{form.source}}
+            <small class="text-danger">{% for error in form.source.errors %}{{error}} {% endfor %}</small>
         </div>
         <div class="form-group col-md-3">
             <label for="id_type">Typ dokumentów</label>
             {{form.type}}
+            <small class="text-danger">{% for error in form.type.errors %}{{error}} {% endfor %}</small>
         </div>
     </div>
 
@@ -19,6 +22,7 @@
         <div class="form-group col-md-12">
             <label for="id_url">Adres URL</label>
             <input type="text" name="url" maxlength="32" id="id_url" class="form-control"/>
+            <small class="text-danger">{% for error in form.url.errors %}{{error}} {% endfor %}</small>
         </div>
     </div>
 
@@ -48,14 +52,17 @@
         <div class="form-group col-md-2">
             <label>Data od</label>
             {{form.date_from}}
+            <small class="text-danger">{% for error in form.date_from.errors %}{{error}} {% endfor %}</small>
         </div>
         <div class="form-group col-md-2">
             <label>Data do</label>
             {{form.date_to}}
+            <small class="text-danger">{% for error in form.date_to.errors %}{{error}} {% endfor %}</small>
         </div>
         <div class="form-group col-md-4">
             <label>Pominięte lata</label>
             {{form.date_excepts}}
+            <small class="text-danger">{% for error in form.date_excepts.errors %}{{error}} {% endfor %}</small>
         </div>
     </div>
 
@@ -66,5 +73,10 @@
     </div>
 
     {% csrf_token %}
+    <input type="hidden" name="parish" value="{{ parish.id }}" />
 
 </form>
+
+{% if saved %}
+saved!
+{% endif %}

@@ -66,9 +66,29 @@ def parish(request):
     #comments =
     return render(request, 'parts/parish.html', {'parish': parish, 'document_groups': documents})
 
+
 def document_add(request):
     form = DocumentGroupForm()
-    return render(request, 'parts/document_add.html', {'form': form})
+    saved = False
+
+    parish_id = request.GET.get('parish', request.POST.get('parish', None))
+    try:
+        parish = Parish.objects.get(pk=parish_id)
+    except:
+        pass
+
+    if request.method == 'POST':
+        form = DocumentGroupForm(request.POST)
+
+        if form.is_valid():
+            document_group = form.save(commit=False)
+            document_group.parish = parish
+            document_group.user = request.user
+            document_group.save()
+
+            saved = True
+
+    return render(request, 'parts/document_add.html', {'form': form, 'saved': saved, 'parish': parish})
 
 
 def _load_root_items():

@@ -8,6 +8,7 @@ class DocumentGroupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(DocumentGroupForm, self).__init__(*args, **kwargs)
+
         for field_name, field in self.fields.items():
             if field_name in ('type_b', 'type_m', 'type_d', 'type_a'):
                 field.widget.attrs['class'] = 'form-check-input'
@@ -19,6 +20,8 @@ class DocumentGroupForm(forms.ModelForm):
     class Meta:
         model = DocumentGroup
         fields = ['name', 'url', 'type', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to', 'date_excepts', 'note', 'source']
+
+    error_css_class = 'is-invalid3'
 
 
 class CommentForm(forms.Form):

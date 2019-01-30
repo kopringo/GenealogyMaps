@@ -25,9 +25,7 @@
 Miejscowość: {{ parish.place }}
 </pre>
 <p class="nomargin">Data erygowania: {{ parish.year }}</p>
-
-<hr>
-
+<br/>
 
 <style>
     .document_years{
@@ -149,8 +147,8 @@ Miejscowość: {{ parish.place }}
         //markers[{{parish.id}}].data.icon = createIcon;
         //markers[{{parish.id}}].data.forceIconRedraw = true;
 
-        markers[{{parish.id}}].filtered = true
-        pruneCluster.ProcessView();
+        //markers[{{parish.id}}].filtered = true
+        //pruneCluster.ProcessView();
 
         console.log('ok {{parish.id}}');
     });
