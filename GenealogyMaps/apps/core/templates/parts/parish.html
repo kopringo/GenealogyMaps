@@ -132,12 +132,24 @@ Miejscowość: {{ parish.place }}
         map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}], 12);
 
         // create custom icon
-        var firefoxIcon = L.icon({
+        var firefoxIcon2 = L.icon({
             iconUrl: '/static/img/marker-icon2.png',
             iconSize: [38, 38], // size of the icon
         });
+        //console.log(firefoxIcon);
 
-        console.log(markers[{{parish.id}}]);
-        //markers[{{parish.id}}].setIcon(firefoxIcon);
+        function createIcon(data, category) {
+            return L.icon({
+                iconUrl: '/static/img/marker-icon2.png',
+                iconSize: [38, 38], // size of the icon
+            });
+        };
+
+        //console.log(markers[{{parish.id}}]);
+        //markers[{{parish.id}}].data.icon = createIcon;
+        //markers[{{parish.id}}].data.forceIconRedraw = true;
+        //pruneCluster.ProcessView();
+
+        console.log('ok {{parish.id}}');
     });
 </script>

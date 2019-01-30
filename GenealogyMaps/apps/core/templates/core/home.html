@@ -20,6 +20,7 @@ https://github.com/Leaflet/Leaflet.markercluster
 <script type="text/javascript">
 var map = null;
 var markers = {};
+var pruneCluster = null;
 $(function(){
 	map = L.map('mapid').setView([51.95, 19.08], 7);
 	map.on('moveend', function() {
@@ -34,7 +35,7 @@ $(function(){
    		subdomains: ['a','b','c']
 	}).addTo( map );
 
-	var pruneCluster = new PruneClusterForLeaflet(50);
+	pruneCluster = new PruneClusterForLeaflet(100);
 
 	var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
 	pruneCluster.RegisterMarker(marker2);
@@ -50,8 +51,11 @@ $(function(){
             marker.data.name = '<h2>' + parish['name'] + '</h2>{{parish.place}}<br/>{{parish.province}}';
             marker.data.ID = parish['id'];
             pruneCluster.RegisterMarker(marker);
-            //markers[marker.data.ID] = marker;
+            markers[marker.data.ID] = marker;
+
+            //break;
         }
+
         pruneCluster.ProcessView();
     }).fail(function(jqXHR, textStatus){
         alert('ajax error');
@@ -64,23 +68,34 @@ $(function(){
     });
 
 	pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
-        //leafletMarker.setIcon(/*... */); // See http://leafletjs.com/reference.html#icon
+
+
+        // See http://leafletjs.com/reference.html#icon
         //listeners can be applied to markers in this function
-        leafletMarker.on('click', function(){
 
-            $.ajax({
-                url: '/parts/parish?id=' + data.ID
+        if( ! leafletMarker.hasEventListeners("click") ){
+            leafletMarker.on('click', function(){
 
-            }).done(function(data){
-                $('#main-col-details').html(data);
+                $.ajax({
+                    url: '/parts/parish?id=' + data.ID
+
+                }).done(function(data){
+                    $('#main-col-details').html(data);
+                });
+
+
             });
+        }
 
-
-        });
         // A popup can already be attached to the marker
         // bindPopup can override it, but it's faster to update the content instead
         if (leafletMarker.getPopup()) {
             leafletMarker.setPopupContent(data.name);
+
+            //leafletMarker.setIcon(L.icon({
+            //    iconUrl: '/static/img/marker-icon2.png',
+            //    iconSize: [38, 38], // size of the icon
+            //}));
         } else {
             leafletMarker.bindPopup(data.name);
         }
