@@ -148,7 +148,9 @@ Miejscowość: {{ parish.place }}
         //console.log(markers[{{parish.id}}]);
         //markers[{{parish.id}}].data.icon = createIcon;
         //markers[{{parish.id}}].data.forceIconRedraw = true;
-        //pruneCluster.ProcessView();
+
+        markers[{{parish.id}}].filtered = true
+        pruneCluster.ProcessView();
 
         console.log('ok {{parish.id}}');
     });

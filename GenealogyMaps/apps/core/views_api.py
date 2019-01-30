@@ -20,7 +20,7 @@ from .forms import DocumentGroupForm
 class ParishSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Parish
-        fields = ('id', 'name', 'geo_lat', 'geo_lng', )#'uri')
+        fields = ('id', 'name', 'geo_lat', 'geo_lng', 'province_id', 'county_id', )#'uri')
 
     #def uri(self):
     #    return '%s://%s/api2/parishes/%d/comments/' % (os.environ.get('HTTP_PROTOCOL', ''), os.environ.get('HTTP_HOST', ''), instance.id)

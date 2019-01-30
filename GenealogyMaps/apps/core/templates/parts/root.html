@@ -36,3 +36,16 @@
 
     </div>
 </div>
+
+<script type="text/javascript">
+    $(function(){
+
+
+        for(i in markers){
+            markers[i].filtered = false;
+        }
+
+
+        pruneCluster.ProcessView();
+    });
+</script>

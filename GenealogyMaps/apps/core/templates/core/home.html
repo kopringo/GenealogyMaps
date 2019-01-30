@@ -50,6 +50,9 @@ $(function(){
             var marker = new PruneCluster.Marker(parish['geo_lat'], parish['geo_lng']);
             marker.data.name = '<h2>' + parish['name'] + '</h2>{{parish.place}}<br/>{{parish.province}}';
             marker.data.ID = parish['id'];
+            marker.province_id = parish['province_id'];
+            marker.county_id = parish['county_id'];
+
             pruneCluster.RegisterMarker(marker);
             markers[marker.data.ID] = marker;
 
@@ -69,11 +72,13 @@ $(function(){
 
 	pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
 
+        if(leafletMarker.preparedLeafletMarker) {
+            return;
+        }
 
         // See http://leafletjs.com/reference.html#icon
         //listeners can be applied to markers in this function
 
-        if( ! leafletMarker.hasEventListeners("click") ){
             leafletMarker.on('click', function(){
 
                 $.ajax({
@@ -85,20 +90,22 @@ $(function(){
 
 
             });
-        }
 
         // A popup can already be attached to the marker
         // bindPopup can override it, but it's faster to update the content instead
         if (leafletMarker.getPopup()) {
             leafletMarker.setPopupContent(data.name);
 
-            //leafletMarker.setIcon(L.icon({
-            //    iconUrl: '/static/img/marker-icon2.png',
-            //    iconSize: [38, 38], // size of the icon
-            //}));
+            leafletMarker.setIcon(L.icon({
+                iconUrl: '/static/img/marker-icon2.png',
+                iconSize: [38, 38], // size of the icon
+            }));
+            pruneCluster.ProcessView();
         } else {
             leafletMarker.bindPopup(data.name);
         }
+
+        leafletMarker.preparedLeafletMarker = true;
     };
 
 	map.addLayer(pruneCluster);

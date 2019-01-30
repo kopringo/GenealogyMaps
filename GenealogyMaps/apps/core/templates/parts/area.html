@@ -32,3 +32,24 @@
     {% endfor %}
 </ul>
 {% endif %}
+
+
+<script type="text/javascript">
+    $(function(){
+
+        {% if group_type == 'province' %}
+        var id = {{ group_obj.id }};
+        var length = Object.keys(markers).length;
+
+        for(i in markers){
+            if(markers[i].province_id == id){
+                markers[i].filtered = false;
+            } else {
+                markers[i].filtered = true;
+            }
+        }
+        {% endif %}
+
+        pruneCluster.ProcessView();
+    });
+</script>
