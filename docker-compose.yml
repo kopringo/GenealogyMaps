@@ -1,0 +1,27 @@
+version: '3.2'
+services:
+  app:
+    build:
+      context: .
+      args:
+        buildno: 1
+    image: gen_maps:0.1
+#    command: /bin/run_fpm
+    ports:
+      - "7000:7000"
+    container_name: gen_maps
+    working_dir: /var/www/app
+    env_file: env_file
+    environment:
+      DATABASE_HOST: localhost
+      DATABASE_USER: genealogy_maps
+      DATABASE_PASSWORD:
+      DATABASE_NAME:
+      LANG: C.UTF-8
+    volumes:
+      - type: bind
+        source: /var/run/mysqld/mysqld.sock
+        target: /var/run/mysqld/mysqld.sock
+      - type: bind
+        source: ./var
+        target: /var/www/app/var

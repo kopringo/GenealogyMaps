@@ -173,7 +173,7 @@ class ParishRawData(models.Model):
     parish = models.ForeignKey(Parish, blank=True, null=True, on_delete=models.DO_NOTHING)
     parish_documentgroup = models.ForeignKey('DocumentGroup', blank=True, null=True, on_delete=models.DO_NOTHING)
     data_source = models.CharField(max_length=16, blank=True)
-    data_key = models.CharField(max_length=16)
+    data_key = models.CharField(max_length=64)
     data = models.TextField(blank=True)
 
     class Meta:

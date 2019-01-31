@@ -100,7 +100,7 @@ def _load_root_items():
         'dioceses': []
     }
 
-    data['provinces'] = Province.objects.all()
-    data['dioceses'] = Diocese.objects.all()
+    data['provinces'] = Province.objects.all().filter(public=True)
+    data['dioceses'] = Diocese.objects.all().filter(public=True)
 
     return data
