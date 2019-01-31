@@ -23,5 +23,5 @@ services:
         source: /var/run/mysqld/mysqld.sock
         target: /var/run/mysqld/mysqld.sock
       - type: bind
-        source: ./var
-        target: /var/www/app/var
+        source: .
+        target: /var/www/app

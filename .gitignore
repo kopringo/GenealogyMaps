@@ -108,4 +108,4 @@ var/tmp/*
 .project
 .pydevproject
 db.sqlite3
-
+env_file

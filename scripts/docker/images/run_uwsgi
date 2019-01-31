@@ -1,0 +1,3 @@
+#!/bin/bash
+pip install -r /var/www/app/requirements.txt;
+/usr/bin/uwsgi --emperor /etc/uwsgi/apps-enabled/

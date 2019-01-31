@@ -1,0 +1,2 @@
+#!/bin/bash
+echo "Available entrypoints: [run_fpm, run_uwsgi]";
