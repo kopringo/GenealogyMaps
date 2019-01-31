@@ -5,7 +5,7 @@ services:
       context: .
       args:
         buildno: 1
-    image: gen_maps:0.1
+    image: gen_maps:0.3
 #    command: /bin/run_fpm
     ports:
       - "7000:7000"
