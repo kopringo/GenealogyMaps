@@ -20,7 +20,7 @@ class Command(BaseCommand):
         if only_parishes:
             only_selected = True
 
-        with open('data/initial_data3.json') as file:
+        with open('data/initial_data4.json') as file:
             data = file.read()
             json_data = json.loads(data)
 
@@ -35,7 +35,8 @@ class Command(BaseCommand):
                     province.name = provice_raw['name']
                     province.country = country_pl
                     province.short = provice_raw['short']
-                    province.visible = provice_raw['public']
+                    province.public = provice_raw['visible']
+
                     try:
                         province.save()
                     except Exception as e:
@@ -72,7 +73,7 @@ class Command(BaseCommand):
                     diocese.url = diecezja_raw['link']
                     diocese.country = country_pl
                     diocese.short = diecezja_raw['short']
-                    diocese.visible = diecezja_raw['public']
+                    diocese.public = diecezja_raw['visible']
 
                     try:
                         diocese.save()

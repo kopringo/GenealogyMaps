@@ -87,6 +87,12 @@ class Diocese(models.Model):
     url = models.URLField(max_length=128, blank=True, null=True)
     public = models.BooleanField(default=False)
 
+    def deanery_number(self):
+        return u'%s' % str(len(Deanery.objects.filter(diocese=self)))
+
+    def parish_number(self):
+        return u'%s' % str(len(Parish.objects.filter(diocese=self)))
+
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
 

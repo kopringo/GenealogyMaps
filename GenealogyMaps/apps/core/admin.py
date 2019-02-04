@@ -68,7 +68,7 @@ class CountyAdmin(admin.ModelAdmin):
 admin.site.register(County, CountyAdmin)
 
 class DioceseAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'deanery_number', 'parish_number', ]
 admin.site.register(Diocese, DioceseAdmin)
 
 class DeaneryAdmin(admin.ModelAdmin):
