@@ -19,21 +19,21 @@ class ParishRefInline(admin.TabularInline):
 class DocumentGroupInline(admin.TabularInline):
     model = DocumentGroup
     extra = 1
+    fields = ['source', 'type', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to']
+    readonly_fields = ('source', 'type', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to')
 
 
 class DocumentSourceAdmin(admin.ModelAdmin):
     #fields = ('name', 'year', 'address')
     pass
-admin.site.register(DocumentSource, DocumentSourceAdmin)
 
 
 class DocumentGroupAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(DocumentGroup, DocumentGroupAdmin)
+    list_display = ['id_with_dates', 'parish', 'source', 'type', 'date_modified', 'user']
 
 
 class ParishAdmin(admin.ModelAdmin):
-    list_display = ['name', 'year', 'country', 'province', 'county', 'place', 'address', 'geo_lat', 'geo_lng', 'diocese', 'deanery', 'access', ]
+    list_display = ['name', 'year', 'province', 'county', 'place', 'geo_lat', 'geo_lng', 'diocese', 'deanery', 'access', ]
     list_filter = ['country', 'province', 'diocese', ]
     list_editable = ('access', )
 
@@ -47,41 +47,50 @@ class ParishAdmin(admin.ModelAdmin):
         ParishUserInline, DocumentGroupInline
     ]
 
-admin.site.register(Parish, ParishAdmin)
 
 class ParishRefAdmin(admin.ModelAdmin):
     pass
-admin.site.register(ParishRef, ParishRefAdmin)
+
 
 class CountryAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Country, CountryAdmin)
+    list_display = ['name', 'code']
 
 
 class ProvinceAdmin(admin.ModelAdmin):
     list_display = ['name', 'country', 'county_number', 'parish_number']
-admin.site.register(Province, ProvinceAdmin)
+
 
 class CountyAdmin(admin.ModelAdmin):
     list_display = ['name', 'province', 'parish_number', ]
     list_filter = ['province', ]
-admin.site.register(County, CountyAdmin)
+
 
 class DioceseAdmin(admin.ModelAdmin):
     list_display = ['name', 'deanery_number', 'parish_number', ]
-admin.site.register(Diocese, DioceseAdmin)
+
 
 class DeaneryAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Deanery, DeaneryAdmin)
+    list_display = ['name', 'diocese']
+    list_filter = ['diocese', ]
 
 
 class ZiemiaIRPAdmin(admin.ModelAdmin):
     list_display = ['name',]
-admin.site.register(ZiemiaIRP, ZiemiaIRPAdmin)
 
 
 class ParishRawDataAdmin(admin.ModelAdmin):
     list_display = ['data_source', 'data_key', 'parish', ]
     list_filter = ['data_source', ]
+
+
+admin.site.register(DocumentSource, DocumentSourceAdmin)
+admin.site.register(DocumentGroup, DocumentGroupAdmin)
+admin.site.register(Parish, ParishAdmin)
+admin.site.register(ParishRef, ParishRefAdmin)
+admin.site.register(Country, CountryAdmin)
+admin.site.register(Province, ProvinceAdmin)
+admin.site.register(County, CountyAdmin)
+admin.site.register(Diocese, DioceseAdmin)
+admin.site.register(Deanery, DeaneryAdmin)
+admin.site.register(ZiemiaIRP, ZiemiaIRPAdmin)
 admin.site.register(ParishRawData, ParishRawDataAdmin)

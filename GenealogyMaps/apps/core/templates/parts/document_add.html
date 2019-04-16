@@ -1,79 +1,92 @@
-<form method="post" action="/parts/document-add" id="document-group-add">
+<form method="post" action="/parish/{{parish.id}}/add-document" id="document-group-add">
 
     <div class="form-row">
-        <div class="form-group col-md-6 {% if form.name.errors %}is-invalid{% endif %}">
-            <label for="id_name">Nazwa grupy dokumentów</label>
-            {{form.name}}
-            <small class="text-danger">{% for error in form.name.errors %}{{error}} {% endfor %}</small>
-        </div>
-        <div class="form-group col-md-3">
-            <label for="id_source">Źródło</label>
-            {{form.source}}
-            <small class="text-danger">{% for error in form.source.errors %}{{error}} {% endfor %}</small>
-        </div>
-        <div class="form-group col-md-3">
-            <label for="id_type">Typ dokumentów</label>
+        <div class="form-group col-md-6">
+            <label for="id_type">Typ dokumentów <span class="text-danger">*</span></label>
             {{form.type}}
             <small class="text-danger">{% for error in form.type.errors %}{{error}} {% endfor %}</small>
         </div>
-    </div>
 
-    <div class="form-row">
-        <div class="form-group col-md-12">
-            <label for="id_url">Adres URL</label>
-            <input type="text" name="url" maxlength="32" id="id_url" class="form-control"/>
-            <small class="text-danger">{% for error in form.url.errors %}{{error}} {% endfor %}</small>
+
+        <!--
+        <div class="form-group col-md-3 {% if form.name.errors %}is-invalid{% endif %}">
+            <label for="id_name">Nazwa</label>
+            {{form.name}}
+            <small class="text-danger">{% for error in form.name.errors %}{{error}} {% endfor %}</small>
         </div>
+
+
+        -->
     </div>
 
     <div class="form-row">
-        <div class="form-group col-md-4">
+
+        <div class="form-group col-md-12">
             <label>Rodzaje dokumentów:</label>
 
-            <div>
-                <div class="form-check">
+            <div class="form-row">
+                <div class="col-md-3 form-check">
 
                     <label class="form-check-label">{{form.type_b}} Urodzenia</label>
                 </div>
-                <div class="form-check">
+                <div class="col-md-3 form-check">
 
-                    <label class="form-check-label">{{form.type_d}} Śmierci</label>
+                    <label class="form-check-label">{{form.type_d}} Zgony</label>
                 </div>
-                <div class="form-check">
+                <div class="col-md-3 form-check">
 
                     <label class="form-check-label">{{form.type_m}} Małżeństwa</label>
                 </div>
-                <div class="form-check">
+                <div class="col-md-3 form-check">
 
                     <label class="form-check-label">{{form.type_a}} Aneksy</label>
                 </div>
             </div>
         </div>
-        <div class="form-group col-md-2">
-            <label>Data od</label>
+
+
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label>Data od <span class="text-danger">*</span></label>
             {{form.date_from}}
             <small class="text-danger">{% for error in form.date_from.errors %}{{error}} {% endfor %}</small>
         </div>
-        <div class="form-group col-md-2">
-            <label>Data do</label>
+        <div class="form-group col-md-3">
+            <label>Data do <span class="text-danger">*</span></label>
             {{form.date_to}}
             <small class="text-danger">{% for error in form.date_to.errors %}{{error}} {% endfor %}</small>
         </div>
-        <div class="form-group col-md-4">
-            <label>Pominięte lata</label>
+        <div class="form-group col-md-6">
+            <label>Pominięte lata <small class="text-muted">(opcjonalnie, <a href="#" data-toggle="popover" title="Pomoc" data-content="Podaj pominięte lata po przecinku lub przy pomocy zakresu, np.: 1756, 1758, 1760-1765">pomoc</a>)</small></label>
             {{form.date_excepts}}
             <small class="text-danger">{% for error in form.date_excepts.errors %}{{error}} {% endfor %}</small>
         </div>
     </div>
 
     <div class="form-row">
-        <label>Notatka</label>
+
+        <div class="form-group col-md-3">
+            <label for="id_source">Źródło <span class="text-danger">*</span></label>
+            {{form.source}}
+            <small class="text-danger">{% for error in form.source.errors %}{{error}} {% endfor %}</small>
+        </div>
+
+        <div class="form-group col-md-9">
+            <label for="id_url">Adres URL <small class="text-muted">(opcjonalnie)</small></label>
+            <input type="text" name="url" maxlength="32" id="id_url" class="form-control"/>
+            <small class="text-danger">{% for error in form.url.errors %}{{error}} {% endfor %}</small>
+        </div>
+
+        <label>Notatka <small class="text-muted">(opcjonalnie)</small></label>
 
         {{form.note}}
     </div>
 
     {% csrf_token %}
     <input type="hidden" name="parish" value="{{ parish.id }}" />
+    {% if document_group %}<input type="hidden" name="dg" value="{{document_group.id}}"/>{% endif %}
 
 </form>
 

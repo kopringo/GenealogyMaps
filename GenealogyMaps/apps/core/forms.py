@@ -11,7 +11,7 @@ class DocumentGroupForm(forms.ModelForm):
 
         for field_name, field in self.fields.items():
             if field_name in ('type_b', 'type_m', 'type_d', 'type_a'):
-                field.widget.attrs['class'] = 'form-check-input'
+                field.widget.attrs['class'] = 'form-check-input_'
             else:
                 field.widget.attrs['class'] = 'form-control'
             if field_name in ('date_excepts', 'note'):
@@ -19,7 +19,7 @@ class DocumentGroupForm(forms.ModelForm):
 
     class Meta:
         model = DocumentGroup
-        fields = ['name', 'url', 'type', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to', 'date_excepts', 'note', 'source']
+        fields = ['type', 'type_b', 'type_d', 'type_m', 'type_a',     'name', 'url',  'date_from', 'date_to', 'date_excepts', 'note', 'source']
 
     error_css_class = 'is-invalid3'
 

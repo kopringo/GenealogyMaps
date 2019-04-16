@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map">
+  <div id="mapid"></div>
+</div>
+<div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
+    <div class="row">
+
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Diecezja {{ diocese.name }}</li>
+                </ol>
+            </nav>
+
+
+            <table class="table table-sm">
+                {% for item in items %}
+                <tr><td><a href="{{ item.link }}" class="ajax_link">{{ item.name}}</a></td>{{ item.place}}<td></td></tr>
+                {% endfor %}
+            </table>
+
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

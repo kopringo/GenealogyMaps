@@ -184,11 +184,3 @@ class DioceseViewSet(MultiSerializerViewSet):
         """
         return Response({'status': 'password set'})
 
-"""
-def parishes__get(request):
-    data = {
-        'parishes': list(Parish.objects.values('id', 'name', 'geo_lat', 'geo_lng').all()[0:2000])
-    }
-    response = JsonResponse(data)
-    return response
-"""

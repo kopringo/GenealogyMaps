@@ -50,7 +50,7 @@ class Province(models.Model):
         return u'%s' % str(len(Parish.objects.filter(province=self)))
 
     def __unicode__(self):
-        return u'<%s>[%s]' % (self.name, self.country)
+        return u'<%s>' % (self.name)
 
     def __str__(self):
         return self.__unicode__()
@@ -218,16 +218,24 @@ class ParishRef(models.Model):
     def __unicode__(self):
         return u'%s' % self.name
 
+    class Meta:
+        verbose_name = 'Parafia - łacznik'
+        verbose_name_plural = 'Parafie - połączenia'#_("countries")
+
 
 DOCUMENT_GROUP_TYPE = (
-    (0, 'Documents'),   # fizyczne dokumenty
-    (1, 'Photos'),      # zdjecia cyfrowe
-    (2, 'Indexes'),     # indexy
+    (0, 'Akta metrykalne'),   # fizyczne dokumenty
+    #(1, 'Photos'),      # zdjecia cyfrowe
+    #(2, 'Indexes'),     # indexy
 )
 
 
 class DocumentSource(models.Model):
     """
+    X. Parafia
+    Y. Archiwum państwowe
+    Z. Archiwum kościelne
+
     0. familysearch.org
     1. geneteka.genealodzy.pl
     2. metryki.genealodzy
@@ -237,7 +245,6 @@ class DocumentSource(models.Model):
     6. basia.famula.pl
     7. lubgens.eu
 
-    8. księgi metrykalne analogowe
     """
 
     name = models.CharField(max_length=32)
@@ -246,16 +253,21 @@ class DocumentSource(models.Model):
     def __str__(self):
         return u'%s' % (self.name)
 
+    class Meta:
+        verbose_name = 'Zbiór danych - źródło'
+        verbose_name_plural = 'Zbiory danych - źródła'#_("countries")
+
 
 class DocumentGroup(models.Model):
-    name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów')
+    name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów', blank=True)
     url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
     #parish_ref = models.ForeignKey(ParishRef, null=True, on_delete=models.DO_NOTHING)
     source = models.ForeignKey(DocumentSource, on_delete=models.DO_NOTHING)
+    source_note = models.TextField(blank=True)
 
-    type = models.IntegerField(choices=DOCUMENT_GROUP_TYPE, help_text='Typ dokumentów')
+    type = models.IntegerField(choices=DOCUMENT_GROUP_TYPE, help_text='Typ dokumentów', default=0)
     type_b = models.BooleanField(default=False, help_text='Akty urodzenia')
     type_d = models.BooleanField(default=False, help_text='Akty zgonu')
     type_m = models.BooleanField(default=False, help_text='Akty małżeństwa')
@@ -273,3 +285,13 @@ class DocumentGroup(models.Model):
 
     def __str__(self):
         return u'%s' % (self.name)
+
+    def id_with_dates(self):
+        return u'%d. %d-%d' % (self.id, self.date_from, self.date_to)
+
+    class Meta:
+        verbose_name = 'Zbiór danych'
+        verbose_name_plural = 'Zbiory danych'#_("countries")
+
+#class DocumentGroupHistory(models.Model):
+#    pass

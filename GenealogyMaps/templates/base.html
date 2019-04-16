@@ -21,11 +21,31 @@
             left: 0px;
             bottom: 0px;
         }
+        #main-col-content{
+          overflow: auto;
+        }
         .row > .navbar{
             width: 100%;
         }
         ul.inline > li{
           display: inline-block;
+        }
+        #mapid{
+            height: 100%;
+        }
+        #main-col-map{
+            padding-right: 0px;
+        }
+        #main-col-details{
+            padding-top: 15px;
+            overflow-y: auto;
+        }
+        .breadcrumb{
+            background-color: white !important;
+        }
+        .tab-content{
+            padding: 10px;
+            border-left: 1px solid #ddd;
         }
     </style>
     {% block content_css %}{% endblock %}
@@ -52,6 +72,177 @@
                 integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
                 crossorigin=""></script>
     <script src="/static/libs/PruneCluster.js"></script>
+    <script type="text/javascript">
+        $(function(){
+
+            // bootstrap
+            $('body').on('click', '[data-toggle="popover"]', function(){
+                $(this).popover('toggle');
+            });
+
+            $('body').on('click', '[data-toggle="modal"]', function(){
+                $($(this).data("target")+' .modal-body').load($(this).data("remote"));
+            });
+
+          $('body').on('click', '.ajax-form-send', function(e){
+              var $form = $('#' + $(this).data('form'));
+              var $parent = $form.parent();
+
+              $.ajax({
+                 type: "POST",
+                 url: $form.attr('action'),
+                 data: $form.serialize(), // serializes the form's elements.
+                 success: function(data)
+                 {
+                      $parent.html(data);
+                     //alert(data); // show response from the php script.
+                 }
+               });
+
+              e.preventDefault();
+          });
+        });
+    </script>
+
+    <!-- map -->
+    <script type="text/javascript">
+        /*
+        $(function(){
+            for(i in markers){
+                markers[i].filtered = false;
+            }
+            pruneCluster.ProcessView();
+        });
+        */
+    </script>
+    <script type="text/javascript">
+    var map = null;
+    var markers = {};
+    var pruneCluster = null;
+    $(function(){
+        map = L.map('mapid').setView([51.95, 19.08], 7);
+        map.on('moveend', function() {
+            //console.log('a');
+        });
+        map.on('zoomend', function() {
+            //console.log('b');
+        });
+
+        L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: ['a','b','c']
+        }).addTo( map );
+
+        pruneCluster = new PruneClusterForLeaflet(100);
+
+        //var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
+        //pruneCluster.RegisterMarker(marker2);
+
+        $.ajax({
+            url: '/parish/list.json{% if limit_parish_on_the_map %}{{ limit_parish_on_the_map }}{% endif %}',
+            dataType: 'json'
+        }).done(function(data){
+            for(parish_key in data){
+                var parish = data[parish_key];
+
+                var marker = new PruneCluster.Marker(parish['geo_lat'], parish['geo_lng']);
+                marker.data.name = '<h2>' + parish['name'] + '</h2>' + parish['place'] + ', ' + parish['address'] + '<br/><a href="/parish/' + parish['id'] + '">Zobacz</a>';
+                marker.data.ID = parish['id'];
+                marker.province_id = parish['province_id'];
+                marker.county_id = parish['county_id'];
+
+                pruneCluster.RegisterMarker(marker);
+                markers[marker.data.ID] = marker;
+
+                //break;
+            }
+
+            pruneCluster.ProcessView();
+        }).fail(function(jqXHR, textStatus){
+            alert('ajax error');
+        });
+
+        pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
+
+            if(leafletMarker.preparedLeafletMarker) {
+                return;
+            }
+
+        //    leafletMarker.on('click', function(){
+        //        $.ajax({
+        //            url: '/parts/parish?id=' + data.ID
+        //        }).done(function(data){
+        //            $('#main-col-details').html(data);
+        //        });
+        //    });
+
+            // A popup can already be attached to the marker
+            // bindPopup can override it, but it's faster to update the content instead
+            if (leafletMarker.getPopup()) {
+                //leafletMarker.setPopupContent(data.name);
+alert('!');
+                leafletMarker.setIcon(L.icon({
+                    iconUrl: '/static/img/marker-icon2.png',
+                    iconSize: [38, 38], // size of the icon
+                }));
+                pruneCluster.ProcessView();
+            } else {
+                leafletMarker.bindPopup(data.name);
+            }
+
+            leafletMarker.preparedLeafletMarker = true;
+        };
+
+        map.addLayer(pruneCluster);
+
+
+        // create a red polygon from an array of LatLng points
+        var latlngs = [{% for row in convex_hull %}[{{row.0}}, {{row.1}}],{% endfor %} ]; //  [51.417944, 20.330228],
+        var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
+        // zoom the map to the polygon
+        //map.fitBounds(polygon.getBounds());
+
+
+
+
+
+
+        $('body').on('click', '#btn-search', function(){
+            var text = $(this).prev().val();
+            $.ajax({
+                url: '/parts/search?text=' + text,
+            }).done(function(data){
+                $('#main-col-details').html(data);
+            });
+            return false;
+        });
+
+
+
+    });
+
+    var resetFilters = function(){
+        for(i in markers){
+            markers[i].filtered = false;
+        }
+        pruneCluster.ProcessView();
+    }
+
+    var filterByProvince = function(province_id){
+        var keys = Object.keys(markers);
+        for(i in keys){
+            console.log(i);
+            if(markers[i].province_id == province_id){
+                markers[i].filtered = false;
+            } else {
+                markers[i].filtered = true;
+            }
+        }
+        pruneCluster.ProcessView();
+    }
+
+    </script>
+
     {% block content_js %}{% endblock %}
   </body>
 </html>

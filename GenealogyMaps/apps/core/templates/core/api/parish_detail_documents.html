@@ -3,20 +3,31 @@
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th>Typ danych</th>
                     <th>Zakres lat</th>
-                    <th>Notatki</th>
+                    <th>Typ danych</th>
+                    <th>Źródło</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for document_group in document_groups %}
                 <tr>
-                    <td>[{{ document_group.type }}] {{ document_group.name }}</td>
                     <td><span title="details...">{{ document_group.date_from }}-{{ document_group.date_to }}</span></td>
+                    <td style="font-family: mono">
+                        {% if document_group.type_b %}B{% else %}&nbsp;{% endif %}
+                        {% if document_group.type_d %}D{% else %}&nbsp;{% endif %}
+                        {% if document_group.type_m %}M{% else %}&nbsp;{% endif %}
+                        {% if document_group.type_a %}A{% else %}&nbsp;{% endif %}
+                    </td>
+                    <td>{{ document_group.source }}</td>
+
                     <td>
+                        {% if document_group.link %}
                         <a href="{{ document_group.link }}">Link</a>
-                        <a href="#">Edit</a>
-                </td>
+                        {% endif %}
+                        <a href="#" data-remote="/parish/{{parish.id}}/add-document?dg={{document_group.id}}" data-toggle="modal" data-target="#exampleModal">Edit</a>
+                    </td>
+                </tr>
                 {% endfor %}
                 {% if not document_groups %}
                 <tr>
@@ -27,7 +38,7 @@
         </table>
     </div>
     <div class="col-md-12">
-        <button type="button" id="btn-add-document" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-remote="/parts/document-add?parish={{parish.id}}">Dodaj</button>
+        <button type="button" id="btn-add-document" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-remote="/parish/{{parish.id}}/add-document">Dodaj</button>
 
     </div>
 </div>

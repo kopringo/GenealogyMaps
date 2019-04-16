@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map">
+  <div id="mapid"></div>
+</div>
+<div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
+    <div class="row">
+        <div class="col-md-12">
+
+
+
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+                    <li class="breadcrumb-item"><a href="/area/province/{{ parish.province.id }}" class="ajax_link">Województwo {{ parish.province.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/area/county/{{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">{{ parish.name }}</li>
+                </ol>
+
+            </nav>
+
+
+            <h3>Parafia: {{ parish.name }} [<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank">edit</a>]</h3>
+            <p>Adres: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
+            <p>Miejscowość: {{ parish.place }}</p>
+            <p class="nomargin">Data erygowania: {{ parish.year }}</p>
+            <br/>
+
+
+            <style>
+                .document_years{
+                    border-collapse: separate;
+                }
+                .document_years td{
+                    width: 50px;
+                    background: #eee;
+
+                }
+
+                #tab-documents-content table th{
+                    border-top: 0px;
+                }
+
+                p.nomargin{
+                    margin: 0px;
+                }
+            </style>
+
+            <br/>
+            <div>
+
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-controls="home" aria-selected="true">Sources</a>
+                    </li>
+                    <!--
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tab-comments-content" role="tab" aria-controls="profile" aria-selected="false">Comments</a>
+                    </li>
+                    -->
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel" aria-labelledby="tab-documents">
+                    {% include "core/api/parish_detail_documents.html" %}
+                    </div>
+                    <div class="tab-pane fade" id="tab-comments-content" role="tabpanel" aria-labelledby="profile-tab">@todo</div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block content_js %}
+<script type="text/javascript">
+    $(function(){
+        //var map = L.map('mapid');
+        if(typeof map !== "undefined"){
+            map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}], 12);
+
+            // create custom icon
+            var firefoxIcon2 = L.icon({
+                iconUrl: '/static/img/marker-icon2.png',
+                iconSize: [38, 38], // size of the icon
+            });
+            //console.log(firefoxIcon);
+
+            function createIcon(data, category) {
+                return L.icon({
+                    iconUrl: '/static/img/marker-icon2.png',
+                    iconSize: [38, 38], // size of the icon
+                });
+            };
+
+            //console.log(markers[{{parish.id}}]);
+            //markers[{{parish.id}}].data.icon = createIcon;
+            //markers[{{parish.id}}].data.forceIconRedraw = true;
+
+            //markers[{{parish.id}}].filtered = true
+            //pruneCluster.ProcessView();
+
+            console.log('ok {{parish.id}}');
+        }
+    });
+</script>
+{% endblock %}

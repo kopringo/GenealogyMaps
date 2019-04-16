@@ -4,195 +4,106 @@
 <div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map">
   <div id="mapid"></div>
 </div>
-<div class="col-md-8 col-lg-7 col-xl-6" id="main-col-details">
+<div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul>
+                <li><input type="checkbox" id="before_1800"/><label for="before_1800">Przed 1800</label></li>
+                <li><input type="checkbox" id="between_1800_1900"/><label for="between_1800_1900">1800-1900</label></li>
+            </ul>
+
+            <div class="form-row align-items-center">
+                <div class="col-auto my-1">
+                  <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+                  <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                    <option selected>Choose...</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </div>
+                <div class="col-auto my-1">
+                  <div class="custom-control custom-checkbox mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+                    <label class="custom-control-label" for="customControlAutosizing">Remember my preference</label>
+                  </div>
+                </div>
+                <div class="col-auto my-1">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+
+            <hr/>
 
 
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="tab1a" data-toggle="tab" href="#tab1" role="tab">Województwa</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="tab2a" data-toggle="tab" href="#tab2" role="tab">Diecezje</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="tab3a" data-toggle="tab" href="#tab3" role="tab">Ziemie I RP</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="tab4a" data-toggle="tab" href="#tab4" role="tab">Ulubione parafie</a>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+
+                <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+                    <ul class="inline list-unstyled">
+                    {% for wojewodztwo in provinces %}
+                        {% if wojewodztwo.name %}
+                        <li><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a> ({{ wojewodztwo.county_number}}. {{wojewodztwo.parish_number}}), </li>
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="tab-pane fade" id="tab2" role="tabpanel">
+                    <ul class="inline list-unstyled">
+                    {% for diecezja in dioceses %}
+                        {% if diecezja.name %}
+                        <li><a href="/area/diocese/{{ diecezja.id }}">{{ diecezja.name }}</a>, </li>
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="tab-pane fade" id="tab3" role="tabpanel">
+                    <h3>Ziemie I RP</h3>
+                </div>
+
+                <div class="tab-pane fade" id="tab4" role="tabpanel">
+                    <h3>Ulubione parafie</h3>
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+
+
+
+<!--
 @todo http://leafletjs.com/examples/choropleth/
 @todo http://leafletjs.com/examples/layers-control/
 
 clustering:
 https://github.com/SINTEF-9012/PruneCluster
 https://github.com/Leaflet/Leaflet.markercluster
+-->
 </div>
 {% endblock %}
-
-{% block content_js %}
-<script type="text/javascript">
-var map = null;
-var markers = {};
-var pruneCluster = null;
-$(function(){
-	map = L.map('mapid').setView([51.95, 19.08], 7);
-	map.on('moveend', function() {
-        //console.log('a');
-    });
-    map.on('zoomend', function() {
-        //console.log('b');
-    });
-
-	L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-   		subdomains: ['a','b','c']
-	}).addTo( map );
-
-	pruneCluster = new PruneClusterForLeaflet(100);
-
-	var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
-	pruneCluster.RegisterMarker(marker2);
-
-    $.ajax({
-        url: '/api2/parishes/?format=json',
-        dataType: 'json'
-    }).done(function(data){
-        for(parish_key in data){
-            var parish = data[parish_key];
-
-            var marker = new PruneCluster.Marker(parish['geo_lat'], parish['geo_lng']);
-            marker.data.name = '<h2>' + parish['name'] + '</h2>{{parish.place}}<br/>{{parish.province}}';
-            marker.data.ID = parish['id'];
-            marker.province_id = parish['province_id'];
-            marker.county_id = parish['county_id'];
-
-            pruneCluster.RegisterMarker(marker);
-            markers[marker.data.ID] = marker;
-
-            //break;
-        }
-
-        pruneCluster.ProcessView();
-    }).fail(function(jqXHR, textStatus){
-        alert('ajax error');
-    });
-
-    $.ajax({
-        url: '/parts/root',
-    }).done(function(data){
-        $('#main-col-details').html(data);
-    });
-
-	pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
-
-        if(leafletMarker.preparedLeafletMarker) {
-            return;
-        }
-
-        // See http://leafletjs.com/reference.html#icon
-        //listeners can be applied to markers in this function
-
-            leafletMarker.on('click', function(){
-
-                $.ajax({
-                    url: '/parts/parish?id=' + data.ID
-
-                }).done(function(data){
-                    $('#main-col-details').html(data);
-                });
-
-
-            });
-
-        // A popup can already be attached to the marker
-        // bindPopup can override it, but it's faster to update the content instead
-        if (leafletMarker.getPopup()) {
-            leafletMarker.setPopupContent(data.name);
-
-            leafletMarker.setIcon(L.icon({
-                iconUrl: '/static/img/marker-icon2.png',
-                iconSize: [38, 38], // size of the icon
-            }));
-            pruneCluster.ProcessView();
-        } else {
-            leafletMarker.bindPopup(data.name);
-        }
-
-        leafletMarker.preparedLeafletMarker = true;
-    };
-
-	map.addLayer(pruneCluster);
-
-
-    // create a red polygon from an array of LatLng points
-var latlngs = [{% for row in test_ch %}[{{row.0}}, {{row.1}}],{% endfor %} ]; //  [51.417944, 20.330228],
-var polygon = L.polygon(latlngs, {color: 'red'}).addTo(map);
-// zoom the map to the polygon
-//map.fitBounds(polygon.getBounds());
-
-
-	$(document).on('click', '.ajax_link', function(){
-	    $.ajax({
-	        url: $(this).attr('href'),
-	    }).done(function(data){
-	        $('#main-col-details').html(data);
-	    });
-	    return false;
-	});
-
-	$(document).on('click', '#btn-add-document', function(){
-
-	});
-
-	$('body').on('click', '[data-toggle="modal"]', function(){
-        $($(this).data("target")+' .modal-body').load($(this).data("remote"));
-    });
-    $('body').on('click', '#btn-search', function(){
-        var text = $(this).prev().val();
-        $.ajax({
-            url: '/parts/search?text=' + text,
-        }).done(function(data){
-            $('#main-col-details').html(data);
-        });
-        return false;
-    });
-
-    $('body').on('click', '.ajax-form-send', function(e){
-        var $form = $('#' + $(this).data('form'));
-        var $parent = $form.parent();
-
-        $.ajax({
-           type: "POST",
-           url: $form.attr('action'),
-           data: $form.serialize(), // serializes the form's elements.
-           success: function(data)
-           {
-                $parent.html(data);
-               //alert(data); // show response from the php script.
-           }
-         });
-
-        e.preventDefault();
-    });
-
-});
-</script>
-{% endblock %}
-
-{% block content_css %}
-<style>
-#mapid{
-    height: 100%;
-}
-#main-col-map{
-    padding-right: 0px;
-}
-#main-col-details{
-    padding-top: 15px;
-    overflow-y: auto;
-}
-</style>
-{% endblock %}
-
-
-
-
-
-
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
-                integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
-                crossorigin=""></script>
-    <script src="/static/libs/PruneCluster.js"></script>
-  </body>
-</html>
