@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from datetime import datetime
 
 import numpy as np
 
@@ -136,6 +137,10 @@ def document_add(request, parish_id):
             document_group.parish = parish
             document_group.user = request.user
             document_group.save()
+            if document_group is None:
+                document_group.date_created = datetime.utcnow()
+            else:
+                document_group.date_modified = datetime.utcnow()
 
             parish.refresh_summary()
 

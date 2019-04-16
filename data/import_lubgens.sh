@@ -22,5 +22,6 @@ for i in `grep "var R" cache/lubgens_root -n | awk '{print $1}' | sed -e 's/://g
 
     echo "$LAT_LNG; $TITLE; ";
 
+    # @todo wygrepowac linki z opisami!
 
 done

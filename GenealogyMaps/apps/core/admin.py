@@ -36,6 +36,7 @@ class ParishAdmin(admin.ModelAdmin):
     list_display = ['name', 'year', 'province', 'county', 'place', 'geo_lat', 'geo_lng', 'diocese', 'deanery', 'access', ]
     list_filter = ['country', 'province', 'diocese', ]
     list_editable = ('access', )
+    search_fields = ['name', 'place']
 
     fieldsets = [
         (None, {'fields': ['name', 'year']}),

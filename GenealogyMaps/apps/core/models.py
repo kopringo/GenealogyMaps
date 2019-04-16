@@ -159,6 +159,8 @@ class Parish(models.Model):
     link = models.URLField(blank=True)
 
     gen_id = models.IntegerField(default=0, unique=True)
+    szwa_id = models.CharField(blank=True, max_length=64)  # 53/1847/0
+    fs_catalog_id = models.CharField(blank=True, max_length=64)
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)

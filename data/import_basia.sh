@@ -7,6 +7,10 @@
 # search:
 # - powiat + miejsowosc
 # - wspolrzedne geo.
+#
+# Decyzja:
+# - najpierw zaladowac szukajwarchiwach. te dane tutaj wskazują stan indeksacji. maja mniejsze znaczenie.
+#
 
 FORCE=0
 

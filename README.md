@@ -67,9 +67,12 @@ Parafie źródła
 - http://mapy.lubgens.eu/polska2.html
 - http://mapy.lubgens.eu/1772.html
 - http://mapy.lubgens.eu/ [w kodzie strony wszystko!]
-- http://www.basia.famula.pl/pl/skany
 - https://www.google.com/maps/d/u/0/viewer?mid=1zwYwcXHsVgUW5cDUiPBnALYGkvE
 - http://metryki.genealodzy.pl/gmapa.php
   http://metryki.genealodzy.pl/rejestry.php
 - https://geneteka.genealodzy.pl/rejestry.php?lang=pol
 - http://poznan-project.psnc.pl/page.php?page=content
+
+Indeksacja, dane pochodne
+=========================
+- http://www.basia.famula.pl/pl/skany
