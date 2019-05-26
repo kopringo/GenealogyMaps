@@ -146,6 +146,7 @@ class Parish(models.Model):
     # lokalizacja
     geo_lat = models.FloatField(blank=True)
     geo_lng = models.FloatField(blank=True)
+    geo_validated = models.BooleanField(default=False)
 
     # podzial administracyjny koscielny
     diocese = models.ForeignKey(Diocese, on_delete=models.DO_NOTHING)
