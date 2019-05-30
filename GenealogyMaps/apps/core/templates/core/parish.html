@@ -27,7 +27,7 @@
             <h3>Parafia: {{ parish.name }} [<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank">edit</a>]</h3>
             <p>Adres: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
             <p>Miejscowość: {{ parish.place }}</p>
-            <p class="nomargin">Data erygowania: {{ parish.year }}</p>
+            <p class="nomargin">Data utworzenia: {% if parish.year %}{{ parish.year }}{% else %}brak danych{% endif %}</p>
             <br/>
 
 
@@ -55,7 +55,7 @@
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-controls="home" aria-selected="true">Sources</a>
+                        <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-controls="home" aria-selected="true">Dane</a>
                     </li>
                     <!--
                     <li class="nav-item">

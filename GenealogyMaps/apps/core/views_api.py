@@ -128,7 +128,7 @@ class ParishViewSet(MultiSerializerViewSet):
         'retrieve': ParishDetailSerializer,
     }
     renderer_classes = (BrowsableAPIRenderer, JSONRenderer, AdminRenderer, TemplateHTMLRenderer)
-    template_name = 'core/api/parish_detail.html'
+    #template_name = 'core/api/parish_detail.html'
 
     @action(detail=True, methods=['get'])
     def documents(self, request, pk=None):

@@ -109,3 +109,4 @@ var/tmp/*
 .pydevproject
 db.sqlite3
 env_file
+.idea

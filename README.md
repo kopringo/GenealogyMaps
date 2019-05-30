@@ -10,9 +10,11 @@ Installation
 ============
 
 ```bash
-pip3.5 install -r requirements.txt
-python3.5 manage.py migrate
-python3.5 manage.py createsuperuser
+pip3 install -r requirements.txt
+python3 manage.py migrate
+python3 manage.py createsuperuser
+
+HTTP_PROTOCOL=http HTTP_HOST=127.0.0.1:8000 python3 manage.py runserver
 ```
 
 Lokalizacja
