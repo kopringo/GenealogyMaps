@@ -23,20 +23,29 @@ def home(request):
 
 
 def diocese(request, d_id):
+    """ Diecezja """
 
     try:
         diocese = Diocese.objects.get(pk=d_id)
     except Diocese.DoesNotExist:
         return redirect('home')
 
-    items = list(map(lambda x: {'name': x.name, 'link': '/area/deanery/%d' % x.id}, Deanery.objects.filter(diocese=diocese)))
+    deaneries = list(map(lambda x: {'name': x.name, 'link': '/area/deanery/%d' % x.id}, Deanery.objects.filter(diocese=diocese).order_by('name')))
+    items = __get_parish_list(diocese=diocese)
+
+    convex_hull = __get_convex_hull(items)
+
     data = {
+        'diocese': diocese,
+        'deaneries': deaneries,
         'items': items,
-        'diocese': diocese
+        'convex_hull': convex_hull
     }
+
     return render(request, 'core/diocese.html', data)
 
 def deanery(request, d_id):
+    """ Dekanat """
 
     try:
         deanery = Deanery.objects.get(pk=d_id)
@@ -45,9 +54,11 @@ def deanery(request, d_id):
         pass
 
     items = list(map(lambda x: {'name': '%s, %s' % (x.place, x.name), 'link': '/parish/%d' % x.id}, Parish.objects.filter(deanery=deanery)))
+    convex_hull = __get_convex_hull(items)
     data = {
         'items': items,
-        'deanery': deanery
+        'deanery': deanery,
+        'convex_hull': convex_hull
     }
     return render(request, 'core/deanery.html', data)
 
@@ -64,7 +75,7 @@ def province(request, p_id):
         return redirect('home')
 
 
-    counties = list(map(lambda x: {'name': x.name, 'link': '/area/county/%d' % x.id}, County.objects.filter(province=province)))
+    counties = list(map(lambda x: {'name': x.name, 'link': '/area/county/%d' % x.id}, County.objects.filter(province=province).order_by('name')))
     items = __get_parish_list(province=province)
 
     convex_hull = __get_convex_hull(items)
@@ -86,9 +97,11 @@ def county(request, c_id):
         return redirect('home')
 
     items = __get_parish_list(county=county)
+    convex_hull = __get_convex_hull(items)
     data = {
         'items': items,
-        'county': county
+        'county': county,
+        'convex_hull': convex_hull
     }
     return render(request, 'core/county.html', data)
 
@@ -149,8 +162,9 @@ def document_add(request, parish_id):
     return render(request, 'parts/document_add.html', {'form': form, 'saved': saved, 'parish': parish, 'document_group': document_group})
 
 def documents(request, parish_id):
-
-    return render(request, 'parts/documents.html', { 'parish': parish})
+    parish = Parish.objects.get(pk=parish_id)
+    documents = DocumentGroup.objects.filter(parish=parish).order_by('date_from')
+    return render(request, 'parts/documents.html', { 'parish': parish, 'document_groups': documents})
 
 
 def contact(request):
@@ -178,17 +192,20 @@ def __get_parish_list(**args):
         'place': x.place,
         'geo_lat': x.geo_lat,
         'geo_lng': x.geo_lng
-    }, Parish.objects.filter(**args)))
+    }, Parish.objects.filter(**args).order_by('place', 'name')))
 
 
 def __get_convex_hull(items):
-    points = []
-    for item in items:
-        points.append([item['geo_lat'], item['geo_lng']])
-
-    points = np.array(points)
-    hull = np.array(convex_hull(points))
-    return hull
+    try:
+        points = []
+        for item in items:
+            points.append([item['geo_lat'], item['geo_lng']])
+    
+        points = np.array(points)
+        hull = np.array(convex_hull(points))
+        return hull
+    except:
+        return np.array([])
 
 ####
 # https://www.oreilly.com/ideas/an-elegant-solution-to-the-convex-hull-problem

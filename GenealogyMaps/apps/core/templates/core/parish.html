@@ -24,7 +24,7 @@
             </nav>
 
 
-            <h3>Parafia: {{ parish.name }} [<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank">edit</a>]</h3>
+            <h3>Parafia: {{ parish.name }} [<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="text-danger">admin edit</a>]</h3>
             <p>Adres: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
             <p>Miejscowość: {{ parish.place }}</p>
             <p class="nomargin">Data utworzenia: {% if parish.year %}{{ parish.year }}{% else %}brak danych{% endif %}</p>
@@ -66,7 +66,7 @@
 
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel" aria-labelledby="tab-documents">
-                    {% include "core/api/parish_detail_documents.html" %}
+                    {% include "parts/documents.html" %}
                     </div>
                     <div class="tab-pane fade" id="tab-comments-content" role="tabpanel" aria-labelledby="profile-tab">@todo</div>
                 </div>

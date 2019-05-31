@@ -14,10 +14,10 @@
                 <tr>
                     <td><span title="details...">{{ document_group.date_from }}-{{ document_group.date_to }}</span></td>
                     <td style="font-family: mono">
-                        {% if document_group.type_b %}B{% else %}&nbsp;{% endif %}
-                        {% if document_group.type_d %}D{% else %}&nbsp;{% endif %}
-                        {% if document_group.type_m %}M{% else %}&nbsp;{% endif %}
-                        {% if document_group.type_a %}A{% else %}&nbsp;{% endif %}
+                        {% if document_group.type_b %}urodzenia{% else %}&nbsp;{% endif %}
+                        {% if document_group.type_d %}zgony{% else %}&nbsp;{% endif %}
+                        {% if document_group.type_m %}małżeństwa{% else %}&nbsp;{% endif %}
+                        {% if document_group.type_a %}aneksy{% else %}&nbsp;{% endif %}
                     </td>
                     <td>{{ document_group.source }}</td>
 
@@ -25,7 +25,9 @@
                         {% if document_group.link %}
                         <a href="{{ document_group.link }}">Link</a>
                         {% endif %}
+                        {% if user.is_authenticated %}
                         <a href="#" data-remote="/parish/{{parish.id}}/add-document?dg={{document_group.id}}" data-toggle="modal" data-target="#exampleModal">Edit</a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

@@ -16,12 +16,39 @@
                 </ol>
             </nav>
 
-
-            <table class="table table-sm">
-                {% for item in items %}
-                <tr><td><a href="{{ item.link }}" class="ajax_link">{{ item.name}}</a></td>{{ item.place}}<td></td></tr>
+			<div>
+                <strong>Dekanaty:</strong>
+                {% for deanery in deaneries %}
+                    <a href="{{deanery.link}}">{{deanery.name}}</a>, 
                 {% endfor %}
+            </div>
+
+            <br/>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                    	<th>Miejscowość</th>
+                        <th>Parafia</th>
+                        
+                        <th>Rok</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                <tr>
+                	<td>{{ item.place}}</td>
+                    <td>
+                        <a href="{{ item.link }}">{{ item.name}}</a>
+                    </td>
+                    
+                    <td>
+                        {{ item.year}}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
             </table>
+            
 
 
         </div>

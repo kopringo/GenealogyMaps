@@ -8,12 +8,8 @@
     <div class="row">
         <div class="col-md-12">
 
-            <ul>
-                <li><input type="checkbox" id="before_1800"/><label for="before_1800">Przed 1800</label></li>
-                <li><input type="checkbox" id="between_1800_1900"/><label for="between_1800_1900">1800-1900</label></li>
-            </ul>
-
             <div class="form-row align-items-center">
+                <!-- 
                 <div class="col-auto my-1">
                   <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
                   <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
@@ -23,14 +19,23 @@
                     <option value="3">Three</option>
                   </select>
                 </div>
+                 -->
                 <div class="col-auto my-1">
                   <div class="custom-control custom-checkbox mr-sm-2">
-                    <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-                    <label class="custom-control-label" for="customControlAutosizing">Remember my preference</label>
+                    <input type="checkbox" class="custom-control-input" id="before_1800">
+                    <label class="custom-control-label" for="before_1800">Przed 1800</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="between_1800_1900">
+                    <label class="custom-control-label" for="between_1800_1900">1800-1900</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="after_19800">
+                    <label class="custom-control-label" for="after_19800">Po 1900</label>
                   </div>
                 </div>
                 <div class="col-auto my-1">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" class="btn btn-primary">Filtruj</button>
                 </div>
             </div>
 
@@ -64,7 +69,7 @@
                     <ul class="inline list-unstyled">
                     {% for wojewodztwo in provinces %}
                         {% if wojewodztwo.name %}
-                        <li><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a> ({{ wojewodztwo.county_number}}. {{wojewodztwo.parish_number}}), </li>
+                        <li><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a> <span title="powiaty">({{ wojewodztwo.county_number}}</span>. <span title="parafie">{{wojewodztwo.parish_number}}</span>), </li>
                         {% endif %}
                     {% endfor %}
                     </ul>
@@ -81,11 +86,11 @@
                 </div>
 
                 <div class="tab-pane fade" id="tab3" role="tabpanel">
-                    <h3>Ziemie I RP</h3>
+                    
                 </div>
 
                 <div class="tab-pane fade" id="tab4" role="tabpanel">
-                    <h3>Ulubione parafie</h3>
+                    
                 </div>
             </div>
 

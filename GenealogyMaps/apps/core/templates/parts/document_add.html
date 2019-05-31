@@ -1,5 +1,27 @@
 <form method="post" action="/parish/{{parish.id}}/add-document" id="document-group-add">
 
+{% if saved %}
+<div class="form-row_">
+	<div class="alert alert-success" role="alert">Dane zapisane</div>
+	<script type="text/javascript">
+	$(function(){
+		
+		
+		$.ajax({
+            url: '/parish/{{parish.id}}/documents',
+            dataType: 'html'
+        }).done(function(data){
+        	
+            $('#tab-documents-content').html(data);
+        }).fail(function(jqXHR, textStatus){
+            console.log('loading /parish/{{ parish.id }}/documents error')
+        });
+		
+	});
+	</script>
+</div>
+{% endif %}
+
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="id_type">Typ dokumentów <span class="text-danger">*</span></label>
@@ -90,6 +112,3 @@
 
 </form>
 
-{% if saved %}
-saved!
-{% endif %}

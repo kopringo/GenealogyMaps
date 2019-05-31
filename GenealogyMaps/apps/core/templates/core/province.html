@@ -19,7 +19,7 @@
             <div>
                 <strong>Powiaty:</strong>
                 {% for county in counties %}
-                    <a href="{{county.link}}">{{county.name}}</a>
+                    <a href="{{county.link}}">{{county.name}}</a>, 
                 {% endfor %}
             </div>
 
@@ -27,18 +27,20 @@
             <table class="table table-sm">
                 <thead>
                     <tr>
+                    	<th>Miejscowość</th>
                         <th>Parafia</th>
-                        <th>Miejscowość</th>
+                        
                         <th>Rok</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for item in items %}
                 <tr>
+                	<td>{{ item.place}}</td>
                     <td>
                         <a href="{{ item.link }}">{{ item.name}}</a>
                     </td>
-                    <td>{{ item.place}}</td>
+                    
                     <td>
                         {{ item.year}}
                     </td>

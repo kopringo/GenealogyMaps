@@ -58,8 +58,8 @@ class CountryAdmin(admin.ModelAdmin):
 
 
 class ProvinceAdmin(admin.ModelAdmin):
-    list_display = ['name', 'country', 'county_number', 'parish_number']
-
+    list_display = ['name', 'country', 'county_number', 'parish_number', 'public', ]
+    list_editable = ('public', )
 
 class CountyAdmin(admin.ModelAdmin):
     list_display = ['name', 'province', 'parish_number', ]
@@ -67,7 +67,8 @@ class CountyAdmin(admin.ModelAdmin):
 
 
 class DioceseAdmin(admin.ModelAdmin):
-    list_display = ['name', 'deanery_number', 'parish_number', ]
+    list_display = ['name', 'deanery_number', 'parish_number', 'public', ]
+    list_editable = ('public', )
 
 
 class DeaneryAdmin(admin.ModelAdmin):
