@@ -58,7 +58,7 @@ ROOT_URLCONF = 'GenealogyMaps.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['GenealogyMaps/templates',],
+        'DIRS': ['GenealogyMaps/templates', 'templates', ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
