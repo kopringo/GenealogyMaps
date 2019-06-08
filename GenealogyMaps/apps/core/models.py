@@ -4,9 +4,20 @@ from django.utils.translation import gettext as _
 
 # Create your models here.
 
+# https://pl.wikipedia.org/wiki/Zwi%C4%85zki_wyznaniowe_w_II_Rzeczypospolitej
 RELIGION_TYPE__RC = 1
+RELIGION_TYPE__SZ = 2
+RELIGION_TYPE__WSCHODNI = 3
+RELIGION_TYPE__MUZULMANSKI = 4
+RELIGION_TYPE__EA = 5
+RELIGION_TYPE__PRAWOSLAWNY = 6
 RELIGION_TYPE = {
     (RELIGION_TYPE__RC, 'Kościół rzymskokatolicki'),
+    (RELIGION_TYPE__SZ, 'Żydowski Związek Wyznaniowy'),
+    (RELIGION_TYPE__WSCHODNI, 'Wschodni Kościół Staroobrzędowy'),
+    (RELIGION_TYPE__MUZULMANSKI, 'Muzułmański Związek Religijny'),
+    (RELIGION_TYPE__EA, 'Kościół Ewangelicko-Augsburski'),
+    (RELIGION_TYPE__PRAWOSLAWNY, 'Polski Kościół Prawosławny')
 }
 
 PARISH_ACCESS__OPEN = 0
@@ -174,6 +185,23 @@ class Parish(models.Model):
         verbose_name_plural = 'Parafie'#"parishes"
 
 
+class CourtOffice(models.Model):
+
+    name = models.CharField(max_length=32, help_text='Nazwa kancelarii')
+
+    # podzial ziem I RP.
+    ziemia_i_rp = models.ForeignKey(ZiemiaIRP, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
+
+
+class CourtBook(models.Model):
+    
+    zespol
+    sygnatura
+    
+    date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
+    date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
+    
+
 class ParishRawData(models.Model):
     """
     Surowe dane na temat parafii
@@ -226,10 +254,16 @@ class ParishRef(models.Model):
         verbose_name_plural = 'Parafie - połączenia'#_("countries")
 
 
-DOCUMENT_GROUP_TYPE = (
-    (0, 'Akta metrykalne'),   # fizyczne dokumenty
+DOCUMENT_GROUP__TYPE = (
+    (0, 'Akta metrykalne'),
+    (1, '')
     #(1, 'Photos'),      # zdjecia cyfrowe
     #(2, 'Indexes'),     # indexy
+)
+
+DOCUMENT_GROUP__COPY_TYPE = (
+    (1, 'Oryginał'),
+    (2, 'Kopia'),
 )
 
 
@@ -266,11 +300,12 @@ class DocumentGroup(models.Model):
     url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
-    #parish_ref = models.ForeignKey(ParishRef, null=True, on_delete=models.DO_NOTHING)
     source = models.ForeignKey(DocumentSource, on_delete=models.DO_NOTHING)
     source_note = models.TextField(blank=True)
 
-    type = models.IntegerField(choices=DOCUMENT_GROUP_TYPE, help_text='Typ dokumentów', default=0)
+    copy_type = models.IntegerField(default=1, choices=DOCUMENT_GROUP__COPY_TYPE)
+
+    type = models.IntegerField(choices=DOCUMENT_GROUP__TYPE, help_text='Typ dokumentów', default=0)
     type_b = models.BooleanField(default=False, help_text='Akty urodzenia')
     type_d = models.BooleanField(default=False, help_text='Akty zgonu')
     type_m = models.BooleanField(default=False, help_text='Akty małżeństwa')
