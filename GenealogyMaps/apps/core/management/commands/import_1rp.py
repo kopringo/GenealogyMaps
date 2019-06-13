@@ -11,10 +11,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         sources = [
-            {'id': 1, 'name': 'Archiwum Państwowe', 'url': ''},
-            {'id': 2, 'name': 'Archiwum Diecezjalne', 'url': ''},
-            {'id': 3, 'name': 'Archiwum Parafialne', 'url': ''},
-            {'id': 99, 'name': 'Inne miejsce', 'url': ''},
+            {'id': 1, 'name': 'Geneteka (indeksy)', 'url': 'https://geneteka.genealodzy.pl'},
+            {'id': 2, 'name': 'Lubgens (indeksy)', 'url': 'https://lubgens.eu'},
+            {'id': 3, 'name': 'Projekt Podlasie (indeksy)', 'url': 'https://projektpodlasie.pl'},
+            {'id': 4, 'name': 'SZwA (zdjęcia)', 'url': 'https://szukajwarchiwach.pl'},
+            {'id': 5, 'name': 'Family Search (zdjęcia)', 'url': 'https://www.familysearch.org'},
+            {'id': 6, 'name': 'Archiwum Państwowe', 'url': ''},
+            {'id': 7, 'name': 'Archiwum Diecezjalne', 'url': ''},
+            {'id': 8, 'name': 'Inne miejsce', 'url': ''},
         ]
 
         for source in sources:

@@ -27,6 +27,9 @@ PARISH_ACCESS = (
     (PARISH_ACCESS__CLOSED, 'Zamknięty'),
 )
 
+###############################################################################
+# Lokalizacja
+###############################################################################
 
 class Country(models.Model):
     """
@@ -72,9 +75,7 @@ class Province(models.Model):
 
 
 class County(models.Model):
-    """
-    Powiat
-    """
+    """ Powiat """
 
     province = models.ForeignKey(Province, help_text='Województwo', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=32, help_text='Powiat')
@@ -91,6 +92,7 @@ class County(models.Model):
 
 
 class Diocese(models.Model):
+    """ Diecezja """
 
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=64, help_text='Diecezja')
@@ -113,6 +115,7 @@ class Diocese(models.Model):
 
 
 class Deanery(models.Model):
+    """ Dekanat """
 
     diocese = models.ForeignKey(Diocese, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=64, help_text='Dekanat')
@@ -136,6 +139,10 @@ class ZiemiaIRP(models.Model):
     class Meta:
         verbose_name_plural = "ziemie I RP"
 
+
+###############################################################################
+# Parafie
+###############################################################################
 
 class Parish(models.Model):
 
@@ -195,8 +202,8 @@ class CourtOffice(models.Model):
 
 class CourtBook(models.Model):
     
-    zespol
-    sygnatura
+    zespol = models.CharField(max_length=64, blank=True)
+    sygnatura = models.CharField(max_length=64, blank=True)
     
     date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
     date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
@@ -208,7 +215,7 @@ class ParishRawData(models.Model):
 
     """
     parish = models.ForeignKey(Parish, blank=True, null=True, on_delete=models.DO_NOTHING)
-    parish_documentgroup = models.ForeignKey('DocumentGroup', blank=True, null=True, on_delete=models.DO_NOTHING)
+    parish_source = models.ForeignKey('Source', blank=True, null=True, on_delete=models.DO_NOTHING)
     data_source = models.CharField(max_length=16, blank=True)
     data_key = models.CharField(max_length=64)
     data = models.TextField(blank=True)
@@ -241,33 +248,30 @@ class ParishComment(models.Model):
     visible = models.BooleanField(default=True, help_text='Widocznosc komentarza')
 
 
-class ParishRef(models.Model):
-    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
-    documents_group = models.ForeignKey('DocumentGroup', on_delete=models.DO_NOTHING)
-    key = models.TextField(blank=True)
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    class Meta:
-        verbose_name = 'Parafia - łacznik'
-        verbose_name_plural = 'Parafie - połączenia'#_("countries")
-
-
+"""
 DOCUMENT_GROUP__TYPE = (
     (0, 'Akta metrykalne'),
     (1, '')
     #(1, 'Photos'),      # zdjecia cyfrowe
     #(2, 'Indexes'),     # indexy
 )
+"""
 
 DOCUMENT_GROUP__COPY_TYPE = (
     (1, 'Oryginał'),
     (2, 'Kopia'),
+    (3, 'Odpis'),
+)
+
+DOCUMENT_SOURCE__FOR__AM = 1
+DOCUMENT_SOURCE__FOR__COURT = 2
+DOCUMENT_SOURCE__FOR = (
+    (DOCUMENT_SOURCE__FOR__AM, 'Dokumenty metrykalne'),
+    (DOCUMENT_SOURCE__FOR__COURT, 'Akta sądowe'),
 )
 
 
-class DocumentSource(models.Model):
+class Source(models.Model):
     """
     X. Parafia
     Y. Archiwum państwowe
@@ -284,8 +288,11 @@ class DocumentSource(models.Model):
 
     """
 
-    name = models.CharField(max_length=32)
+    name = models.CharField(max_length=64)
+    short = models.CharField(max_length=16, blank=True)
     url = models.URLField(max_length=64, blank=True)
+
+    group = models.CharField(max_length=32, blank=True, help_text='Grupa źródeł')
 
     def __str__(self):
         return u'%s' % (self.name)
@@ -295,31 +302,33 @@ class DocumentSource(models.Model):
         verbose_name_plural = 'Zbiory danych - źródła'#_("countries")
 
 
-class DocumentGroup(models.Model):
-    name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów', blank=True)
-    url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
+class SourceRef(models.Model):
+
+    note = models.TextField(blank=True, help_text='Notatka')
+    date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
+    date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
+    user = models.ForeignKey(User, null=True, help_text='Autor rekordu', on_delete=models.DO_NOTHING)
+
+    class Meta:
+        abstract = True
+
+class ParishSource(SourceRef):
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
-    source = models.ForeignKey(DocumentSource, on_delete=models.DO_NOTHING)
-    source_note = models.TextField(blank=True)
+    source = models.ForeignKey(Source, on_delete=models.DO_NOTHING, limit_choices_to={'source_for': DOCUMENT_SOURCE__FOR__AM})
 
+    note = models.TextField(blank=True, help_text='Notatka')
     copy_type = models.IntegerField(default=1, choices=DOCUMENT_GROUP__COPY_TYPE)
 
-    type = models.IntegerField(choices=DOCUMENT_GROUP__TYPE, help_text='Typ dokumentów', default=0)
+    #type = models.IntegerField(choices=DOCUMENT_GROUP__TYPE, help_text='Typ dokumentów', default=0)
     type_b = models.BooleanField(default=False, help_text='Akty urodzenia')
     type_d = models.BooleanField(default=False, help_text='Akty zgonu')
     type_m = models.BooleanField(default=False, help_text='Akty małżeństwa')
     type_a = models.BooleanField(default=False, help_text='Alegaty')
+    type_sum_only = models.BooleanField(default=False, help_text='Dostępny tylko sumariusz')
 
     date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
     date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
-    date_excepts = models.TextField(blank=True, help_text='Lata pominięte')
-
-    note = models.TextField(blank=True, help_text='Notatka')
-
-    date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
-    date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
-    user = models.ForeignKey(User, null=True, help_text='Autor rekordu', on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return u'%s' % (self.name)
@@ -330,6 +339,14 @@ class DocumentGroup(models.Model):
     class Meta:
         verbose_name = 'Zbiór danych'
         verbose_name_plural = 'Zbiory danych'#_("countries")
+
+class ParishSourceExt(models.Model):
+
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
+
+    name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów', blank=True)
+    url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
+
 
 #class DocumentGroupHistory(models.Model):
 #    pass

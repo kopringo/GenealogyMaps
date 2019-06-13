@@ -6,8 +6,8 @@ from datetime import datetime
 import numpy as np
 
 # Create your views here.
-from .models import Parish, Diocese, Province, County, Deanery, DocumentGroup
-from .forms import DocumentGroupForm
+from .models import Parish, Diocese, Province, County, Deanery, Source
+from .forms import SourceForm
 
 
 @login_required
@@ -108,7 +108,7 @@ def county(request, c_id):
 
 def parish(request, parish_id):
     parish = Parish.objects.get(pk=parish_id)
-    documents = DocumentGroup.objects.filter(parish=parish).order_by('date_from')
+    documents = Source.objects.filter(parish=parish).order_by('date_from')
     #comments =
     return render(request, 'core/parish.html', {'parish': parish, 'document_groups': documents})
 
@@ -123,7 +123,7 @@ def parish_list_json(request):
 
 
 def document_add(request, parish_id):
-    form = DocumentGroupForm()
+    form = SourceForm()
     saved = False
 
     # pobranie parafii
@@ -137,13 +137,13 @@ def document_add(request, parish_id):
     document_group = None
     if dg is not None:
         try:
-            document_group = DocumentGroup.objects.get(pk=dg, parish=parish)
-            form = DocumentGroupForm(instance=document_group)
-        except DocumentGroup.DoesNotExist:
+            document_group = Source.objects.get(pk=dg, parish=parish)
+            form = SourceForm(instance=document_group)
+        except Source.DoesNotExist:
             pass
 
     if request.method == 'POST':
-        form = DocumentGroupForm(request.POST, instance=document_group)
+        form = SourceForm(request.POST, instance=document_group)
 
         if form.is_valid():
             document_group = form.save(commit=False)
@@ -163,7 +163,7 @@ def document_add(request, parish_id):
 
 def documents(request, parish_id):
     parish = Parish.objects.get(pk=parish_id)
-    documents = DocumentGroup.objects.filter(parish=parish).order_by('date_from')
+    documents = Source.objects.filter(parish=parish).order_by('date_from')
     return render(request, 'parts/documents.html', { 'parish': parish, 'document_groups': documents})
 
 

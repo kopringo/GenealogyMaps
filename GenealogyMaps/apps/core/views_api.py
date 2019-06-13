@@ -11,7 +11,7 @@ from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, AdminRe
 from rest_framework.decorators import action
 
 from .models import Parish, Diocese, Province
-from .forms import DocumentGroupForm
+from .forms import SourceForm
 
 
 ###############################################################################
@@ -137,7 +137,7 @@ class ParishViewSet(MultiSerializerViewSet):
     @action(detail=True, methods=['get', 'post'])
     def documents_add(self, request, pk=None):
 
-        form = DocumentGroupForm()
+        form = SourceForm()
         data = {'form': form}
 
         if request.GET.get('format', None) != 'html':

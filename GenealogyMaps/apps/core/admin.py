@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import DocumentSource, Parish, ParishRef, Country, DocumentGroup, Province, County, Diocese, Deanery, \
+from .models import DocumentSource, Parish, ParishRef, Country, Source, Province, County, Diocese, Deanery, \
     ParishUser, ZiemiaIRP, ParishRawData
 
 
@@ -16,8 +16,8 @@ class ParishRefInline(admin.TabularInline):
     extra = 1
 
 
-class DocumentGroupInline(admin.TabularInline):
-    model = DocumentGroup
+class SourceInline(admin.TabularInline):
+    model = Source
     extra = 1
     fields = ['source', 'type', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to']
     readonly_fields = ('source', 'type', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to')
@@ -28,7 +28,7 @@ class DocumentSourceAdmin(admin.ModelAdmin):
     pass
 
 
-class DocumentGroupAdmin(admin.ModelAdmin):
+class SourceAdmin(admin.ModelAdmin):
     list_display = ['id_with_dates', 'parish', 'source', 'type', 'date_modified', 'user']
 
 
@@ -45,7 +45,7 @@ class ParishAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        ParishUserInline, DocumentGroupInline
+        ParishUserInline, SourceInline
     ]
 
 
@@ -86,7 +86,7 @@ class ParishRawDataAdmin(admin.ModelAdmin):
 
 
 admin.site.register(DocumentSource, DocumentSourceAdmin)
-admin.site.register(DocumentGroup, DocumentGroupAdmin)
+admin.site.register(Source, SourceAdmin)
 admin.site.register(Parish, ParishAdmin)
 admin.site.register(ParishRef, ParishRefAdmin)
 admin.site.register(Country, CountryAdmin)
