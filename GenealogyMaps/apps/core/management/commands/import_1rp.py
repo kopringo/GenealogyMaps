@@ -6,7 +6,7 @@ from GenealogyMaps.apps.core.models import Parish, Deanery, Diocese, Province, C
 
 
 class Command(BaseCommand):
-    help = 'Import podstawowych źródeł danych'
+    help = 'Import ziem I RP'
 
     def handle(self, *args, **options):
 
