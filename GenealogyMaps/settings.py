@@ -176,6 +176,8 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_TIMEOUT = 5
 
+#AUTH_USER_MODEL = 'core.UserProfile'
+
 try:
     from .settings_local import *
 except Exception as e:

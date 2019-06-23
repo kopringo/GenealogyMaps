@@ -1,35 +1,30 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
 
-# Register your models here.
-
-from .models import DocumentSource, Parish, ParishRef, Country, Source, Province, County, Diocese, Deanery, \
-    ParishUser, ZiemiaIRP, ParishRawData
+from .models import ParishSource, Parish, Country, Source, Province, County, Diocese, Deanery, \
+    ParishUser, ZiemiaIRP, UserProfile
 
 
 class ParishUserInline(admin.TabularInline):
     model = ParishUser
     extra = 1
 
-
-class ParishRefInline(admin.TabularInline):
-    model = ParishRef
-    extra = 1
-
-
 class SourceInline(admin.TabularInline):
     model = Source
     extra = 1
-    fields = ['source', 'type', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to']
-    readonly_fields = ('source', 'type', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to')
+    #fields = ['source', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to']
+    #readonly_fields = ('source', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to')
 
 
-class DocumentSourceAdmin(admin.ModelAdmin):
+class ParishSourceAdmin(admin.ModelAdmin):
     #fields = ('name', 'year', 'address')
     pass
 
 
 class SourceAdmin(admin.ModelAdmin):
-    list_display = ['id_with_dates', 'parish', 'source', 'type', 'date_modified', 'user']
+    #list_display = ['id_with_dates', 'parish', 'source', 'type', 'date_modified', 'user']
+    pass
 
 
 class ParishAdmin(admin.ModelAdmin):
@@ -45,7 +40,7 @@ class ParishAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        ParishUserInline, SourceInline
+        ParishUserInline
     ]
 
 
@@ -85,14 +80,32 @@ class ParishRawDataAdmin(admin.ModelAdmin):
     list_filter = ['data_source', ]
 
 
-admin.site.register(DocumentSource, DocumentSourceAdmin)
+admin.site.register(ParishSource, ParishSourceAdmin)
 admin.site.register(Source, SourceAdmin)
 admin.site.register(Parish, ParishAdmin)
-admin.site.register(ParishRef, ParishRefAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(Province, ProvinceAdmin)
 admin.site.register(County, CountyAdmin)
 admin.site.register(Diocese, DioceseAdmin)
 admin.site.register(Deanery, DeaneryAdmin)
 admin.site.register(ZiemiaIRP, ZiemiaIRPAdmin)
-admin.site.register(ParishRawData, ParishRawDataAdmin)
+
+# user profile
+
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = 'Profile'
+    fk_name = 'user'
+
+class CustomUserAdmin(UserAdmin):
+    inlines = (UserProfileInline, )
+
+    def get_inline_instances(self, request, obj=None):
+        if not obj:
+            return list()
+        return super(CustomUserAdmin, self).get_inline_instances(request, obj)
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)
+

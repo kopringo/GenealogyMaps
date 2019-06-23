@@ -15,6 +15,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        Country.objects.bulk_create([
+            Country(pk=1, code='pl', name="Polska"),
+            Country(pk=2, code='ua', name="Ukraina"),
+        ])
+
         only_selected = False
         only_parishes = options['only_parishes']
         if only_parishes:

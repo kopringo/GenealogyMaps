@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 # Create your models here.
 
@@ -139,6 +141,75 @@ class ZiemiaIRP(models.Model):
     class Meta:
         verbose_name_plural = "ziemie I RP"
 
+###############################################################################
+# User
+###############################################################################
+
+class UserProfile(models.Model):  
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    firstname = models.CharField(max_length=64, blank=True, help_text='Imię')
+    lastname = models.CharField(max_length=64, blank=True, help_text='Nazwisko')
+    full_access = models.BooleanField(default=False, help_text='Pełen dostęp do danych')
+
+    def __unicode__(self):
+        return u'Profile of user: %s' % self.user.username
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    instance.userprofile.save()
+
+###############################################################################
+# Refs
+###############################################################################
+
+DOCUMENT_SOURCE__FOR__AM = 1
+DOCUMENT_SOURCE__FOR__COURT = 2
+DOCUMENT_SOURCE__FOR = (
+    (DOCUMENT_SOURCE__FOR__AM, 'Dokumenty metrykalne'),
+    (DOCUMENT_SOURCE__FOR__COURT, 'Akta sądowe'),
+)
+
+SOURCE_GROUP__DEFAULT='Other'
+SOURCE_GROUP = (
+    ('AP', 'Archiwum Państwowe'),
+    ('AD', 'Archiwym Diecezjalne'),
+    (SOURCE_GROUP__DEFAULT, 'Inne'),
+)
+
+DOCUMENT_GROUP__COPY_TYPE = (
+    (1, 'Oryginał'),
+    (2, 'Kopia'),
+    (3, 'Odpis'),
+    (4, 'Sumariusz'),
+)
+
+class SourceRef(models.Model):
+
+    copy_type = models.IntegerField(default=1, choices=DOCUMENT_GROUP__COPY_TYPE)
+    note = models.TextField(blank=True, help_text='Notatka')
+    date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
+    date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
+    user = models.ForeignKey(User, null=True, help_text='Autor rekordu', on_delete=models.DO_NOTHING)
+
+    class Meta:
+        abstract = True
+
+class Source(models.Model):
+
+    name = models.CharField(max_length=64)
+    short = models.CharField(max_length=16, blank=True)
+    url = models.URLField(max_length=64, blank=True)
+
+    group = models.CharField(max_length=32, blank=True, help_text='Grupa źródeł', choices=SOURCE_GROUP, default=SOURCE_GROUP__DEFAULT)
+
+    def __str__(self):
+        return u'%s' % (self.name)
+
+    class Meta:
+        verbose_name = 'Zbiór danych - źródło'
+        verbose_name_plural = 'Zbiory danych - źródła'#_("countries")
 
 ###############################################################################
 # Parafie
@@ -191,41 +262,6 @@ class Parish(models.Model):
         verbose_name = 'Parafia'
         verbose_name_plural = 'Parafie'#"parishes"
 
-
-class CourtOffice(models.Model):
-
-    name = models.CharField(max_length=32, help_text='Nazwa kancelarii')
-
-    # podzial ziem I RP.
-    ziemia_i_rp = models.ForeignKey(ZiemiaIRP, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
-
-
-class CourtBook(models.Model):
-    
-    zespol = models.CharField(max_length=64, blank=True)
-    sygnatura = models.CharField(max_length=64, blank=True)
-    
-    date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
-    date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
-    
-
-class ParishRawData(models.Model):
-    """
-    Surowe dane na temat parafii
-
-    """
-    parish = models.ForeignKey(Parish, blank=True, null=True, on_delete=models.DO_NOTHING)
-    parish_source = models.ForeignKey('Source', blank=True, null=True, on_delete=models.DO_NOTHING)
-    data_source = models.CharField(max_length=16, blank=True)
-    data_key = models.CharField(max_length=64)
-    data = models.TextField(blank=True)
-
-    class Meta:
-        unique_together = (('data_source', 'data_key'), )
-        verbose_name = 'Parafia - dane surowe'
-        verbose_name_plural = 'Parafie - dane surowe'  # "parishes"
-
-
 class ParishUser(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
@@ -247,79 +283,11 @@ class ParishComment(models.Model):
     date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
     visible = models.BooleanField(default=True, help_text='Widocznosc komentarza')
 
-
-"""
-DOCUMENT_GROUP__TYPE = (
-    (0, 'Akta metrykalne'),
-    (1, '')
-    #(1, 'Photos'),      # zdjecia cyfrowe
-    #(2, 'Indexes'),     # indexy
-)
-"""
-
-DOCUMENT_GROUP__COPY_TYPE = (
-    (1, 'Oryginał'),
-    (2, 'Kopia'),
-    (3, 'Odpis'),
-)
-
-DOCUMENT_SOURCE__FOR__AM = 1
-DOCUMENT_SOURCE__FOR__COURT = 2
-DOCUMENT_SOURCE__FOR = (
-    (DOCUMENT_SOURCE__FOR__AM, 'Dokumenty metrykalne'),
-    (DOCUMENT_SOURCE__FOR__COURT, 'Akta sądowe'),
-)
-
-
-class Source(models.Model):
-    """
-    X. Parafia
-    Y. Archiwum państwowe
-    Z. Archiwum kościelne
-
-    0. familysearch.org
-    1. geneteka.genealodzy.pl
-    2. metryki.genealodzy
-    3. szukajwarchiwach.pl
-    4. metryki.genbaza.pl
-    5. poznan-project.psnc.pl
-    6. basia.famula.pl
-    7. lubgens.eu
-
-    """
-
-    name = models.CharField(max_length=64)
-    short = models.CharField(max_length=16, blank=True)
-    url = models.URLField(max_length=64, blank=True)
-
-    group = models.CharField(max_length=32, blank=True, help_text='Grupa źródeł')
-
-    def __str__(self):
-        return u'%s' % (self.name)
-
-    class Meta:
-        verbose_name = 'Zbiór danych - źródło'
-        verbose_name_plural = 'Zbiory danych - źródła'#_("countries")
-
-
-class SourceRef(models.Model):
-
-    note = models.TextField(blank=True, help_text='Notatka')
-    date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
-    date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
-    user = models.ForeignKey(User, null=True, help_text='Autor rekordu', on_delete=models.DO_NOTHING)
-
-    class Meta:
-        abstract = True
-
 class ParishSource(SourceRef):
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
-    source = models.ForeignKey(Source, on_delete=models.DO_NOTHING, limit_choices_to={'source_for': DOCUMENT_SOURCE__FOR__AM})
-
-    note = models.TextField(blank=True, help_text='Notatka')
-    copy_type = models.IntegerField(default=1, choices=DOCUMENT_GROUP__COPY_TYPE)
-
+    source = models.ForeignKey(Source, on_delete=models.DO_NOTHING)
+    
     #type = models.IntegerField(choices=DOCUMENT_GROUP__TYPE, help_text='Typ dokumentów', default=0)
     type_b = models.BooleanField(default=False, help_text='Akty urodzenia')
     type_d = models.BooleanField(default=False, help_text='Akty zgonu')
@@ -347,6 +315,61 @@ class ParishSourceExt(models.Model):
     name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów', blank=True)
     url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
 
+###############################################################################
+# Ksiegi sadowe
+###############################################################################
+
+class CourtOffice(models.Model):
+
+    name = models.CharField(max_length=32, help_text='Nazwa kancelarii')
+
+    # podzial ziem I RP.
+    ziemia_i_rp = models.ForeignKey(ZiemiaIRP, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
+
+class CourtBook(models.Model):
+    
+    office = models.ForeignKey(CourtOffice, on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=64, help_text='Nazwa księgi', blank=True)
+
+class CourtBookSource(SourceRef):
+
+    book = models.ForeignKey(CourtBook, on_delete=models.DO_NOTHING, help_text='Księga')
+    source = models.ForeignKey(Source, on_delete=models.DO_NOTHING)
+    
+    # 
+    zespol = models.CharField(max_length=64, blank=True)
+    sygnatura = models.CharField(max_length=64, blank=True)
+
+    date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
+    date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
+
+    def __str__(self):
+        return u'%s' % (self.name)
+
+    def id_with_dates(self):
+        return u'%d. %d-%d' % (self.id, self.date_from, self.date_to)
+
+    class Meta:
+        verbose_name = 'Zbiór danych'
+        verbose_name_plural = 'Zbiory danych'#_("countries")
+    
+    
+"""
+class ParishRawData(models.Model):
+    # Surowe dane na temat parafii
+
+    
+    parish = models.ForeignKey(Parish, blank=True, null=True, on_delete=models.DO_NOTHING)
+    parish_source = models.ForeignKey('Source', blank=True, null=True, on_delete=models.DO_NOTHING)
+    data_source = models.CharField(max_length=16, blank=True)
+    data_key = models.CharField(max_length=64)
+    data = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = (('data_source', 'data_key'), )
+        verbose_name = 'Parafia - dane surowe'
+        verbose_name_plural = 'Parafie - dane surowe'  # "parishes"
+"""
 
 #class DocumentGroupHistory(models.Model):
 #    pass

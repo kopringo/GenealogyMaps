@@ -1,7 +1,7 @@
 
 from django import forms
 
-from .models import Source
+from .models import ParishSource
 
 
 class SourceForm(forms.ModelForm):
@@ -18,8 +18,8 @@ class SourceForm(forms.ModelForm):
                 field.widget.attrs['rows'] = '3'
 
     class Meta:
-        model = Source
-        fields = ['type', 'type_b', 'type_d', 'type_m', 'type_a',     'name', 'url',  'date_from', 'date_to', 'date_excepts', 'note', 'source']
+        model = ParishSource
+        fields = ['type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to', 'note', 'source', ]
 
     error_css_class = 'is-invalid3'
 
