@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'GenealogyMaps.apps.core',
+
+    'import_export',
 ]
 
 MIDDLEWARE = [

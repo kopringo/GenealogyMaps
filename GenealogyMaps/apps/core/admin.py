@@ -2,9 +2,21 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
-from .models import ParishSource, Parish, Country, Source, Province, County, Diocese, Deanery, \
-    ParishUser, ZiemiaIRP, UserProfile
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 
+from .models import *
+
+
+###############################################################################
+# import/export functions
+
+class CourtOfficeResource(resources.ModelResource):
+
+    class Meta:
+        model = CourtOffice
+
+###############################################################################
 
 class ParishUserInline(admin.TabularInline):
     model = ParishUser
@@ -18,9 +30,18 @@ class SourceInline(admin.TabularInline):
 
 
 class ParishSourceAdmin(admin.ModelAdmin):
-    #fields = ('name', 'year', 'address')
-    pass
+    fieldsets = [
+        (None, {'fields': ['parish', 'source', 'copy_type', 'note']}),
+        ('Details', {'fields': ['type_b', 'type_m', 'type_d', 'type_a', 'type_sum_only', 'date_from', 'date_to']}),
+        ('Creator', {'fields': ['user', 'date_created', 'date_modified']})
+    ]
 
+
+class ParishSourceInline(admin.TabularInline):
+    model = ParishSource
+    extra = 0
+    fields = ['source', 'copy_type', 'type_b', 'type_m', 'type_d', 'type_a', 'type_sum_only', 'date_from', 'date_to', 'user', 'date_modified']
+    readonly_fields = ('source', 'user', 'date_modified')
 
 class SourceAdmin(admin.ModelAdmin):
     #list_display = ['id_with_dates', 'parish', 'source', 'type', 'date_modified', 'user']
@@ -34,19 +55,44 @@ class ParishAdmin(admin.ModelAdmin):
     search_fields = ['name', 'place']
 
     fieldsets = [
-        (None, {'fields': ['name', 'year']}),
+        (None, {'fields': ['name', 'year', 'religion', ]}),
         ('Location', {'fields': ['country', 'province', 'county', 'place', 'address', 'geo_lat', 'geo_lng']}),
         ('Location2', {'fields': ['diocese', 'deanery']})
     ]
 
     inlines = [
-        ParishUserInline
+        ParishSourceInline,
+        #ParishUserInline
     ]
 
 
 class ParishRefAdmin(admin.ModelAdmin):
     pass
 
+class ParishUserAdmin(admin.ModelAdmin):
+    pass
+
+class ParishSourceExtAdmin(admin.ModelAdmin):
+    pass
+
+
+##########################################################
+
+class CourtOfficeAdmin(ImportExportModelAdmin):
+    list_display = ['name', 'ziemia_i_rp', ]
+    list_filter = ['ziemia_i_rp', ]
+
+    resource_class = CourtOfficeResource
+
+
+class CourtBookAdmin(admin.ModelAdmin):
+    list_display = ['name', 'office', ]
+    list_filter = ['office', ]
+
+class CourtBookSourceAdmin(admin.ModelAdmin):
+    pass
+
+##########################################################
 
 class CountryAdmin(admin.ModelAdmin):
     list_display = ['name', 'code']
@@ -80,15 +126,25 @@ class ParishRawDataAdmin(admin.ModelAdmin):
     list_filter = ['data_source', ]
 
 
-admin.site.register(ParishSource, ParishSourceAdmin)
-admin.site.register(Source, SourceAdmin)
-admin.site.register(Parish, ParishAdmin)
+
+
 admin.site.register(Country, CountryAdmin)
 admin.site.register(Province, ProvinceAdmin)
 admin.site.register(County, CountyAdmin)
 admin.site.register(Diocese, DioceseAdmin)
 admin.site.register(Deanery, DeaneryAdmin)
 admin.site.register(ZiemiaIRP, ZiemiaIRPAdmin)
+
+admin.site.register(Parish, ParishAdmin)
+admin.site.register(ParishSource, ParishSourceAdmin)
+admin.site.register(ParishUser, ParishUserAdmin)
+admin.site.register(ParishSourceExt, ParishSourceExtAdmin)
+
+admin.site.register(CourtOffice, CourtOfficeAdmin)
+admin.site.register(CourtBook, CourtBookAdmin)
+admin.site.register(CourtBookSource, CourtBookSourceAdmin)
+
+admin.site.register(Source, SourceAdmin)
 
 # user profile
 
@@ -98,6 +154,7 @@ class UserProfileInline(admin.StackedInline):
     verbose_name_plural = 'Profile'
     fk_name = 'user'
 
+"""
 class CustomUserAdmin(UserAdmin):
     inlines = (UserProfileInline, )
 
@@ -108,4 +165,4 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
-
+"""

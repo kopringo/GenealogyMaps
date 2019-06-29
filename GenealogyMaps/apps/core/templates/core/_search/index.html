@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" >
+
+    <div class="row">
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+
+            </ol>
+
+        </nav>
+
+        <div class="col-md-6">
+
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Parafia</th>
+                        <th>Miejsowość</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for parish in parishes %}
+                    <tr>
+                        <td><a href="/parish/{{parish.id}}">{{ parish.name }}</a></td>
+                        <td>{{ parish.place }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+
+
+        </div>
+        <div class="col-md-6">
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

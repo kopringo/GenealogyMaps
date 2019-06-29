@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" >
+
+    <div class="row">
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+
+            </ol>
+
+        </nav>
+
+        <div class="col-md-12">
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Kancelaria</th>
+                        <th>Ilość ksiąg</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for office in offices %}
+                    <tr>
+                        <td><a href="/courts/office/{{office.id}}">{{ office.name }}</a></td>
+                        <td>{{ office.book_number }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

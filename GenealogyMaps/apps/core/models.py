@@ -13,14 +13,14 @@ RELIGION_TYPE__WSCHODNI = 3
 RELIGION_TYPE__MUZULMANSKI = 4
 RELIGION_TYPE__EA = 5
 RELIGION_TYPE__PRAWOSLAWNY = 6
-RELIGION_TYPE = {
+RELIGION_TYPE = (
     (RELIGION_TYPE__RC, 'Kościół rzymskokatolicki'),
     (RELIGION_TYPE__SZ, 'Żydowski Związek Wyznaniowy'),
     (RELIGION_TYPE__WSCHODNI, 'Wschodni Kościół Staroobrzędowy'),
     (RELIGION_TYPE__MUZULMANSKI, 'Muzułmański Związek Religijny'),
     (RELIGION_TYPE__EA, 'Kościół Ewangelicko-Augsburski'),
     (RELIGION_TYPE__PRAWOSLAWNY, 'Polski Kościół Prawosławny')
-}
+)
 
 PARISH_ACCESS__OPEN = 0
 PARISH_ACCESS__CLOSED = 1
@@ -239,7 +239,7 @@ class Parish(models.Model):
 
     # podzial administracyjny koscielny
     diocese = models.ForeignKey(Diocese, on_delete=models.DO_NOTHING)
-    deanery = models.ForeignKey(Deanery, null=True, on_delete=models.DO_NOTHING)
+    deanery = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING)
 
     # podzial ziem I RP.
     ziemia_i_rp = models.ForeignKey(ZiemiaIRP, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
@@ -254,6 +254,12 @@ class Parish(models.Model):
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
+
+    def get_religion_description(self):
+        try:
+            return RELIGION_TYPE[self.religion-1][1]
+        except:
+            return ''
 
     def refresh_summary(self):
         pass
@@ -299,14 +305,14 @@ class ParishSource(SourceRef):
     date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
 
     def __str__(self):
-        return u'%s' % (self.name)
+        return u'%s (%s - %s)' % (self.parish, str(self.date_from), str(self.date_to))
 
     def id_with_dates(self):
         return u'%d. %d-%d' % (self.id, self.date_from, self.date_to)
 
     class Meta:
-        verbose_name = 'Zbiór danych'
-        verbose_name_plural = 'Zbiory danych'#_("countries")
+        verbose_name = 'Parafia - Zbiór danych'
+        verbose_name_plural = 'Parafie - zbiory danych'#_("countries")
 
 class ParishSourceExt(models.Model):
 
@@ -324,12 +330,29 @@ class CourtOffice(models.Model):
     name = models.CharField(max_length=32, help_text='Nazwa kancelarii')
 
     # podzial ziem I RP.
-    ziemia_i_rp = models.ForeignKey(ZiemiaIRP, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
+    ziemia_i_rp = models.ForeignKey(ZiemiaIRP, blank=True, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
+
+    def book_number(self):
+        return u'%s' % str(len(CourtBook.objects.filter(office=self)))
+
+    def __str__(self):
+        return u'%s' % (self.name)
+
+    class Meta:
+        verbose_name = 'Kancelaria'
+        verbose_name_plural = 'Kancelarie'
 
 class CourtBook(models.Model):
-    
-    office = models.ForeignKey(CourtOffice, on_delete=models.DO_NOTHING)
+
     name = models.CharField(max_length=64, help_text='Nazwa księgi', blank=True)
+    office = models.ForeignKey(CourtOffice, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return u'%s' % (self.name)
+
+    class Meta:
+        verbose_name = 'Księga sądowa'
+        verbose_name_plural = 'Księgi sądowe'
 
 class CourtBookSource(SourceRef):
 
@@ -350,8 +373,8 @@ class CourtBookSource(SourceRef):
         return u'%d. %d-%d' % (self.id, self.date_from, self.date_to)
 
     class Meta:
-        verbose_name = 'Zbiór danych'
-        verbose_name_plural = 'Zbiory danych'#_("countries")
+        verbose_name = 'Księga sądowa - zbiór danych'
+        verbose_name_plural = 'Księgi sądowe - zbiory danych'#_("countries")
     
     
 """
@@ -370,6 +393,3 @@ class ParishRawData(models.Model):
         verbose_name = 'Parafia - dane surowe'
         verbose_name_plural = 'Parafie - dane surowe'  # "parishes"
 """
-
-#class DocumentGroupHistory(models.Model):
-#    pass

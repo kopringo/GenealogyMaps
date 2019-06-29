@@ -12,7 +12,7 @@
             <tbody>
                 {% for document_group in document_groups %}
                 <tr>
-                    <td><span title="details...">{{ document_group.date_from }}-{{ document_group.date_to }}</span></td>
+                    <td><span>{{ document_group.date_from }}-{{ document_group.date_to }}{% if document_group.note %} <span class="fa fa-info-circle" title="{{document_group.note}}"></span>{% endif %}</span></td>
                     <td style="font-family: mono">
                         {% if document_group.type_b %}urodzenia{% else %}&nbsp;{% endif %}
                         {% if document_group.type_d %}zgony{% else %}&nbsp;{% endif %}

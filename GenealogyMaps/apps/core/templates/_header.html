@@ -1,23 +1,32 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">Parafie w Polsce</a>
+  <a class="navbar-brand" href="/">Dokumenty</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-    {% comment %}
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search">Search</button>
+
+    <form class="form-inline my-2 my-lg-0" action="/search">
+      <input class="form-control mr-sm-2" type="search" placeholder="Nazwa parafii" aria-label="Search" name="q">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search2">Search</button>
     </form>
-    {% endcomment %}
+
 
     <ul class="navbar-nav ml-auto">
 
       <li class="nav-item">
+        <a class="nav-link" href="/">Księgi metrykalne</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/courts">Księgi sądowe</a>
+      </li>
+
+      <!--
+      <li class="nav-item">
         <a class="nav-link" href="/contact">Kontakt</a>
       </li>
+      -->
 
       {% if request.user.is_anonymous %}
       <li class="nav-item">
@@ -26,7 +35,7 @@
       {% else %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Profil
+            Narzędzia
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
             <!-- <a class="nav-link" href="{% url "accounts_profile" %}">Profil</a> -->
@@ -34,6 +43,8 @@
 
             {% if request.user.is_superuser %}
             <a class="nav-link text-danger" href="/admin">Admin panel</a>
+            <a class="nav-link text-danger" href="/admin/auth/user/" target="_blank">Użytkownicy</a>
+            <a class="nav-link text-danger" href="/admin/core/source/ target="_blank">Źródła</a>
             {% endif %}
 
             <!-- <div class="dropdown-divider"></div> -->

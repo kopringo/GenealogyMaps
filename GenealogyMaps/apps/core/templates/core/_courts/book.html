@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" >
+
+    <div class="row">
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/courts">Księgi sądowe</a></li>
+                <li class="breadcrumb-item"><a href="/courts/office/{{ book.office.id }}">{{ book.office.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ book.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="col-md-12">
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Zespół</th>
+                        <th>Sygnatura</th>
+                        <th>Zakres lat</th>
+                        <th>Notatka</th>
+                        <th>Źródło</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source in sources %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 import json
 
+from django.auth.models import Group
 from django.core.management.base import BaseCommand, CommandError
 from GenealogyMaps.apps.core.models import Parish, Deanery, Diocese, Province, County, Country
 
@@ -18,6 +19,10 @@ class Command(BaseCommand):
         Country.objects.bulk_create([
             Country(pk=1, code='pl', name="Polska"),
             Country(pk=2, code='ua', name="Ukraina"),
+        ])
+
+        Group.objects.bulk_create([
+            Group(pk=1, name='FULL_DATA_ACCESS'),
         ])
 
         only_selected = False

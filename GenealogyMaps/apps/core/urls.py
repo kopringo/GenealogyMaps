@@ -1,7 +1,9 @@
 
 from django.urls import path, re_path
 from django.conf.urls import url, include
-from . import views
+from django.views.generic.base import TemplateView
+
+from . import views, views_courts, views_account, views_search
 
 urlpatterns = [
 
@@ -22,5 +24,23 @@ urlpatterns = [
     path('area/province/<int:p_id>', views.province, name='view_province'),
     path('area/county/<int:c_id>', views.county, name='view_county'),
 
+    path('courts', views_courts.index, name='view_courts_index'),
+    path('courts/office/<int:o_id>', views_courts.office, name='view_courts_office'),
+    path('courts/book/<int:b_id>', views_courts.book, name='view_courts_book'),
+
+    path('search', views_search.index),
+
+    #path('accounts/register/', views_account.register),
+    url(r'^accounts/register/$', views_account.RegistrationView.as_view(), name='registration_register'),
+    url(r'^accounts/register/closed/$',
+        TemplateView.as_view(
+            template_name='django_registration/registration_closed.html'
+        ),
+        name='registration_disallowed'),
+    url(r'^accounts/register/complete/$',
+        TemplateView.as_view(
+            template_name='django_registration/registration_complete.html'
+        ),
+        name='registration_complete'),
 
 ]

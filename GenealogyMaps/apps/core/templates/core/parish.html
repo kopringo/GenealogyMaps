@@ -27,6 +27,7 @@
             <h3>Parafia: {{ parish.name }} [<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="text-danger">admin edit</a>]</h3>
             <p>Adres: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
             <p>Miejscowość: {{ parish.place }}</p>
+            <p>Wyznanie: {{ parish.get_religion_description }}</p>
             <p class="nomargin">Data utworzenia: {% if parish.year %}{{ parish.year }}{% else %}brak danych{% endif %}</p>
             <br/>
 

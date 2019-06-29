@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" >
+
+    <div class="row">
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/courts">Księgi sądowe</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ office.name }}</li>
+            </ol>
+
+        </nav>
+
+        <div class="col-md-12">
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Księga</th>
+                        <th>Daty skrajne</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td><a href="/courts/book/{{book.id}}">{{ book.name }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
