@@ -367,7 +367,7 @@ class CourtBookSource(SourceRef):
     date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
 
     def __str__(self):
-        return u'%s' % (self.name)
+        return u'%s' % (self.book, )
 
     def id_with_dates(self):
         return u'%d. %d-%d' % (self.id, self.date_from, self.date_to)

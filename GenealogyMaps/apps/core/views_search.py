@@ -12,6 +12,8 @@ def index(request):
     q = request.GET.get('q', None)
     if q is None:
         return redirect('/')
+    if len(q) < 3:
+        return redirect('/?error=to-short')
     parishes = Parish.objects.filter(Q(name__icontains=q) | Q(place__icontains=q))
     data['parishes'] = parishes
 

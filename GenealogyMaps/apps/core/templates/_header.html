@@ -9,7 +9,7 @@
 
     <form class="form-inline my-2 my-lg-0" action="/search">
       <input class="form-control mr-sm-2" type="search" placeholder="Nazwa parafii" aria-label="Search" name="q">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search2">Search</button>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search2">Szukaj</button>
     </form>
 
 
@@ -42,7 +42,7 @@
 
 
             {% if request.user.is_superuser %}
-            <a class="nav-link text-danger" href="/admin">Admin panel</a>
+            <a class="nav-link text-danger" href="/admin">Panel administratora</a>
             <a class="nav-link text-danger" href="/admin/auth/user/" target="_blank">Użytkownicy</a>
             <a class="nav-link text-danger" href="/admin/core/source/ target="_blank">Źródła</a>
             {% endif %}

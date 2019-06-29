@@ -12,9 +12,13 @@ from .models import *
 # import/export functions
 
 class CourtOfficeResource(resources.ModelResource):
-
     class Meta:
         model = CourtOffice
+
+
+class ParishSourceResource(resources.ModelResource):
+    class Meta:
+        model = ParishSource
 
 ###############################################################################
 
@@ -29,12 +33,14 @@ class SourceInline(admin.TabularInline):
     #readonly_fields = ('source', 'type_b', 'type_d', 'type_m', 'type_a', 'date_from', 'date_to')
 
 
-class ParishSourceAdmin(admin.ModelAdmin):
+class ParishSourceAdmin(ImportExportModelAdmin):
+    list_display = ['parish', 'source', 'type_b', 'type_m', 'type_d', 'type_a', 'type_sum_only', 'date_from', 'date_to']
     fieldsets = [
         (None, {'fields': ['parish', 'source', 'copy_type', 'note']}),
         ('Details', {'fields': ['type_b', 'type_m', 'type_d', 'type_a', 'type_sum_only', 'date_from', 'date_to']}),
         ('Creator', {'fields': ['user', 'date_created', 'date_modified']})
     ]
+    resource_class = ParishSourceResource
 
 
 class ParishSourceInline(admin.TabularInline):
@@ -44,7 +50,8 @@ class ParishSourceInline(admin.TabularInline):
     readonly_fields = ('source', 'user', 'date_modified')
 
 class SourceAdmin(admin.ModelAdmin):
-    #list_display = ['id_with_dates', 'parish', 'source', 'type', 'date_modified', 'user']
+    list_display = ['name', 'short', 'group']
+    list_filter = ['group', ]
     pass
 
 
@@ -81,7 +88,6 @@ class ParishSourceExtAdmin(admin.ModelAdmin):
 class CourtOfficeAdmin(ImportExportModelAdmin):
     list_display = ['name', 'ziemia_i_rp', ]
     list_filter = ['ziemia_i_rp', ]
-
     resource_class = CourtOfficeResource
 
 
@@ -90,7 +96,7 @@ class CourtBookAdmin(admin.ModelAdmin):
     list_filter = ['office', ]
 
 class CourtBookSourceAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['book', 'source', 'copy_type', 'date_from', 'date_to']
 
 ##########################################################
 

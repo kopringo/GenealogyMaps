@@ -42,7 +42,7 @@
                     </td>
                     
                     <td>
-                        {{ item.year}}
+                        {% if item.year %} {{ item.year}}{% else %}-{%endif%}
                     </td>
                 </tr>
                 {% endfor %}

@@ -32,7 +32,7 @@
                     	<td>{{ item.place }}</td>
                         <td><a href="{{ item.link }}">{{ item.name}}</a></td>
                         
-                        <td>{{ item.year }}</td>
+                        <td>{% if item.year != 0 %} {{ item.year}}{% else %}-{%endif%}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
