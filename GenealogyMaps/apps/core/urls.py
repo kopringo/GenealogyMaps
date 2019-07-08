@@ -28,10 +28,12 @@ urlpatterns = [
 
     path('courts', views_courts.index, name='view_courts_index'),
     path('courts/office/<int:o_id>', views_courts.office, name='view_courts_office'),
+    path('courts/office/<int:o_id>/add-book', views_courts.court_add_book, name='view_courts_add_book'),
     path('courts/book/<int:b_id>', views_courts.book, name='view_courts_book'),
 
     path('search', views_search.index),
 
+    # for admin
     path('a/users', views_admin.users),
 
     #path('accounts/register/', views_account.register),

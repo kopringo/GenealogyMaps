@@ -82,7 +82,8 @@ class ParishRefAdmin(admin.ModelAdmin):
     pass
 
 class ParishUserAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['parish', 'user', 'favorite', 'manager', ]
+    list_filter = ['favorite', 'manager']
 
 class ParishSourceExtAdmin(admin.ModelAdmin):
     pass
@@ -97,7 +98,7 @@ class CourtOfficeAdmin(ImportExportModelAdmin):
 
 
 class CourtBookAdmin(admin.ModelAdmin):
-    list_display = ['name', 'office', ]
+    list_display = ['name', 'office', 'owner', ]
     list_filter = ['office', ]
 
 class CourtBookSourceAdmin(ImportExportModelAdmin):

@@ -29,6 +29,7 @@
                     {% for book in books %}
                     <tr>
                         <td><a href="/courts/book/{{book.id}}">{{ book.name }}</a></td>
+                        <td>@todo</td>
                     </tr>
                     {% endfor %}
                     {% if not books %}
@@ -41,7 +42,8 @@
             </table>
 
             {% if user.is_staff %}
-            <a href="/admin/core/courtbook/add/?office={{office.id}}" class="btn btn-danger" target="_blank">Dodaj księgę</a>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" data-remote="/courts/office/{{office.id}}/add-book">Dodaj księgę</button>
+
             <a href="/admin/core/courtbook/" class="btn btn-danger" target="_blank">Zarządaj księgami</a>
             {% endif %}
 

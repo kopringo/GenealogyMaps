@@ -9,6 +9,10 @@
 
         <div class="col-md-12">
 
+            <h3>Zarejestrowane konta</h3>
+            <p>Dostęp ograniczony - oznacza dostęp do edycji wybranych parafii.</p>
+            <p>Dostęp pełny - oznacza dostęp do edycji wszystkich parafii.</p>
+
 
             <table class="table table-sm">
                 <colgroup>
@@ -34,10 +38,10 @@
                         <td style="background: #eee;">
                             {% if user.is_superuser %}
                             <span class="text-danger">ADMINISTRATOR</span>
-                            {% elif request.user|has_group:"FULL_DATA_ACCESS" %}
-                            <span class="text-success">Pełny dostęp</span>
+                            {% elif user|has_group:"FULL_DATA_ACCESS" %}
+                            <span class="text-success">Dostęp pełny</span> <a href="?switch_access_for_user={{user.id}}">ogranicz</a>
                             {% else %}
-                            <span class="">Dostęp ograniczony</span>
+                            <span class="">Dostęp ograniczony <a href="?switch_access_for_user={{user.id}}">zwiększ</a> | <a href="/admin/core/parishuser/?user={{user.id}}&manager=1" target="_blank">do czego ma dostęp</a></span>
                             {% endif %}
                         </td>
                     </tr>
@@ -45,6 +49,35 @@
                 </tbody>
 
             </table>
+
+            <h3>Prośby o dostęp do edycji</h3>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Osoba</th>
+                        <th>Parafia</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for request in user_requests %}
+                <tr>
+                    <td>{{request.manager_request_date|date:"Y-m-d H:s"}} UTC</td>
+                    <td>{{request.user.first_name}} {{request.user.last_name}}</td>
+                    <td>{{request.parish.name}}</td>
+                    <td><a href="?access&parish={{request.parish.id}}&user={{request.user.id}}" class="btn btn-light">DAJ DOSTĘP</a></td>
+                </tr>
+                {% endfor %}
+                {% if not user_requests %}
+                <tr>
+                    <td colspan="4">Brak</td>
+                </tr>
+                {% endif %}
+
+                </tbody>
+
+            </tabel>
 
 
 

@@ -1,0 +1,42 @@
+<form method="post" action="/courts/office/{{office.id}}/add-book" id="book-add">
+
+{% if saved %}
+<div class="form-row_">
+	<div class="alert alert-success" role="alert">Dane zapisane</div>
+	<script type="text/javascript">
+	$(function(){
+        setTimeout(function(){
+            window.location.reload();
+        }, 1000);
+
+	});
+	</script>
+</div>
+{% endif %}
+
+
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="id_copy_type">Nazwa księgi <span class="text-danger">*</span></label>
+            {{form.name}}
+            <small class="text-danger">{% for error in form.name.errors %}{{error}} {% endfor %}</small>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <label>Notatka <small class="text-muted">(opcjonalnie)</small></label>
+
+        {{form.owner_note}}
+    </div>
+
+    {% csrf_token %}
+    <input type="hidden" name="office" value="{{ office.id }}" />
+
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary ajax-form-send" data-form="book-add">Zapisz</button>
+    </div>
+
+</form>
+
