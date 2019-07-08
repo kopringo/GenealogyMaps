@@ -1,6 +1,6 @@
 import json
 
-from django.auth.models import Group
+from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand, CommandError
 from GenealogyMaps.apps.core.models import Parish, Deanery, Diocese, Province, County, Country
 

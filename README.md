@@ -13,6 +13,7 @@ Installation
 pip3 install -r requirements.txt
 python3 manage.py migrate
 python3 manage.py createsuperuser
+python3 manage.py collectstatic
 
 HTTP_PROTOCOL=http HTTP_HOST=127.0.0.1:8000 python3 manage.py runserver
 ```
