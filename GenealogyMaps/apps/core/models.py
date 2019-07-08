@@ -225,7 +225,7 @@ class Parish(models.Model):
 
     # lokalizacja
     country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
-    province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING)
+    province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING, help_text='Województwo')
     county = models.ForeignKey(County, help_text='Powiat', on_delete=models.DO_NOTHING)
     place = models.CharField(max_length=32, help_text='Miejscowość')
     postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')
@@ -238,8 +238,8 @@ class Parish(models.Model):
     geo_validated = models.BooleanField(default=False)
 
     # podzial administracyjny koscielny
-    diocese = models.ForeignKey(Diocese, null=True, blank=True, on_delete=models.DO_NOTHING)
-    deanery = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING)
+    diocese = models.ForeignKey(Diocese, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Diecezja')
+    deanery = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat')
 
     # podzial ziem I RP.
     ziemia_i_rp = models.ForeignKey(ZiemiaIRP, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
@@ -263,6 +263,18 @@ class Parish(models.Model):
 
     def refresh_summary(self):
         pass
+
+    def any_issues(self):
+        diocese_str = ''
+        deanery_str = ''
+        geo_str = ''
+        if not self.diocese:
+            diocese_str = '<span class="text-danger" title="brak diecezji">D </span>'
+        if not self.deanery:
+            deanery_str = '<span class="text-danger" title="brak dekanatu">D </span>'
+        if (not self.geo_lat) or (not self.geo_lng):
+            geo_str = '<span class="text-danger" title="brak współrzędnych">GEO </span>'
+        return u'%s%s%s' % (diocese_str, deanery_str, geo_str)
 
     def has_user_manage_permission(self, user):
         if not user.is_authenticated:

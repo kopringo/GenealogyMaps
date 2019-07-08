@@ -289,7 +289,8 @@ def __get_parish_list(**args):
         'year': x.year,
         'place': x.place,
         'geo_lat': x.geo_lat,
-        'geo_lng': x.geo_lng
+        'geo_lng': x.geo_lng,
+        'any_issues': x.any_issues()
     }, Parish.objects.filter(**args).order_by('place', 'name')))
 
 
