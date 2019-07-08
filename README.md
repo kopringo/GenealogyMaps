@@ -16,6 +16,8 @@ python3 manage.py createsuperuser
 python3 manage.py collectstatic
 
 HTTP_PROTOCOL=http HTTP_HOST=127.0.0.1:8000 python3 manage.py runserver
+
+update `core_parish` SET diocese_id=null WHERE diocese_id=44
 ```
 
 Lokalizacja
