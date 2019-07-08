@@ -12,7 +12,8 @@ from .forms import ParishSourceForm
 
 def __prepare_common_params():
     return {
-        'main_menu': 'churches'
+        'main_menu': 'churches',
+        'body_map': True
     }
 
 
