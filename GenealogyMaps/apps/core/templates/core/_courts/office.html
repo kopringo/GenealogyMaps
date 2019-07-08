@@ -6,15 +6,17 @@
 
     <div class="row">
 
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/courts">Księgi sądowe</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ office.name }}</li>
-            </ol>
 
-        </nav>
 
         <div class="col-md-12">
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/courts">Księgi sądowe</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ office.name }}</li>
+                </ol>
+
+            </nav>
 
             <table class="table table-sm">
                 <thead>
@@ -29,9 +31,19 @@
                         <td><a href="/courts/book/{{book.id}}">{{ book.name }}</a></td>
                     </tr>
                     {% endfor %}
+                    {% if not books %}
+                    <tr>
+                        <td colspan="2">Brak ksiąg w kancelarii</td>
+                    </tr>
+                    {% endif %}
                 </tbody>
 
             </table>
+
+            {% if user.is_staff %}
+            <a href="/admin/core/courtbook/add/?office={{office.id}}" class="btn btn-danger" target="_blank">Dodaj księgę</a>
+            <a href="/admin/core/courtbook/" class="btn btn-danger" target="_blank">Zarządaj księgami</a>
+            {% endif %}
 
 
 

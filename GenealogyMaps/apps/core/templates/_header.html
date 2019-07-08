@@ -1,25 +1,26 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">Dokumenty</a>
+  <!--<a class="navbar-brand" href="/">Dokumenty</a>-->
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-
+    {% if user.is_authenticated %}
     <form class="form-inline my-2 my-lg-0" action="/search">
       <input class="form-control mr-sm-2" type="search" placeholder="Nazwa parafii" aria-label="Search" name="q">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search2">Szukaj</button>
     </form>
+    {% endif %}
 
 
     <ul class="navbar-nav ml-auto">
 
       <li class="nav-item">
-        <a class="nav-link" href="/">Księgi metrykalne</a>
+        <a class="nav-link {% if main_menu == 'churches' %}active{% endif %}" href="/">Księgi metrykalne</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/courts">Księgi sądowe</a>
+        <a class="nav-link {% if main_menu == 'courts' %}active{% endif %}" href="/courts">Księgi sądowe</a>
       </li>
 
       <!--
@@ -42,8 +43,8 @@
 
 
             {% if request.user.is_superuser %}
-            <a class="nav-link text-danger" href="/admin">Panel administratora</a>
-            <a class="nav-link text-danger" href="/admin/auth/user/" target="_blank">Użytkownicy</a>
+            <a class="nav-link text-danger" href="/admin">Administrator</a>
+            <a class="nav-link text-danger" href="/a/users" target="_blank">Użytkownicy</a>
             <a class="nav-link text-danger" href="/admin/core/source/ target="_blank">Źródła</a>
             {% endif %}
 

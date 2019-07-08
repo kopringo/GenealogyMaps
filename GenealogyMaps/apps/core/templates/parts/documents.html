@@ -14,10 +14,11 @@
                 <tr>
                     <td><span>{{ document_group.date_from }}-{{ document_group.date_to }}{% if document_group.note %} <span class="fa fa-info-circle" title="{{document_group.note}}"></span>{% endif %}</span></td>
                     <td style="font-family: mono">
-                        {% if document_group.type_b %}urodzenia{% else %}&nbsp;{% endif %}
-                        {% if document_group.type_d %}zgony{% else %}&nbsp;{% endif %}
-                        {% if document_group.type_m %}małżeństwa{% else %}&nbsp;{% endif %}
-                        {% if document_group.type_a %}aneksy{% else %}&nbsp;{% endif %}
+                        {% if document_group.type_b %}urodzenia{% else %} {% endif %}
+                        {% if document_group.type_d %}zgony{% else %} {% endif %}
+                        {% if document_group.type_m %}małżeństwa{% else %} {% endif %}
+                        {% if document_group.type_a %}aneksy{% else %} {% endif %}
+                        {% if document_group.type_sum_only %}sumariusz{% else %}{% endif %}
                     </td>
                     <td>{{ document_group.source }}</td>
 
@@ -40,7 +41,11 @@
         </table>
     </div>
     <div class="col-md-12">
+        {% if manager %}
         <button type="button" id="btn-add-document" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-remote="/parish/{{parish.id}}/add-document">Dodaj</button>
-
+        {% endif %}
+        {% if not manager %}
+        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/request-access">Prośba o dostęp</button>
+        {% endif %}
     </div>
 </div>

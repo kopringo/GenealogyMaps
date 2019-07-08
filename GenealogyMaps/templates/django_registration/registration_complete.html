@@ -5,8 +5,19 @@
     <br/>
     <div class="row">
         <div class="col-md-6">
-            Dziekujemy za rejestrację. <a href="/accounts/login/">Zaloguj się</a>
+            Dziekujemy za rejestrację. Za chwilę zostaniesz przeniesiony na stronę główną.
+
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block content_js %}
+<script type="text/javascript">
+            $(function(){
+                setTimeout(function(){
+                    window.location.href='/';
+                }, 3000);
+            });
+            </script>
 {% endblock %}

@@ -14,21 +14,25 @@
     <div class="row">
 
 
-        <div class="col-md-6">
+        <div class="col-md-9">
 
 
             <table class="table table-sm">
                 <thead>
                     <tr>
                         <th>Parafia</th>
-                        <th>Miejsowość</th>
+                        <th class="text-right">Miejsowość</th>
+                        <th class="text-right">Powiat</th>
+                        <th class="text-right">Województwo</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for parish in parishes %}
                     <tr>
                         <td><a href="/parish/{{parish.id}}">{{ parish.name }}</a></td>
-                        <td>{{ parish.place }}</td>
+                        <td class="text-right">{{ parish.place }}</td>
+                        <td class="text-right">{{ parish.county.name }}</td>
+                        <td class="text-right">{{ parish.province.name }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

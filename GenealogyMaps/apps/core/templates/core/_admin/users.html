@@ -1,0 +1,58 @@
+{% extends "base.html" %}{% load has_group %}
+
+{% block content %}
+
+<div class="container" >
+
+    <div class="row">
+
+
+        <div class="col-md-12">
+
+
+            <table class="table table-sm">
+                <colgroup>
+                    <col width="200"/>
+                    <col/>
+                    <col/>
+                    <col width="400"/>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Data rejestracji</th>
+                        <th>Osoba</th>
+                        <th>E-mail</th>
+                        <th>Uprawnienia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{user.date_joined|date:"Y-m-d H:s"}} UTC</td>
+                        <td>{{user.first_name}} {{user.last_name}}</td>
+                        <td>{{user.email}}</td>
+                        <td style="background: #eee;">
+                            {% if user.is_superuser %}
+                            <span class="text-danger">ADMINISTRATOR</span>
+                            {% elif request.user|has_group:"FULL_DATA_ACCESS" %}
+                            <span class="text-success">Pełny dostęp</span>
+                            {% else %}
+                            <span class="">Dostęp ograniczony</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+
+
+        </div>
+        <div class="col-md-6">
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

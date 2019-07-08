@@ -1,0 +1,18 @@
+{% if error_user %}
+    <h4>User niezalogowany.</h4>
+{% elif error_parish %}
+    <h4>Parafia nie istnieje.</h4>
+{% else %}
+    {% if parish_user.favorite %}Parafia zapisana jako ważna.{% else %}Parafia usunięta z listy ważnych.{% endif %}
+    <script type="text/javascript">
+        $(function(){
+
+            {% if parish_user.favorite %}
+            $("#favourite-icon").attr('class', 'fa fa-star');
+            {% else %}
+            $("#favourite-icon").attr('class', 'fa fa-star-o');
+            {% endif %}
+
+        });
+    </script>
+{% endif %}

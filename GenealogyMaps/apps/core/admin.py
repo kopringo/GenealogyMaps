@@ -20,6 +20,11 @@ class ParishSourceResource(resources.ModelResource):
     class Meta:
         model = ParishSource
 
+
+class CourtBookSourceResource(resources.ModelResource):
+    class Meta:
+        model = CourtBookSource
+
 ###############################################################################
 
 class ParishUserInline(admin.TabularInline):
@@ -95,8 +100,9 @@ class CourtBookAdmin(admin.ModelAdmin):
     list_display = ['name', 'office', ]
     list_filter = ['office', ]
 
-class CourtBookSourceAdmin(admin.ModelAdmin):
+class CourtBookSourceAdmin(ImportExportModelAdmin):
     list_display = ['book', 'source', 'copy_type', 'date_from', 'date_to']
+    resource_class = CourtBookSourceResource
 
 ##########################################################
 

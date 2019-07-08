@@ -1,0 +1,9 @@
+{% if error_already_clicked %}
+    <p>Zgłoszenie już wysłane wcześniej.</p>
+{% elif error_parish %}
+    <p>Parafia nie istnieje.</p>
+{% elif error_user %}
+    <p>Użytkownik niezalogowany.</p>
+{% else %}
+    <p>Zgłoszenie wysłane.</p>
+{% endif %}

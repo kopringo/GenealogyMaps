@@ -238,7 +238,7 @@ class Parish(models.Model):
     geo_validated = models.BooleanField(default=False)
 
     # podzial administracyjny koscielny
-    diocese = models.ForeignKey(Diocese, on_delete=models.DO_NOTHING)
+    diocese = models.ForeignKey(Diocese, null=True, blank=True, on_delete=models.DO_NOTHING)
     deanery = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING)
 
     # podzial ziem I RP.
@@ -264,15 +264,36 @@ class Parish(models.Model):
     def refresh_summary(self):
         pass
 
+    def has_user_manage_permission(self, user):
+        if not user.is_authenticated:
+            return False
+        if user.is_staff:
+            return True
+        try:
+            parish_user = ParishUser.objects.get(user=user, parish=self)
+            if parish_user.manager:
+                return True
+        except:
+            pass
+        return False
+
     class Meta:
         verbose_name = 'Parafia'
         verbose_name_plural = 'Parafie'#"parishes"
+
 
 class ParishUser(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     note = models.TextField(blank=True)
-    #favorite = models.BooleanField(default=False, help_text='Czy parafia nalezy do ulubionych')
+
+    favorite = models.BooleanField(default=False, help_text='Czy parafia nalezy do ulubionych usera')
+    manager = models.BooleanField(default=False, help_text='Czy mamy uprawnienia do zarządzania parafią')
+    manager_request = models.BooleanField(default=False, help_text='Zadanie dostepu do zarzadzania parafia')
+    manager_request_date = models.DateTimeField(blank=True, null=True, help_text='')
+
+    class Meta:
+        unique_together = ('parish', 'user', )
 
 
 class ParishPlace(models.Model):
@@ -346,6 +367,11 @@ class CourtBook(models.Model):
 
     name = models.CharField(max_length=64, help_text='Nazwa księgi', blank=True)
     office = models.ForeignKey(CourtOffice, on_delete=models.DO_NOTHING)
+
+    # autor rekordu
+    owner = models.ForeignKey(User, null=True, help_text='Osoba dodająca księgę', on_delete=models.DO_NOTHING)
+    owner_note = models.TextField(blank=True, help_text='Notatka')
+    owner_date_created = models.DateTimeField(blank=True, null=True, help_text='Data dodania księgi')
 
     def __str__(self):
         return u'%s' % (self.name)

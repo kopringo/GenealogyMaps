@@ -24,11 +24,19 @@
             </nav>
 
 
-            <h3>Parafia: {{ parish.name }} [<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="text-danger">admin edit</a>]</h3>
-            <p>Adres: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
-            <p>Miejscowość: {{ parish.place }}</p>
-            <p>Wyznanie: {{ parish.get_religion_description }}</p>
-            <p class="nomargin">Data utworzenia: {% if parish.year %}{{ parish.year }}{% else %}brak danych{% endif %}</p>
+            <h3>Parafia: {{ parish.name }} {% if user.is_staff %}
+                    <a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="btn btn-danger">edycja</a>{% endif %}
+                    <a data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/favourite" title="Oznacz jako ważną"><i class="fa fa-star{% if not parish_user.favorite %}-o{% endif %}" id="favourite-icon"></i></a>
+            </h3>
+            <div>
+                <p class="nomargin">Diecezja: {% if parish.diocese %}{{ parish.diocese.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
+                                    Dekanat: {% if parish.deanery %}{{ parish.deanery.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
+                </p>
+                <p class="nomargin">Adres: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
+                <p class="nomargin">Miejscowość: {{ parish.place }}</p>
+                <p class="nomargin">Wyznanie: {{ parish.get_religion_description }}</p>
+                <p class="nomargin">Data utworzenia: {% if parish.year %}{{ parish.year }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
+            </div>
             <br/>
 
 
@@ -56,7 +64,10 @@
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-controls="home" aria-selected="true">Dane</a>
+                        <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-selected="true">Źródła</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-documents2" data-toggle="tab" href="#tab-documents2-content" role="tab" aria-selected="false">Zasoby</a>
                     </li>
                     <!--
                     <li class="nav-item">
@@ -66,10 +77,10 @@
                 </ul>
 
                 <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel" aria-labelledby="tab-documents">
+                    <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel">
                     {% include "parts/documents.html" %}
                     </div>
-                    <div class="tab-pane fade" id="tab-comments-content" role="tabpanel" aria-labelledby="profile-tab">@todo</div>
+                    <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
                 </div>
 
             </div>

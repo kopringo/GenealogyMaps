@@ -30,7 +30,7 @@
                 {% for item in items %}
                     <tr>
                     	<td>{{ item.place }}</td>
-                        <td><a href="{{ item.link }}">{{ item.name}}</a></td>
+                        <td><a href="{{ item.link }}">{{ item.name}}{% if not item.name %}(brak nazwy){% endif %}</a></td>
                         
                         <td>{% if item.year != 0 %} {{ item.year}}{% else %}-{%endif%}</td>
                     </tr>
