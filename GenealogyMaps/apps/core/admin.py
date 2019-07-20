@@ -62,13 +62,13 @@ class SourceAdmin(admin.ModelAdmin):
 
 class ParishAdmin(admin.ModelAdmin):
     list_display = ['name', 'year', 'province', 'county', 'place', 'geo_lat', 'geo_lng', 'diocese', 'deanery', 'access', ]
-    list_filter = ['country', 'province', 'diocese', ]
+    list_filter = ['country', 'province', 'diocese', 'not_exist_anymore', ]
     list_editable = ('access', )
     search_fields = ['name', 'place']
 
     fieldsets = [
         (None, {'fields': ['name', 'year', 'religion', ]}),
-        ('Location', {'fields': ['country', 'province', 'county', 'place', 'address', 'geo_lat', 'geo_lng']}),
+        ('Location', {'fields': ['country', 'province', 'county', 'place', 'address', 'geo_lat', 'geo_lng', 'not_exist_anymore']}),
         ('Location2', {'fields': ['diocese', 'deanery']})
     ]
 
@@ -114,6 +114,7 @@ class CountryAdmin(admin.ModelAdmin):
 class ProvinceAdmin(admin.ModelAdmin):
     list_display = ['name', 'country', 'county_number', 'parish_number', 'public', ]
     list_editable = ('public', )
+    list_filter = ['country', 'public', ]
 
 class CountyAdmin(admin.ModelAdmin):
     list_display = ['name', 'province', 'parish_number', ]

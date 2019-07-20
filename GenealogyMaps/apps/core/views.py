@@ -6,7 +6,7 @@ from datetime import datetime
 import numpy as np
 
 # Create your views here.
-from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser
+from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country
 from .forms import ParishSourceForm
 
 
@@ -276,7 +276,7 @@ def profile(request):
 
 def _load_root_items():
     data ={}
-    data['provinces'] = Province.objects.all().filter(public=True)
+    data['countires'] = Country.objects.all().filter(public=True)
     data['dioceses'] = Diocese.objects.all().filter(public=True)
     return data
 

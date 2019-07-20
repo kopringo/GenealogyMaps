@@ -16,14 +16,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        Country.objects.bulk_create([
-            Country(pk=1, code='pl', name="Polska"),
-            Country(pk=2, code='ua', name="Ukraina"),
-        ])
+        try:
+            Country.objects.bulk_create([
+                Country(pk=1, code='pl', name="Polska"),
+                Country(pk=2, code='ua', name="Ukraina"),
+            ])
+        except:
+            print('country pl, ua failed.')
 
-        Group.objects.bulk_create([
-            Group(pk=1, name='FULL_DATA_ACCESS'),
-        ])
+        try:
+            Group.objects.bulk_create([
+                Group(pk=1, name='FULL_DATA_ACCESS'),
+            ])
+        except:
+            pass
 
         only_selected = False
         only_parishes = options['only_parishes']

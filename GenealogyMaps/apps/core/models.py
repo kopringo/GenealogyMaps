@@ -40,6 +40,10 @@ class Country(models.Model):
 
     code = models.CharField(max_length=2, help_text='2 literowy kod kraju')
     name = models.CharField(max_length=32, help_text='Nazwa kraju')
+    public = models.BooleanField(default=False)
+
+    def get_provinces(self):
+        return Province.objects.filter(country=self, public=True)
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
@@ -180,8 +184,9 @@ SOURCE_GROUP = (
 
 DOCUMENT_GROUP__COPY_TYPE = (
     (1, 'Oryginał'),
-    (2, 'Kopia'),
-    (3, 'Odpis'),
+    (2, 'Duplikat ASC / USC'),
+    #(3, 'Odpis'),
+    (5, 'Kopia dekanalna'),
     (4, 'Sumariusz'),
 )
 
@@ -220,7 +225,7 @@ class Parish(models.Model):
     # nazwa parafii
     name = models.CharField(max_length=32, help_text='Parafia pod wezwaniem')
     religion = models.IntegerField(default=1, choices=RELIGION_TYPE)
-    year = models.IntegerField(blank=True, help_text='Data erygowania')
+    year = models.IntegerField(blank=True, null=True, help_text='Data erygowania')
     access = models.IntegerField(default=0, choices=PARISH_ACCESS)
 
     # lokalizacja
@@ -233,9 +238,10 @@ class Parish(models.Model):
     address = models.CharField(max_length=32, help_text='Adres, ulica i numer')
 
     # lokalizacja
-    geo_lat = models.FloatField(blank=True)
-    geo_lng = models.FloatField(blank=True)
+    geo_lat = models.FloatField(blank=True, null=True)
+    geo_lng = models.FloatField(blank=True, null=True)
     geo_validated = models.BooleanField(default=False)
+    not_exist_anymore = models.BooleanField(default=False, help_text='Parafia już nie istnieje')
 
     # podzial administracyjny koscielny
     diocese = models.ForeignKey(Diocese, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Diecezja')
@@ -248,9 +254,10 @@ class Parish(models.Model):
     phone = models.CharField(max_length=32, help_text=16, blank=True)
     link = models.URLField(blank=True)
 
-    gen_id = models.IntegerField(default=0, unique=True)
+    gen_id = models.IntegerField(unique=True, blank=True, null=True)
     szwa_id = models.CharField(blank=True, max_length=64)  # 53/1847/0
     fs_catalog_id = models.CharField(blank=True, max_length=64)
+    all_done = models.BooleanField(default=False, help_text='Oznacza parafię całkowicie uzuepłnioną (wg wiedzy opiekunów)')
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
