@@ -1,0 +1,50 @@
+{% extends "base.html" %}{% load has_group %}
+
+{% block content %}
+
+<div class="container" >
+    <br/>
+    <div class="row">
+
+
+        <div class="col-md-8">
+            <h3>{{ user.first_name }} {{user.last_name}}</h3>
+
+            <table class="table table-sm">
+            {% for parish_rel in parish_rels %}
+                <tr>
+                    <td>{{ parish_rel.parish.name }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+
+        </div>
+        <div class="col-md-4">
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-9">
+                        <select name="parishes" style="width: 100%;">
+
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary btn-sm" style="width: 100%">Nadaj dostęp</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}
+
+{% block content_js %}
+<script type="text/javascript">
+    $(function(){
+        $('select[name=parishes]').select2();
+    });
+</script>
+{% endblock %}

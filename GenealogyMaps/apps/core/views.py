@@ -30,6 +30,11 @@ def home(request):
     data['favorite_list'] = ParishUser.objects.filter(user=request.user, favorite=True).select_related('parish').all()
     data['manager_list'] = ParishUser.objects.filter(user=request.user, manager=True).select_related('parish').all()
 
+    try:
+        data['country'] = Country.objects.get(code=request.GET.get('country', 'pl'))
+    except:
+        pass
+
     return render(request, 'core/home.html', data)
 
 
@@ -276,7 +281,7 @@ def profile(request):
 
 def _load_root_items():
     data ={}
-    data['countires'] = Country.objects.all().filter(public=True)
+    data['countries'] = Country.objects.all().filter(public=True)
     data['dioceses'] = Diocese.objects.all().filter(public=True)
     return data
 

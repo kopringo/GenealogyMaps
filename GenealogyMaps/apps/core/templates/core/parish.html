@@ -24,7 +24,7 @@
             </nav>
 
 
-            <h3>Parafia: {{ parish.name }} {% if user.is_staff %}
+            <h3>{{ parish.place }}. {{ parish.name }} {% if user.is_staff %}
                     <a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="btn btn-danger">edycja</a>{% endif %}
                     <a data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/favourite" title="Oznacz jako ważną"><i class="fa fa-star{% if not parish_user.favorite %}-o{% endif %}" id="favourite-icon"></i></a>
             </h3>
@@ -32,10 +32,10 @@
                 <p class="nomargin">Diecezja: {% if parish.diocese %}{{ parish.diocese.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
                                     Dekanat: {% if parish.deanery %}{{ parish.deanery.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
                 </p>
-                <p class="nomargin">Adres: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
-                <p class="nomargin">Miejscowość: {{ parish.place }}</p>
+                <p class="nomargin">Adres pocztowy: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
                 <p class="nomargin">Wyznanie: {{ parish.get_religion_description }}</p>
-                <p class="nomargin">Data utworzenia: {% if parish.year %}{{ parish.year }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
+                <p class="nomargin">Ziemia I RP: {% if parish.ziemia_i_rp %}{{ parish.ziemia_i_rp.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
+                <p class="nomargin">Rok utworzenia: {% if parish.year %}{{ parish.year }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
             </div>
             <br/>
 

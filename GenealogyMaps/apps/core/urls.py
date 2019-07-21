@@ -34,6 +34,7 @@ urlpatterns = [
     path('search', views_search.index),
 
     # for admin
+    path('a/users/<int:user_id>', views_admin.users_user),
     path('a/users', views_admin.users),
 
     #path('accounts/register/', views_account.register),

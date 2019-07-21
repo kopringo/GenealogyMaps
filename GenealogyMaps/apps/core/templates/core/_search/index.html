@@ -14,14 +14,15 @@
     <div class="row">
 
 
-        <div class="col-md-9">
+        <div class="col-md-12">
 
 
             <table class="table table-sm">
                 <thead>
                     <tr>
+                        <th title="Rok utworzenia">Rok</th>
+                        <th class="text-left">Miejsowość</th>
                         <th>Parafia</th>
-                        <th class="text-right">Miejsowość</th>
                         <th class="text-right">Powiat</th>
                         <th class="text-right">Województwo</th>
                     </tr>
@@ -29,10 +30,11 @@
                 <tbody>
                     {% for parish in parishes %}
                     <tr>
+                        <td>{% if parish.year %}{{ parish.year }}{% else %}-{% endif %}</td>
+                        <td class="text-left">{{ parish.place }}</td>
                         <td><a href="/parish/{{parish.id}}">{{ parish.name }}</a></td>
-                        <td class="text-right">{{ parish.place }}</td>
                         <td class="text-right">{{ parish.county.name }}</td>
-                        <td class="text-right">{{ parish.province.name }}</td>
+                        <td class="text-right">{{ parish.province.country.code }} / {{ parish.province.name }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

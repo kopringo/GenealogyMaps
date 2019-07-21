@@ -45,3 +45,19 @@ def users(request):
     }
 
     return render(request, 'core/_admin/users.html', data)
+
+@staff_member_required
+def users_user(request, user_id):
+
+    try:
+        user = User.objects.get(pk=user_id)
+    except:
+        return redirect('/a/users')
+
+    data = {
+        'user': user,
+        'parish_rels': ParishUser.objects.all().filter(user=user),
+        #'user_requests': ParishUser.objects.filter(manager_request=True).order_by('-manager_request_date')
+    }
+
+    return render(request, 'core/_admin/users_user.html', data)
