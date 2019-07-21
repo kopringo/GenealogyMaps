@@ -194,3 +194,6 @@ try:
 except Exception as e:
     pass
 
+# raven url jest zmieniany w settings_local wiec tutaj dopisujemy transport bo SNI nie dziala bez tego
+from raven.transport.requests import RequestsHTTPTransport
+RAVEN_CONFIG['transport'] = RequestsHTTPTransport
