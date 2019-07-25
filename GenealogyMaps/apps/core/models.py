@@ -177,8 +177,9 @@ DOCUMENT_SOURCE__FOR = (
 
 SOURCE_GROUP__DEFAULT='Other'
 SOURCE_GROUP = (
-    ('AP', 'Archiwum Państwowe'),
-    ('AD', 'Archiwym Diecezjalne'),
+    ('AP', 'Archiwum Państwowe - PL'),
+    ('AD', 'Archiwum Diecezjalne - PL'),
+    ('PAR', 'Archiwum Parafialne'),
     (SOURCE_GROUP__DEFAULT, 'Inne'),
 )
 
@@ -208,6 +209,7 @@ class Source(models.Model):
     url = models.URLField(max_length=64, blank=True)
 
     group = models.CharField(max_length=32, blank=True, help_text='Grupa źródeł', choices=SOURCE_GROUP, default=SOURCE_GROUP__DEFAULT)
+    #parish = models.ForeignKey('Parish', blank=True, null=True)
 
     def __str__(self):
         return u'%s' % (self.name)

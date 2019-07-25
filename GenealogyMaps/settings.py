@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'GenealogyMaps.apps.core',
 
     'import_export',
+    'django_messages',
     'raven.contrib.django.raven_compat',
 ]
 
@@ -125,6 +127,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = False
 USE_TZ = True
+
+SITE_ID = 1
 
 
 # Static files (CSS, JavaScript, Images)

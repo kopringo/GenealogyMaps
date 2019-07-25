@@ -24,5 +24,7 @@ urlpatterns = [
     #path('accounts/', include('django_registration.backends.one_step.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 
+    path('messages/', include('django_messages.urls')),
+
     path('', include('GenealogyMaps.apps.core.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
