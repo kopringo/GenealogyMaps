@@ -6,7 +6,7 @@ from datetime import datetime
 import numpy as np
 
 # Create your views here.
-from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country
+from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP
 from .forms import ParishSourceForm
 
 
@@ -195,7 +195,16 @@ def document_add(request, parish_id):
 
             saved = True
 
-    return render(request, 'parts/document_add.html', {'form': form, 'saved': saved, 'parish': parish, 'document_group': document_group})
+    source_types = SOURCE_GROUP
+
+    data = {
+        'form': form,
+        'saved': saved,
+        'parish': parish,
+        'document_group': document_group,
+        'source_types': source_types
+    }
+    return render(request, 'parts/document_add.html', data)
 
 
 def documents(request, parish_id):

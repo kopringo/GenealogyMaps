@@ -2,7 +2,9 @@
 
 {% if saved %}
 <div class="form-row_">
-	<div class="alert alert-success" role="alert">Dane zapisane</div>
+
+
+
 	<script type="text/javascript">
 	$(function(){
 		
@@ -13,6 +15,12 @@
         }).done(function(data){
         	
             $('#tab-documents-content').html(data);
+
+            $("#exampleModal").modal('hide');
+            //var $toast = $('<div class="toast" id="toast"><div class="toast-header">Komunikat</div><div class="toast-body">Dane zapisane</div></div>');
+            //$toast.append( $("body"));
+            //$toast.toast({delay: 1500}).toast('show');
+            //$('#toast').toast('show');
         }).fail(function(jqXHR, textStatus){
             console.log('loading /parish/{{ parish.id }}/documents error')
         });
@@ -21,6 +29,33 @@
 	</script>
 </div>
 {% endif %}
+
+    <script type="text/javascript">
+        $(function(){
+            var params = {
+                term: 1,
+                page: 2,
+            };
+
+            $('#source_type').change();
+            $('#id_source').select2({
+                dropdownParent: $('#exampleModal'),
+                placeholder: 'Nazwa archiwum',
+                ajax: {
+                    url: 'https://api.github.com/search/repositories',
+                    data: function (params) {
+                      var query = {
+                        search: params.term,
+                        page: params.page || 1
+                      }
+
+                      // Query parameters will be ?search=[term]&page=[page]
+                      return query;
+                    }
+                 }
+            });
+        });
+    </script>
 
     <div class="form-row">
         <div class="form-group col-md-6">
@@ -84,9 +119,18 @@
 
 
     <div class="form-row">
-
-        <div class="form-group col-md-3">
+        <div class="col-md-12">
             <label for="id_source">Źródło <span class="text-danger">*</span></label>
+        </div>
+        <div class="form-group col-md-3">
+            <select name="source_type" id="source_type" class="form-control">
+                {% for source_type in source_types %}
+                <option value="{{ source_type.0 }}">{{ source_type.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <style>#id_source, .select2{ width: 100% !important; };</style>
             {{form.source}}
             <small class="text-danger">{% for error in form.source.errors %}{{error}} {% endfor %}</small>
         </div>

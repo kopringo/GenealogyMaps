@@ -73,7 +73,13 @@
           </div>
       </div>
       <div class="row" id="main-row-content">
-          {% block content %}{% endblock %}
+          <div class="container">
+            <div class="row">
+
+              {% block content %}{% endblock %}
+
+            </div>
+          </div>
       </div>
     </div>
 
@@ -270,5 +276,6 @@ alert('!');
       ga('create', '{{ GA }}', 'auto');
     </script>
     {% endif %}
+
   </body>
 </html>

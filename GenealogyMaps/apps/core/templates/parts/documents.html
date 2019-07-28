@@ -3,8 +3,9 @@
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th>Zakres lat</th>
                     <th>Typ danych</th>
+                    <th>Zakres lat</th>
+
                     <th>Źródło</th>
                     <th></th>
                 </tr>
@@ -12,7 +13,6 @@
             <tbody>
                 {% for document_group in document_groups %}
                 <tr>
-                    <td><span>{{ document_group.date_from }}-{{ document_group.date_to }}{% if document_group.note %} <span class="fa fa-info-circle" title="{{document_group.note}}"></span>{% endif %}</span></td>
                     <td style="font-family: mono">
                         {% if document_group.type_b %}urodzenia{% else %} {% endif %}
                         {% if document_group.type_d %}zgony{% else %} {% endif %}
@@ -20,6 +20,8 @@
                         {% if document_group.type_a %}aneksy{% else %} {% endif %}
                         {% if document_group.type_sum_only %}sumariusz{% else %}{% endif %}
                     </td>
+                    <td><span>{{ document_group.date_from }}-{{ document_group.date_to }}{% if document_group.note %} <span class="fa fa-info-circle" title="{{document_group.note}}"></span>{% endif %}</span></td>
+
                     <td>{{ document_group.source }}</td>
 
                     <td>

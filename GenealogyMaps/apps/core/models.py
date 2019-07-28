@@ -175,12 +175,12 @@ DOCUMENT_SOURCE__FOR = (
     (DOCUMENT_SOURCE__FOR__COURT, 'Akta sądowe'),
 )
 
-SOURCE_GROUP__DEFAULT='Other'
+SOURCE_GROUP__OTHER='Other'
 SOURCE_GROUP = (
     ('AP', 'Archiwum Państwowe - PL'),
     ('AD', 'Archiwum Diecezjalne - PL'),
     ('PAR', 'Archiwum Parafialne'),
-    (SOURCE_GROUP__DEFAULT, 'Inne'),
+    (SOURCE_GROUP__OTHER, 'Inne'),
 )
 
 DOCUMENT_GROUP__COPY_TYPE = (
@@ -208,8 +208,9 @@ class Source(models.Model):
     short = models.CharField(max_length=16, blank=True)
     url = models.URLField(max_length=64, blank=True)
 
-    group = models.CharField(max_length=32, blank=True, help_text='Grupa źródeł', choices=SOURCE_GROUP, default=SOURCE_GROUP__DEFAULT)
-    #parish = models.ForeignKey('Parish', blank=True, null=True)
+    group = models.CharField(max_length=32, blank=True, help_text='Grupa źródeł', choices=SOURCE_GROUP, default=SOURCE_GROUP__OTHER)
+    parish = models.ForeignKey('Parish', blank=True, null=True, on_delete=models.SET_NULL)
+    note = models.TextField(blank=True)
 
     def __str__(self):
         return u'%s' % (self.name)

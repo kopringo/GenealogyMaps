@@ -2,17 +2,8 @@
 
 {% block content %}
 
-<div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map">
-  <div id="mapid"></div>
-</div>
-<div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
-    <div class="row">
-        <div class="col-md-12">
-
-
-
-
-            <nav aria-label="breadcrumb">
+<div class="col-md-12">
+    <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
                     <li class="breadcrumb-item"><a href="/area/province/{{ parish.province.id }}" class="ajax_link">Województwo {{ parish.province.name }}</a></li>
@@ -22,7 +13,14 @@
                 </ol>
 
             </nav>
+</div>
 
+<div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map">
+  <div id="mapid"></div>
+</div>
+<div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
+    <div class="row">
+        <div class="col-md-12">
 
             <h3>{{ parish.place }}. {{ parish.name }} {% if user.is_staff %}
                     <a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="btn btn-danger">edycja</a>{% endif %}
@@ -59,8 +57,12 @@
                 }
             </style>
 
-            <br/>
-            <div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12">
+          <br/>
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
@@ -83,10 +85,8 @@
                     <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
                 </div>
 
-            </div>
 
-        </div>
-    </div>
+
 </div>
 
 {% endblock %}
@@ -121,6 +121,11 @@
 
             console.log('ok {{parish.id}}');
         }
+
+        $(document).on('change', '#source_type', function(){
+
+        });
+
     });
 </script>
 {% endblock %}
