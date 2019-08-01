@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
+from import_export.fields import Field
 
 from .models import *
 
@@ -15,6 +16,52 @@ class CourtOfficeResource(resources.ModelResource):
     class Meta:
         model = CourtOffice
 
+
+class ParishResource(resources.ModelResource):
+    name = Field(attribute='name', column_name='nazwa')
+    wyznanie = Field(attribute='religion', column_name='wyznanie')
+    year = Field(attribute='year', column_name='rok')
+    country = Field(attribute='country', column_name='kraj')
+    province = Field(attribute='province', column_name='wojewodztwo')
+    county = Field(attribute='county', column_name='powiat')
+    diocese = Field(attribute='diocese', column_name='diecezja')
+    deanery = Field(attribute='deanery', column_name='dekanat')
+    place = Field(attribute='place', column_name='miejscowosc')
+    
+    def before_import_row(self, row, **kwargs):
+        print('before_import_row' ,row, kwargs)
+        
+        try:
+            country = row.get('kraj')
+            (cat, _created) = Country.objects.get(code=country)
+            row['kraj'] = cat
+        except:
+            row['kraj'] = Country.objects.get(pk=1)
+            
+        try:
+            province = row.get('wojewodztwo')
+            (cat, _created) = Province.objects.get(name=province)
+            row['wojewodztwo'] = cat
+        except:
+            row['wojewodztwo'] = None
+    
+    def before_save_instance(self, instance, using_transactions, dry_run):
+        print('before_save_instance', instance)
+    
+    class Meta:
+        model = Parish
+        fields = (
+            'id',
+            'name', 'year', 'wyznanie', 
+            'country', 'province', 'county', 'diocese', 'deanery',
+            'place', 'postal_code', 'postal_place', 'address',
+            'geo_lat', 'geo_lng', 'not_exist_anymore',
+            )
+        export_order = fields
+        
+        #widgets = {
+        #        'published': {'format': '%d.%m.%Y'},
+        #        }
 
 class ParishSourceResource(resources.ModelResource):
     class Meta:
@@ -60,7 +107,7 @@ class SourceAdmin(admin.ModelAdmin):
     pass
 
 
-class ParishAdmin(admin.ModelAdmin):
+class ParishAdmin(ImportExportModelAdmin):
     list_display = ['name', 'year', 'province', 'county', 'place', 'geo_lat', 'geo_lng', 'diocese', 'deanery', 'access', ]
     list_filter = ['country', 'province', 'diocese', 'not_exist_anymore', ]
     list_editable = ('access', )
@@ -76,6 +123,8 @@ class ParishAdmin(admin.ModelAdmin):
         ParishSourceInline,
         #ParishUserInline
     ]
+    
+    resource_class = ParishResource
 
 
 class ParishRefAdmin(admin.ModelAdmin):
