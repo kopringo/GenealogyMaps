@@ -130,6 +130,7 @@ def county(request, c_id):
 
 
 def parish(request, parish_id):
+    """ Widok parafii """
     parish = Parish.objects.get(pk=parish_id)
     documents = ParishSource.objects.filter(parish=parish).order_by('date_from')
 
@@ -147,6 +148,13 @@ def parish(request, parish_id):
     })
 
     return render(request, 'core/parish.html', data)
+
+
+def parish_edit(request, parish_id):
+    """ Panel edycji parafii dla opiekuna """
+    data = {}
+
+    return render(request, 'core/parish_edit.html', data)
 
 
 def parish_list_json(request):

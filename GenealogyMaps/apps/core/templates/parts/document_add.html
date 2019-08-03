@@ -32,21 +32,18 @@
 
     <script type="text/javascript">
         $(function(){
-            var params = {
-                term: 1,
-                page: 2,
-            };
 
             $('#source_type').change();
             $('#id_source').select2({
                 dropdownParent: $('#exampleModal'),
                 placeholder: 'Nazwa archiwum',
                 ajax: {
-                    url: 'https://api.github.com/search/repositories',
+                	delay: 250,
+                    url: '/ajax/sources',
                     data: function (params) {
                       var query = {
-                        search: params.term,
-                        page: params.page || 1
+                        q: params.term,
+                        g: $('#source_type').val()
                       }
 
                       // Query parameters will be ?search=[term]&page=[page]
@@ -129,7 +126,7 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-9">
             <style>#id_source, .select2{ width: 100% !important; };</style>
             {{form.source}}
             <small class="text-danger">{% for error in form.source.errors %}{{error}} {% endfor %}</small>

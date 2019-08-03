@@ -3,7 +3,7 @@ from django.urls import path, re_path
 from django.conf.urls import url, include
 from django.views.generic.base import TemplateView
 
-from . import views, views_courts, views_account, views_search, views_admin
+from . import views, views_courts, views_account, views_search, views_admin, views_ajax
 
 urlpatterns = [
 
@@ -17,6 +17,7 @@ urlpatterns = [
     path('parish/<int:parish_id>/add-document', views.document_add, name='parish_add_document'),
     path('parish/<int:parish_id>/favourite', views.parish_favourite, name='parish_favourite'),
     path('parish/<int:parish_id>/request-access', views.parish_request_access, name='parish_request_access'),
+    path('parish/<int:parish_id>/edit', views.parish_edit),
 
     path('parish/list.json', views.parish_list_json),
 
@@ -32,6 +33,8 @@ urlpatterns = [
     path('courts/book/<int:b_id>', views_courts.book, name='view_courts_book'),
 
     path('search', views_search.index),
+    
+    path('ajax/sources', views_ajax.sources),
 
     # for admin
     path('a/users/<int:user_id>', views_admin.users_user),

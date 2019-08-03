@@ -27,24 +27,45 @@ class ParishResource(resources.ModelResource):
     diocese = Field(attribute='diocese', column_name='diecezja')
     deanery = Field(attribute='deanery', column_name='dekanat')
     place = Field(attribute='place', column_name='miejscowosc')
-    
+
     def before_import_row(self, row, **kwargs):
         print('before_import_row' ,row, kwargs)
-        
+
         try:
             country = row.get('kraj')
-            (cat, _created) = Country.objects.get(code=country)
+            (cat, _created) = Country.objects.get(code__iexact=country)
             row['kraj'] = cat
         except:
             row['kraj'] = Country.objects.get(pk=1)
-            
+
         try:
             province = row.get('wojewodztwo')
-            (cat, _created) = Province.objects.get(name=province)
+            (cat, _created) = Province.objects.get(name__iexact=province)
             row['wojewodztwo'] = cat
         except:
             row['wojewodztwo'] = None
-    
+
+        try:
+            county = row.get('powiat')
+            (cat, _created) = County.objects.get(name__iexact=county)
+            row['powiat'] = cat
+        except:
+            row['powiat'] = None
+
+        try:
+            diocese = row.get('diecezja')
+            (cat, _created) = Diocese.objects.get(name__iexact=diocese)
+            row['diecezja'] = cat
+        except:
+            row['diecezja'] = None
+
+        try:
+            deanery = row.get('dekanat')
+            (cat, _created) = Deanery.objects.get(name__iexact=deanery)
+            row['dekanat'] = cat
+        except:
+            row['dekanat'] = None
+
     def before_save_instance(self, instance, using_transactions, dry_run):
         print('before_save_instance', instance)
     
