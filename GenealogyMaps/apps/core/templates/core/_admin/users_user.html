@@ -5,25 +5,66 @@
 <div class="container" >
     <br/>
     <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/a/users">Użytkownicy</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ user.first_name }} {{user.last_name}}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
 
 
-        <div class="col-md-8">
-            <h3>{{ user.first_name }} {{user.last_name}}</h3>
+        <div class="col-md-12">
+
+
 
             <table class="table table-sm">
-            {% for parish_rel in parish_rels %}
-                <tr>
-                    <td>{{ parish_rel.parish.name }}</td>
-                </tr>
-            {% endfor %}
+                <thead>
+                    <tr>
+                        <th title="Rok utworzenia">Rok</th>
+                        <th class="text-left">Miejsowość</th>
+                        <th>Parafia</th>
+                        <th class="text-right">Powiat</th>
+                        <th class="text-right">Województwo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for parish_rel in parish_rels %}
+                        {% with parish=parish_rel.parish %}
+                        <tr>
+                            <td>{% if parish.year %}{{ parish.year }}{% else %}-{% endif %}</td>
+                            <td class="text-left">{{ parish.place }}</td>
+                            <td><a href="/parish/{{parish.id}}">{{ parish.name }}</a></td>
+                            <td class="text-right">{{ parish.county.name }}</td>
+                            <td class="text-right">{{ parish.province.country.code }} / {{ parish.province.name }}</td>
+                            <td class="text-right"><a href="/a/users/{{ user.id }}?remove={{parish.id}}"><span class="fa fa-trash"></span></a></td>
+                        </tr>
+                        {% endwith %}
+                    {% endfor %}
+                    {% if not parish_rels %}
+                    <tr>
+                        <td colspan="5">Brak przyznanych uprawnień</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+
+            </table>
+
+            <table class="table table-sm">
+
             </table>
 
         </div>
-        <div class="col-md-4">
+        <div class="col-md-12">
             <form method="post">
+                {% csrf_token %}
                 <div class="row">
                     <div class="col-md-9">
-                        <select name="parishes" style="width: 100%;">
+                        <select name="parishes" style="width: 100%;" multiple="multiple">
 
                         </select>
                     </div>
@@ -44,7 +85,19 @@
 {% block content_js %}
 <script type="text/javascript">
     $(function(){
-        $('select[name=parishes]').select2();
+        $('select[name=parishes]').select2({
+            placeholder: 'Podaj miejscowość; min 3 znaki',
+            ajax: {
+                delay: 250,
+                url: '/ajax/parishes',
+                data: function (params) {
+                  var query = {
+                    q: params.term,
+                  }
+                  return query;
+                }
+             }
+        });
     });
 </script>
 {% endblock %}

@@ -35,6 +35,7 @@ urlpatterns = [
     path('search', views_search.index),
     
     path('ajax/sources', views_ajax.sources),
+    path('ajax/parishes', views_ajax.parishes),
 
     # for admin
     path('a/users/<int:user_id>', views_admin.users_user),

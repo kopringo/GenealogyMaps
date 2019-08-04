@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User, Group
-from .models import ParishUser
+from .models import ParishUser, Parish
 
 
 @staff_member_required
@@ -35,13 +35,18 @@ def users(request):
             parish_user.manager_request = False
             parish_user.manager_request_date = None
             parish_user.save()
-        except ParishUser.DoesNotExists:
+        except ParishUser.DoesNotExist:
             return redirect('/a/users?error=parish_user_not_found')
         return redirect('/a/users')
 
+    # parafie zarzadzane przez wiecej osob
+    query = 'SELECT * FROM `core_parish` INNER JOIN (SELECT parish_id, count(*) count FROM `core_parishuser` WHERE manager=1 group by parish_id HAVING count>1) c ON id=c.parish_id'
+    parishes_with_more_managers = Parish.objects.raw(query)
+
     data = {
         'users': User.objects.all().order_by('-id'),
-        'user_requests': ParishUser.objects.filter(manager_request=True).order_by('-manager_request_date')
+        'user_requests': ParishUser.objects.filter(manager_request=True).order_by('-manager_request_date'),
+        'parishes_with_more_managers': parishes_with_more_managers
     }
 
     return render(request, 'core/_admin/users.html', data)
@@ -54,9 +59,42 @@ def users_user(request, user_id):
     except:
         return redirect('/a/users')
 
+    remove_id = request.GET.get('remove', None)
+    if remove_id is not None:
+        try:
+            parish = Parish.objects.get(pk=int(remove_id))
+            parish_user = ParishUser.objects.get(parish=parish, user=user)
+            parish_user.manager = False
+            parish_user.save()
+        except Exception as e:
+            print(e)
+
+        return redirect('/a/users/%d' % user.id)
+
+    if request.POST:
+        parishes = request.POST.getlist('parishes')
+
+        for parish_id in parishes:
+            try:
+                parish = Parish.objects.get(pk=int(parish_id))
+                try:
+                    parish_user = ParishUser.objects.get(parish=parish, user=user)
+                except ParishUser.DoesNotExist:
+                    parish_user = ParishUser()
+
+                parish_user.parish = parish
+                parish_user.user = user
+                parish_user.manager = True
+                parish_user.manager_request = False
+                parish_user.save()
+
+            except Exception as e:
+                print(e)
+
+
     data = {
         'user': user,
-        'parish_rels': ParishUser.objects.all().filter(user=user),
+        'parish_rels': ParishUser.objects.all().filter(user=user, manager=True),
         #'user_requests': ParishUser.objects.filter(manager_request=True).order_by('-manager_request_date')
     }
 

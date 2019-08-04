@@ -29,3 +29,14 @@ def sources(request):
             data['results'].append({'id': item.id, 'text': item.name})
 
     return JsonResponse(data)
+
+@login_required
+def parishes(request):
+    q = request.GET.get('q', None)
+    data = {'results': [], 'pagionation': {}}
+    if q is not None and len(q) >=3:
+        items = Parish.objects.all().filter(Q(name__icontains=q) | Q(place__icontains=q)).order_by('province__name', 'place', 'name')
+        for item in items:
+            data['results'].append({'id': item.id, 'text': '%s, %s: %s (%d)' % (str(item.province), item.place, item.name, item.year)})
+
+    return JsonResponse(data)

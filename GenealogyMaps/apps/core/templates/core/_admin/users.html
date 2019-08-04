@@ -5,14 +5,21 @@
 <div class="container" >
 
     <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">Użytkownicy</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
 
 
         <div class="col-md-12">
 
             <h3>Zarejestrowane konta</h3>
-            <p>Dostęp ograniczony - oznacza dostęp do edycji wybranych parafii.</p>
-            <p>Dostęp pełny - oznacza dostęp do edycji wszystkich parafii.</p>
-
 
             <table class="table table-sm">
                 <colgroup>
@@ -41,7 +48,7 @@
                             {% elif user|has_group:"FULL_DATA_ACCESS" %}
                             <span class="text-success">Dostęp pełny</span> <a href="?switch_access_for_user={{user.id}}">ogranicz</a>
                             {% else %}
-                            <span class="">Dostęp ograniczony <a href="?switch_access_for_user={{user.id}}">zwiększ</a> | <a href="/a/users/{{user.id}}">dostęp</a></span>
+                            <span class="">Dostęp ograniczony <a href="?switch_access_for_user={{user.id}}">zwiększ</a> | <a href="/a/users/{{user.id}}">daj dostęp</a></span>
                             {% endif %}
                         </td>
                     </tr>
@@ -49,6 +56,11 @@
                 </tbody>
 
             </table>
+
+            <small>Dostęp ograniczony - oznacza dostęp do edycji wybranych parafii.<br/>
+                Dostęp pełny - oznacza dostęp do edycji wszystkich parafii.</small>
+
+            <br/><br/>
 
             <h3>Prośby o dostęp do edycji</h3>
             <table class="table table-sm">
@@ -77,14 +89,22 @@
 
                 </tbody>
 
-            </tabel>
+            </table>
+            <br/><br/>
 
+            <h3>Parafie zarządzane przez ponad 1 osobę</h3>
+            <ul>
+            {% for parish in parishes_with_more_managers %}
+                <li>{{ parish }}, @todo-kto</li>
+            {% endfor %}
+            </ul>
+            {% if not parishes_with_more_managers %}
+                <p class="text-success">Brak takich parafii</p>
+            {% endif %}
 
 
         </div>
-        <div class="col-md-6">
 
-        </div>
     </div>
 
 </div>

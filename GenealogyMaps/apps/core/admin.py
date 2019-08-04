@@ -31,25 +31,32 @@ class ParishResource(resources.ModelResource):
     def before_import_row(self, row, **kwargs):
         print('before_import_row' ,row, kwargs)
 
+
+        try:
+            rok = row.get('rok')
+            row['rok'] = int(rok)
+        except:
+            row['rok'] = 0
+
         try:
             country = row.get('kraj')
-            (cat, _created) = Country.objects.get(code__iexact=country)
-            row['kraj'] = cat
-        except:
+            row['kraj'] = Country.objects.get(code__iexact=country)
+        except Exception as e:
+            print(e)
             row['kraj'] = Country.objects.get(pk=1)
 
         try:
             province = row.get('wojewodztwo')
-            (cat, _created) = Province.objects.get(name__iexact=province)
-            row['wojewodztwo'] = cat
-        except:
+            row['wojewodztwo'] = Province.objects.get(name__iexact=province)
+        except Exception as e:
+            print(e)
             row['wojewodztwo'] = None
 
         try:
             county = row.get('powiat')
-            (cat, _created) = County.objects.get(name__iexact=county)
-            row['powiat'] = cat
-        except:
+            row['powiat'] = County.objects.get(name__iexact=county)
+        except Exception as e:
+            print(e)
             row['powiat'] = None
 
         try:
@@ -66,8 +73,11 @@ class ParishResource(resources.ModelResource):
         except:
             row['dekanat'] = None
 
-    def before_save_instance(self, instance, using_transactions, dry_run):
-        print('before_save_instance', instance)
+        print(row)
+        print('')
+
+    #def before_save_instance(self, instance, using_transactions, dry_run):
+    #    print('before_save_instance', instance)
     
     class Meta:
         model = Parish
