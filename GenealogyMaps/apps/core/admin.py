@@ -50,26 +50,24 @@ class ParishResource(resources.ModelResource):
             row['wojewodztwo'] = Province.objects.get(name__iexact=province)
         except Exception as e:
             print(e)
-            row['wojewodztwo'] = None
+            row['wojewodztwo'] = '-'
 
         try:
             county = row.get('powiat')
             row['powiat'] = County.objects.get(name__iexact=county)
         except Exception as e:
-            print(e)
-            row['powiat'] = None
+            print(e, county)
+            row['powiat'] = '-'
 
         try:
             diocese = row.get('diecezja')
-            (cat, _created) = Diocese.objects.get(name__iexact=diocese)
-            row['diecezja'] = cat
+            row['diecezja'] = Diocese.objects.get(name__iexact=diocese)
         except:
             row['diecezja'] = None
 
         try:
             deanery = row.get('dekanat')
-            (cat, _created) = Deanery.objects.get(name__iexact=deanery)
-            row['dekanat'] = cat
+            row['dekanat'] = Deanery.objects.get(name__iexact=deanery)
         except:
             row['dekanat'] = None
 
@@ -78,7 +76,32 @@ class ParishResource(resources.ModelResource):
 
     #def before_save_instance(self, instance, using_transactions, dry_run):
     #    print('before_save_instance', instance)
-    
+
+    def dehydrate_country(self, parish):
+        if parish.country is not None:
+            return '%s' % parish.country.code
+        return ''
+
+    def dehydrate_province(self, parish):
+        if parish.province is not None:
+            return '%s' % parish.province.name
+        return ''
+
+    def dehydrate_county(self, parish):
+        if parish.county is not None:
+            return '%s' % parish.county.name
+        return ''
+
+    def dehydrate_diocese(self, parish):
+        if parish.diocese is not None:
+            return '%s' % parish.diocese.name
+        return ''
+
+    def dehydrate_deanery(self, parish):
+        if parish.deanery is not None:
+            return '%s' % parish.deanery.name
+        return ''
+
     class Meta:
         model = Parish
         fields = (

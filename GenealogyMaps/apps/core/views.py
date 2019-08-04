@@ -154,6 +154,14 @@ def parish_edit(request, parish_id):
     """ Panel edycji parafii dla opiekuna """
     data = {}
 
+    parish = Parish.objects.get(pk=parish_id)
+    if not parish.has_user_manage_permission(request.user):
+        return redirect('/?error=access-denied')
+
+    data.update({
+        'parish': parish,
+    })
+
     return render(request, 'core/parish_edit.html', data)
 
 

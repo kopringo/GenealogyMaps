@@ -22,10 +22,14 @@
     <div class="row">
         <div class="col-md-12">
 
-            <h3>{{ parish.place }}. {{ parish.name }} {% if user.is_staff %}
-                    <a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="btn btn-danger">edycja</a>{% endif %}
+            <h3>{{ parish.place }}. {{ parish.name }}
                     <a data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/favourite" title="Oznacz jako ważną"><i class="fa fa-star{% if not parish_user.favorite %}-o{% endif %}" id="favourite-icon"></i></a>
             </h3>
+            <div style="margin-bottom: 10px;">
+                {% if manager %}<a href="/parish/{{ parish.id }}/edit" class="btn btn-sm btn-primary">edycja</a>{% endif %}
+                {% if user.is_staff %}<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="btn btn-sm btn-danger">edycja admin</a>{% endif %}
+            </div>
+
             <div>
                 <p class="nomargin">Diecezja: {% if parish.diocese %}{{ parish.diocese.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
                                     Dekanat: {% if parish.deanery %}{{ parish.deanery.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
