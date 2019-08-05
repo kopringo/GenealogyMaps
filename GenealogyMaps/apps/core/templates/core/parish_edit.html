@@ -20,7 +20,110 @@
     <div class="row">
         <div class="col-md-12">
 
-            form
+            <form method="post">
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label>Nazwa parafii / wezwanie <span class="text-danger">*</span></label>
+                        {{form.name}}
+                    </div>
+                    <div class="col-md-3">
+                        <label>Rok utworzenia</label>
+                        {{form.year}}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Wyznani</label>
+                        {{form.religion}}
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-3">
+                        <label>Kraj <span class="text-danger">*</span></label>
+                        {{form.country}}
+                    </div>
+                    <div class="col-md-5">
+                        <label>Województwo <span class="text-danger">*</span></label>
+                        {{form.province}}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Powiat <span class="text-danger">*</span></label>
+                        {{form.county}}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Miejscowość <span class="text-danger">*</span></label>
+                        {{form.place}}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Miejscowość (nazwa historyczna)</label>
+                        {{form.place2}}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Kod</label>
+                        {{form.postal_code}}
+                    </div>
+                    <div class="col-md-3">
+                        <label>Poczta</label>
+                        {{form.postal_place}}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Adres</label>
+                        {{form.address}}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label>Diecezja</label>
+                        {{form.diocese}}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Dekanat</label>
+                        {{form.deanery}}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label>Ziema I RP</label>
+                        {{form.ziemia_i_rp}}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <br/>
+                    <div class="col-md-12">
+                        <label class="form-check-label">{{form.not_exist_anymore}} Parafia już nie istnieje.</label>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-check-label">{{form.all_done}} Parafia wypełniona w całości</label>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-check-label">{{form.geo_validated}} Pozycja parafii na mapie poprawna</label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-3">
+                        <label>GEO LAT</label>
+                        {{ form.geo_lat }}
+                    </div>
+                    <div class="col-md-3">
+                        <label>GEO LNG</label>
+                        {{ form.geo_lng }}
+                    </div>
+                </div>
+
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                    </div>
+                </div>
+            </form>
 
 
         </div>

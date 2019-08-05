@@ -7,7 +7,7 @@ import numpy as np
 
 # Create your views here.
 from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP
-from .forms import ParishSourceForm
+from .forms import ParishSourceForm, ParishEditForm
 
 
 def __prepare_common_params():
@@ -158,8 +158,18 @@ def parish_edit(request, parish_id):
     if not parish.has_user_manage_permission(request.user):
         return redirect('/?error=access-denied')
 
+    form = ParishEditForm(instance=parish)
+
+    if request.method == 'POST':
+        form = ParishEditForm(request.POST, instance=parish)
+        if form.is_valid():
+            form.save()
+
+            return redirect('/parish/%d/edit?saved=1' % parish.id)
+
     data.update({
         'parish': parish,
+        'form': form
     })
 
     return render(request, 'core/parish_edit.html', data)

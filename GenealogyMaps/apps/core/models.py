@@ -191,6 +191,19 @@ DOCUMENT_GROUP__COPY_TYPE = (
     (4, 'Sumariusz'),
 )
 
+COURT_BOOK_TYPE = (
+    ('grodzkie', 'Grodzkie'),
+    ('ziemskie', 'Ziemskie'),
+    ('podkomorskie', 'Podkomorskie'),
+    ('biskupie', 'Biskupie'),
+    ('bartne', 'Bartne'),
+    ('wojtowskie', 'Wójtowskie'),
+    ('radzieckie', 'Radzieckie'),
+    ('lawnicze', 'Ławnicze'),
+    ('kapicjana', 'Kapicjana'),
+    ('inne', 'Inne'),
+)
+
 class SourceRef(models.Model):
 
     copy_type = models.IntegerField(default=1, choices=DOCUMENT_GROUP__COPY_TYPE)
@@ -236,6 +249,7 @@ class Parish(models.Model):
     province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING, help_text='Województwo')
     county = models.ForeignKey(County, help_text='Powiat', on_delete=models.DO_NOTHING)
     place = models.CharField(max_length=32, help_text='Miejscowość')
+    place2 = models.CharField(max_length=32, help_text='Miejscowość, nazwa historyczna', blank=True)
     postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')
     postal_place = models.CharField(max_length=32, help_text='Poczta')
     address = models.CharField(max_length=32, help_text='Adres, ulica i numer')
@@ -251,7 +265,7 @@ class Parish(models.Model):
     deanery = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat')
 
     # podzial ziem I RP.
-    ziemia_i_rp = models.ForeignKey(ZiemiaIRP, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
+    ziemia_i_rp = models.ForeignKey(ZiemiaIRP, blank=True, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
 
     # kontakt
     phone = models.CharField(max_length=32, help_text=16, blank=True)
@@ -278,13 +292,30 @@ class Parish(models.Model):
         diocese_str = ''
         deanery_str = ''
         geo_str = ''
+        geo_str2 = ''
+        missing_sth = ''
+        not_exists = ''
+        all_done = ''
+
         if not self.diocese:
-            diocese_str = '<span class="text-danger" title="brak diecezji">D </span>'
+            diocese_str = 'brak diecezji'
         if not self.deanery:
-            deanery_str = '<span class="text-danger" title="brak dekanatu">D </span>'
+            deanery_str = 'brak dekanatu'
+        if diocese_str != '' or deanery_str != '':
+            missing_sth = '<span class="text-danger fa fa-exclamation-triangle" title="%s %s"></span>' % (diocese_str, deanery_str)
+
         if (not self.geo_lat) or (not self.geo_lng):
-            geo_str = '<span class="text-danger" title="brak współrzędnych">GEO </span>'
-        return u'%s%s%s' % (diocese_str, deanery_str, geo_str)
+            geo_str = '<span class="text-danger fa fa-map-marker" title="brak współrzędnych"></span>'
+        if self.geo_validated:
+            geo_str2 = '<span class="text-success fa fa-map-marker" title="współrzedne zatwierdzone"></span>'
+
+        if self.not_exist_anymore:
+            not_exists = '<span class="text-danger fa fa-ban" title="Parafia nie istnieje obecnie."></span>'
+
+        if self.all_done:
+            all_done = '<span class="text-success fa fa-check-circle" title="Parafia w pełni uzupełniona."></span>'
+
+        return u'%s%s%s%s%s' % (missing_sth, geo_str, geo_str2, not_exists, all_done)
 
     def has_user_manage_permission(self, user):
         if not user.is_authenticated:
@@ -342,6 +373,7 @@ class ParishSource(SourceRef):
     type_d = models.BooleanField(default=False, help_text='Akty zgonu')
     type_m = models.BooleanField(default=False, help_text='Akty małżeństwa')
     type_a = models.BooleanField(default=False, help_text='Alegaty')
+    type_zap = models.BooleanField(default=False, help_text='Zapowiedzi')
     type_sum_only = models.BooleanField(default=False, help_text='Dostępny tylko sumariusz')
 
     date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
@@ -372,6 +404,8 @@ class CourtOffice(models.Model):
 
     name = models.CharField(max_length=32, help_text='Nazwa kancelarii')
 
+    country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
+
     # podzial ziem I RP.
     ziemia_i_rp = models.ForeignKey(ZiemiaIRP, blank=True, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
 
@@ -389,6 +423,7 @@ class CourtBook(models.Model):
 
     name = models.CharField(max_length=64, help_text='Nazwa księgi', blank=True)
     office = models.ForeignKey(CourtOffice, on_delete=models.DO_NOTHING)
+    type = models.CharField(max_length=32, blank=True, choices=COURT_BOOK_TYPE)
 
     # autor rekordu
     owner = models.ForeignKey(User, null=True, help_text='Osoba dodająca księgę', on_delete=models.DO_NOTHING)
