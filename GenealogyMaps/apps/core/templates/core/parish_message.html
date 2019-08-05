@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-md-12">
+    <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+                    <li class="breadcrumb-item"><a href="/area/province/{{ parish.province.id }}" class="ajax_link">Województwo {{ parish.province.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/area/county/{{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/parish/{{ parish.id }}">{{ parish.name }}</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Wiadomość do opiekuna</li>
+                </ol>
+
+            </nav>
+</div>
+
+<div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
+    <div class="row">
+        <div class="col-md-12">
+
+            {% if saved %}<div class="alert alert-success">Wiadomość wysłana</div>{% endif %}
+
+            <form method="post">
+
+
+                {{form}}
+
+                {% csrf_token %}
+
+                <div class="form-row" style="margin-top: 10px;">
+
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-primary">Wyślij</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

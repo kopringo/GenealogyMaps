@@ -1,4 +1,11 @@
 <div class="row">
+    <div class="col-md-12 form-check" style="margin-bottom: 20px;">
+        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="B"> urodzenia</label></label>&nbsp;&nbsp;
+        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="D"> zgony</label></label>&nbsp;&nbsp;
+        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="M"> małżeństwa</label></label>&nbsp;&nbsp;
+        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="ZAP"> zapowiedzi</label></label>&nbsp;&nbsp;
+        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="A"> aneksy</label></label>&nbsp;&nbsp;
+    </div>
     <div class="col-md-12">
         <table class="table table-sm">
             <thead>
@@ -12,12 +19,13 @@
             </thead>
             <tbody>
                 {% for document_group in document_groups %}
-                <tr>
+                <tr class="document_group {%if document_group.type_b%}B{%endif%} {%if document_group.type_d%}D{%endif%} {%if document_group.type_m%}M{%endif%} {%if document_group.type_zap%}ZAP{%endif%} {%if document_group.type_a%}A{%endif%}">
                     <td style="font-family: mono">
                         {% if document_group.type_b %}urodzenia{% else %} {% endif %}
                         {% if document_group.type_d %}zgony{% else %} {% endif %}
                         {% if document_group.type_m %}małżeństwa{% else %} {% endif %}
                         {% if document_group.type_a %}aneksy{% else %} {% endif %}
+                        {% if document_group.type_zap %}zapowiedzi{% else %} {% endif %}
                         {% if document_group.type_sum_only %}sumariusz{% else %}{% endif %}
                     </td>
                     <td><span>{{ document_group.date_from }}-{{ document_group.date_to }}{% if document_group.note %} <span class="fa fa-info-circle" title="{{document_group.note}}"></span>{% endif %}</span></td>
@@ -47,7 +55,12 @@
         <button type="button" id="btn-add-document" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-remote="/parish/{{parish.id}}/add-document">Dodaj</button>
         {% endif %}
         {% if not manager %}
-        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/request-access">Prośba o dostęp</button>
+            {% if manager_exists %}
+        <p>Parafia zarządzana jest przez <strong>{{manager_exists.first_name}} {{manager_exists.last_name}}</strong>. <a href="/parish/{{parish.id}}/message">Wiadomość do opiekuna</a></p>
+            {% endif %}
+            {% if not manager_exists %}
+                <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/request-access">Prośba o dostęp do edycji</button>
+            {% endif %}
         {% endif %}
     </div>
 </div>

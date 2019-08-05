@@ -4,6 +4,14 @@ from django import forms
 from .models import ParishSource, CourtBook, Parish
 
 
+class ParishMessageForm(forms.Form):
+    title = forms.CharField(max_length=64, label='Tytuł wiadomości')
+    body = forms.CharField(widget=forms.Textarea, label='Treść:')
+
+    title.widget.attrs['class'] = 'form-control'
+    body.widget.attrs['class'] = 'form-control'
+
+
 class ParishEditForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):

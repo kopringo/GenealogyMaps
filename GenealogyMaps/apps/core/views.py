@@ -7,7 +7,7 @@ import numpy as np
 
 # Create your views here.
 from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP
-from .forms import ParishSourceForm, ParishEditForm
+from .forms import ParishSourceForm, ParishEditForm, ParishMessageForm
 
 
 def __prepare_common_params():
@@ -139,12 +139,20 @@ def parish(request, parish_id):
     except ParishUser.DoesNotExist:
         parish_user = None
 
+    # czy istnieje manager
+    manager_exists = None
+    try:
+        manager_exists = ParishUser.objects.filter(parish=parish, manager=True)[0].user
+    except:
+        pass
+
     data = __prepare_common_params()
     data.update({
         'parish': parish,
         'document_groups': documents,
         'manager': parish.has_user_manage_permission(request.user),
-        'parish_user': parish_user
+        'parish_user': parish_user,
+        'manager_exists': manager_exists
     })
 
     return render(request, 'core/parish.html', data)
@@ -173,6 +181,47 @@ def parish_edit(request, parish_id):
     })
 
     return render(request, 'core/parish_edit.html', data)
+
+
+def parish_message(request, parish_id):
+    """ Panel edycji parafii dla opiekuna """
+    data = {}
+
+    parish = Parish.objects.get(pk=parish_id)
+    saved = False
+    form = ParishMessageForm()
+
+    if request.method == 'POST':
+        form = ParishMessageForm(request.POST)
+        if form.is_valid():
+
+
+            manager_exists = None
+            try:
+                manager_exists = ParishUser.objects.filter(parish=parish, manager=True)[0].user
+            except:
+                pass
+
+            from django_messages.models import Message
+            message = Message()
+            message.subject = form.cleaned_data['title']
+            message.body = form.cleaned_data['body']
+            message.sender = request.user
+            message.recipient = manager_exists
+            message.sent_at = datetime.utcnow()
+            message.save()
+
+            saved = True
+
+
+
+    data.update({
+        'parish': parish,
+        'form': form,
+        'saved': saved
+    })
+
+    return render(request, 'core/parish_message.html', data)
 
 
 def parish_list_json(request):

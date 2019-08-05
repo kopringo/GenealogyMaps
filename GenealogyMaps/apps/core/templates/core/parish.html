@@ -132,6 +132,21 @@
 
         });
 
+        $(function(){
+            $(document).on('click', '.filter-type', function(){
+                $('.document_group').hide();
+                $( ".filter-type" ).each(function( index ) {
+                    if( $(this).is(':checked') ){
+                        var type = $(this).data('type');
+                        $('.document_group.'+type).show();
+                    }
+                });
+
+
+                //
+            });
+        });
+
     });
 </script>
 {% endblock %}

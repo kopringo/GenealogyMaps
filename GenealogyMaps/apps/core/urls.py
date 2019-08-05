@@ -18,6 +18,7 @@ urlpatterns = [
     path('parish/<int:parish_id>/favourite', views.parish_favourite, name='parish_favourite'),
     path('parish/<int:parish_id>/request-access', views.parish_request_access, name='parish_request_access'),
     path('parish/<int:parish_id>/edit', views.parish_edit),
+    path('parish/<int:parish_id>/message', views.parish_message),
 
     path('parish/list.json', views.parish_list_json),
 
