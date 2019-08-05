@@ -154,6 +154,7 @@ class ParishSourceInline(admin.TabularInline):
     extra = 0
     fields = ['source', 'copy_type', 'type_b', 'type_m', 'type_d', 'type_a', 'type_sum_only', 'date_from', 'date_to', 'user', 'date_modified']
     readonly_fields = ('source', 'user', 'date_modified')
+    fk_name = 'parish'
 
 class SourceAdmin(admin.ModelAdmin):
     list_display = ['name', 'short', 'group']

@@ -30,7 +30,12 @@
                     </td>
                     <td><span>{{ document_group.date_from }}-{{ document_group.date_to }}{% if document_group.note %} <span class="fa fa-info-circle" title="{{document_group.note}}"></span>{% endif %}</span></td>
 
-                    <td>{{ document_group.source }}</td>
+                    <td>{% if document_group.source.group == 'PAR' %}
+                            Archiwum parafialne: <strong>{{ document_group.source_parish.name }}, {{ document_group.source_parish.place }}</strong>
+                        {% else %}
+                            {{ document_group.source }}
+                        {% endif %}
+                    </td>
 
                     <td>
                         {% if document_group.link %}

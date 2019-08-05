@@ -222,7 +222,6 @@ class Source(models.Model):
     url = models.URLField(max_length=64, blank=True)
 
     group = models.CharField(max_length=32, blank=True, help_text='Grupa źródeł', choices=SOURCE_GROUP, default=SOURCE_GROUP__OTHER)
-    parish = models.ForeignKey('Parish', blank=True, null=True, on_delete=models.SET_NULL)
     note = models.TextField(blank=True)
 
     def __str__(self):
@@ -365,8 +364,9 @@ class ParishComment(models.Model):
 
 class ParishSource(SourceRef):
 
-    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia', related_name='parish')
     source = models.ForeignKey(Source, on_delete=models.DO_NOTHING)
+    source_parish = models.ForeignKey(Parish, blank=True, null=True, on_delete=models.SET_NULL, related_name='source_parish')
     
     #type = models.IntegerField(choices=DOCUMENT_GROUP__TYPE, help_text='Typ dokumentów', default=0)
     type_b = models.BooleanField(default=False, help_text='Akty urodzenia')

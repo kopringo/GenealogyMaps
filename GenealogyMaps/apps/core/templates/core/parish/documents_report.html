@@ -1,0 +1,39 @@
+<table class="table table-sm">
+    <colgroup>
+        <col width="200"/>
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Rodzaj dokumentów</th>
+            <th>Zakres lat</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Urodzenia</td>
+            <td>{% for item in document_groups_sorted.b %}{{item.0}}-{{item.1}}, {% endfor %}</td>
+        </tr>
+        <tr>
+            <td>Małżeństwa</td>
+            <td>{% for item in document_groups_sorted.m %}{{item.0}}-{{item.1}}, {% endfor %}</td>
+        </tr>
+        <tr>
+            <td>Zgony</td>
+            <td>{% for item in document_groups_sorted.d %}{{item.0}}-{{item.1}}, {% endfor %}</td>
+        </tr>
+        {% if document_groups_sorted.zap %}
+        <tr>
+            <td>Zapowiedzi</td>
+            <td>{% for item in document_groups_sorted.zap %}{{item.0}}-{{item.1}}, {% endfor %}</td>
+        </tr>
+        {% endif %}
+        {% if document_groups_sorted.a %}
+        <tr>
+            <td>Aneksy</td>
+            <td>{% for item in document_groups_sorted.a %}{{item.0}}-{{item.1}}, {% endfor %}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+
+
+</table>

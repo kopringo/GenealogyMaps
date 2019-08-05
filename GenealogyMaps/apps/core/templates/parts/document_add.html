@@ -33,6 +33,16 @@
     <script type="text/javascript">
         $(function(){
 
+            var group = '{{ document_group.source.group }}';
+            var source_id = '{{ document_group.source.id }}';
+            var source_parish_id = '{{ document_group.source_parish.id }}';
+            //console.log(group);
+            console.log(source_id);
+            console.log(source_parish_id);
+            if(group){
+                $('#source_type').val(group);
+            }
+
             $('#source_type').change();
             $('#id_source').select2({
                 dropdownParent: $('#exampleModal'),
@@ -51,6 +61,24 @@
                     }
                  }
             });
+            $('#id_source_parish').select2({
+                dropdownParent: $('#exampleModal'),
+                placeholder: 'Nazwa parafii',
+                ajax: {
+                	delay: 250,
+                    url: '/ajax/sources',
+                    data: function (params) {
+                      var query = {
+                        q: params.term,
+                        g: $('#source_type').val()
+                      }
+
+                      // Query parameters will be ?search=[term]&page=[page]
+                      return query;
+                    }
+                 }
+            });
+
         });
     </script>
 
@@ -129,10 +157,15 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="form-group col-md-9">
+        <div class="form-group col-md-9" id="select-source">
             <style>#id_source, .select2{ width: 100% !important; };</style>
             {{form.source}}
             <small class="text-danger">{% for error in form.source.errors %}{{error}} {% endfor %}</small>
+        </div>
+        <div class="form-group col-md-9" id="select-source-parish" style="display: none;">
+            <style>#id_source_parish, .select2{ width: 100% !important; };</style>
+            <select name="source_parish" id="id_source_parish" class="form-control"></select>
+            <small class="text-danger">{% for error in form.source_parish.errors %}{{error}} {% endfor %}</small>
         </div>
 
         <!--

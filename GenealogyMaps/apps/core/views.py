@@ -133,6 +133,7 @@ def parish(request, parish_id):
     """ Widok parafii """
     parish = Parish.objects.get(pk=parish_id)
     documents = ParishSource.objects.filter(parish=parish).order_by('date_from')
+    documents_sorted = __prepare_report(documents)
 
     try:
         parish_user = ParishUser.objects.get(parish=parish, user=request.user)
@@ -150,6 +151,7 @@ def parish(request, parish_id):
     data.update({
         'parish': parish,
         'document_groups': documents,
+        'document_groups_sorted': documents_sorted,
         'manager': parish.has_user_manage_permission(request.user),
         'parish_user': parish_user,
         'manager_exists': manager_exists
@@ -254,18 +256,33 @@ def document_add(request, parish_id):
             pass
 
     if request.method == 'POST':
-        form = ParishSourceForm(request.POST, instance=document_group)
+        post = request.POST.copy()
+        par = False
+        # hack, jesli wybieramy archiwum parafialne to ustawiamy na sztywno source jeden
+        # i relacja idzie do parish
+        if post.get('source_type', None) == 'PAR':
+            par = True
+            post['source'] = Source.objects.filter(group='PAR')[0].id
+
+        form = ParishSourceForm(post, instance=document_group)
 
         if form.is_valid():
             document_group = form.save(commit=False)
             document_group.parish = parish
             document_group.user = request.user
-            document_group.save()
+
             if document_group is None:
                 document_group.date_created = datetime.utcnow()
             else:
                 document_group.date_modified = datetime.utcnow()
 
+            if par:
+                try:
+                    document_group.source_parish = Parish.objects.get(pk=int(post.get('source_parish')))
+                except:
+                    pass
+
+            document_group.save()
             parish.refresh_summary()
 
             saved = True
@@ -361,6 +378,32 @@ def contact(request):
 
 def profile(request):
     return render(request, 'accounts/profile.html')
+
+
+def __prepare_report(sorted_documents):
+    all = {
+        'b': [],
+        'd': [],
+        'm': [],
+        'a': [],
+        'zap': []
+    }
+
+    for document in sorted_documents:
+        date_from = document.date_from
+        date_to = document.date_to
+        for attr in ['b', 'd', 'm', 'a', 'zap']:
+            if getattr(document, 'type_%s' % attr):
+                sizeof = len(all[attr])
+                if sizeof > 0:
+                    last = all[attr][sizeof-1]
+                    if last[1] >= date_from:
+                        # nakladaja sie
+                        all[attr][sizeof-1] = (all[attr][-1:][0][0], date_to)
+                        continue
+                all[attr].append((date_from, date_to))
+    return all
+
 
 
 def _load_root_items():

@@ -61,6 +61,15 @@
                 p.nomargin{
                     margin: 0px;
                 }
+                .select2-results__option {
+                    padding: 0px 6px !important;
+                }
+                .select2-selection__rendered{
+                    padding: 4px !important;
+                }
+                .select2-selection{
+                    height: initial !important;
+                }
             </style>
 
         </div>
@@ -75,6 +84,9 @@
                         <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-selected="true">Źródła</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" id="tab-documents3" data-toggle="tab" href="#tab-documents3-content" role="tab" aria-selected="true"><strong>Źródła - raport</strong></a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" id="tab-documents2" data-toggle="tab" href="#tab-documents2-content" role="tab" aria-selected="false">Zasoby</a>
                     </li>
                     <!--
@@ -86,7 +98,10 @@
 
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel">
-                    {% include "parts/documents.html" %}
+                        {% include "parts/documents.html" %}
+                    </div>
+                    <div class="tab-pane fade" id="tab-documents3-content" role="tabpanel">
+                        {% include "core/parish/documents_report.html" %}
                     </div>
                     <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
                 </div>
@@ -129,7 +144,13 @@
         }
 
         $(document).on('change', '#source_type', function(){
-
+            if( $(this).val() == 'PAR' ){
+                $('#select-source').hide();
+                $('#select-source-parish').show();
+            } else {
+                $('#select-source').show();
+                $('#select-source-parish').hide();
+            }
         });
 
         $(function(){
