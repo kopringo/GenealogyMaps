@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -28,6 +29,14 @@ PARISH_ACCESS = (
     (PARISH_ACCESS__OPEN, 'Otwarty'),
     (PARISH_ACCESS__CLOSED, 'Zamknięty'),
 )
+
+def my_year_validator(value):
+    if value < 1000 or value > 2100:
+        raise ValidationError(
+            _('%(value)s is not a correcrt year!'),
+            params={'value': value},
+        )
+
 
 ###############################################################################
 # Lokalizacja
@@ -177,9 +186,11 @@ DOCUMENT_SOURCE__FOR = (
 
 SOURCE_GROUP__OTHER='Other'
 SOURCE_GROUP = (
-    ('AP', 'Archiwum Państwowe - PL'),
-    ('AD', 'Archiwum Diecezjalne - PL'),
+    ('AP', 'Archiwa Państwowe (PL)'),
+    ('AD', 'Archiwa Kościelne (PL)'),
     ('PAR', 'Archiwum Parafialne'),
+    ('BIB', 'Biblioteki'),
+    ('USC', 'Urzędy Stanu Cywilnego'),
     (SOURCE_GROUP__OTHER, 'Inne'),
 )
 
@@ -212,6 +223,12 @@ class SourceRef(models.Model):
     date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
     user = models.ForeignKey(User, null=True, help_text='Autor rekordu', on_delete=models.DO_NOTHING)
 
+    def copy_type_str(self):
+        for ct in DOCUMENT_GROUP__COPY_TYPE:
+            if ct[0] == self.copy_type:
+                return ct[1]
+        return ''
+
     class Meta:
         abstract = True
 
@@ -223,6 +240,13 @@ class Source(models.Model):
 
     group = models.CharField(max_length=32, blank=True, help_text='Grupa źródeł', choices=SOURCE_GROUP, default=SOURCE_GROUP__OTHER)
     note = models.TextField(blank=True)
+
+    # 
+    country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
+    place = models.CharField(max_length=32, help_text='Miejscowość', blank=True)
+    address = models.CharField(max_length=32, help_text='Adres, ulica i numer', blank=True)
+    geo_lat = models.FloatField(blank=True, null=True)
+    geo_lng = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return u'%s' % (self.name)
@@ -240,7 +264,7 @@ class Parish(models.Model):
     # nazwa parafii
     name = models.CharField(max_length=32, help_text='Parafia pod wezwaniem')
     religion = models.IntegerField(default=1, choices=RELIGION_TYPE)
-    year = models.IntegerField(blank=True, null=True, help_text='Data erygowania')
+    year = models.IntegerField(blank=True, null=True, help_text='Data erygowania', validators=[my_year_validator])
     access = models.IntegerField(default=0, choices=PARISH_ACCESS)
 
     # lokalizacja
@@ -274,6 +298,10 @@ class Parish(models.Model):
     szwa_id = models.CharField(blank=True, max_length=64)  # 53/1847/0
     fs_catalog_id = models.CharField(blank=True, max_length=64)
     all_done = models.BooleanField(default=False, help_text='Oznacza parafię całkowicie uzuepłnioną (wg wiedzy opiekunów)')
+
+    places = models.TextField(help_text='Lista miejscowości', blank=True)
+    main_parish = models.ForeignKey('Parish', blank=True, null=True, on_delete=models.SET_NULL, related_name='main_parish2', \
+                                    help_text='Parafia główna jeśli to jest filia')
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
@@ -376,8 +404,8 @@ class ParishSource(SourceRef):
     type_zap = models.BooleanField(default=False, help_text='Zapowiedzi')
     type_sum_only = models.BooleanField(default=False, help_text='Dostępny tylko sumariusz')
 
-    date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
-    date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
+    date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800, validators=[my_year_validator])
+    date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900, validators=[my_year_validator])
 
     def __str__(self):
         return u'%s (%s - %s)' % (self.parish, str(self.date_from), str(self.date_to))
@@ -405,6 +433,13 @@ class CourtOffice(models.Model):
     name = models.CharField(max_length=32, help_text='Nazwa kancelarii')
 
     country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
+    province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING, help_text='Województwo')
+    county = models.ForeignKey(County, null=True, help_text='Powiat', on_delete=models.DO_NOTHING)
+    place = models.CharField(max_length=32, help_text='Miejscowość', blank=True)
+    address = models.CharField(max_length=32, help_text='Adres, ulica i numer', blank=True)
+
+    geo_lat = models.FloatField(blank=True, null=True)
+    geo_lng = models.FloatField(blank=True, null=True)
 
     # podzial ziem I RP.
     ziemia_i_rp = models.ForeignKey(ZiemiaIRP, blank=True, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')

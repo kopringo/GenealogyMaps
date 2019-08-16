@@ -21,15 +21,21 @@
 <div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
     <div class="row">
         <div class="col-md-12">
+        	<style>
+        	h3>.fa{
+        		width: 28px;
+        		text-align: center;
+        	}
+        	</style>
 
-            <h3>{{ parish.place }}. {{ parish.name }}
-                    <a data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/favourite" title="Oznacz jako ważną"><i class="fa fa-star{% if not parish_user.favorite %}-o{% endif %}" id="favourite-icon"></i></a>
-
+            <h3>{{ parish.place }}{% if parish.place2 %} (<i>{{parish.place2}}</i>){% endif %}. {{ parish.name }}
+                    <a data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/favourite" title="Oznacz jako ważną dla Ciebie"><i class="fa fa-star{% if not parish_user.favorite %}-o{% endif %}" id="favourite-icon"></i></a>
+					{{ parish.any_issues |safe}}
             </h3>
             <div style="margin-bottom: 10px;">
                 {% if manager %}<a href="/parish/{{ parish.id }}/edit" class="btn btn-sm btn-primary">edycja</a>{% endif %}
                 {% if user.is_staff %}<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="btn btn-sm btn-danger">edycja admin</a>{% endif %}
-                {{ parish.any_issues |safe}}
+                
             </div>
 
             <div>
@@ -106,6 +112,17 @@
                     <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
                 </div>
 
+				{% if user.is_staff and managers %}
+				<br/>
+		        <div class="alert alert-danger">
+		        	<p>Lista opiekunów (info dla administratora)</p>
+		        	<ul>
+		        	{% for p_manager in managers %}
+		        		<li><a href="/a/users/{{p_manager.user.id}}" target="_blank">{{p_manager.user.first_name}} {{p_manager.user.last_name}}</a>
+		        	{% endfor %}
+		        	</ul>
+		        </div>
+		        {% endif %}
 
 
 </div>

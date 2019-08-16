@@ -14,7 +14,7 @@ def index(request):
         return redirect('/')
     if len(q) < 3:
         return redirect('/?error=to-short')
-    parishes = Parish.objects.filter(Q(name__icontains=q) | Q(place__icontains=q)).order_by('year')
+    parishes = Parish.objects.filter(Q(name__icontains=q) | Q(place__icontains=q) | Q(place2__icontains=q) ).order_by('year')
     data['parishes'] = parishes
 
     return render(request, 'core/_search/index.html', data)

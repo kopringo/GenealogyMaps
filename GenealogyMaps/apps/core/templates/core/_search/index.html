@@ -31,7 +31,7 @@
                     {% for parish in parishes %}
                     <tr>
                         <td>{% if parish.year %}{{ parish.year }}{% else %}-{% endif %}</td>
-                        <td class="text-left">{{ parish.place }}</td>
+                        <td class="text-left">{{ parish.place }}{% if parish.place2 %} (<i>{{parish.place2}}</i>){% endif %}</td>
                         <td><a href="/parish/{{parish.id}}">{{ parish.name }}</a></td>
                         <td class="text-right">{{ parish.county.name }}</td>
                         <td class="text-right">{{ parish.province.country.code }} / {{ parish.province.name }}</td>

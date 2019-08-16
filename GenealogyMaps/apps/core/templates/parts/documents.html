@@ -1,8 +1,8 @@
 <div class="row">
     <div class="col-md-12 form-check" style="margin-bottom: 20px;">
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="B"> urodzenia</label></label>&nbsp;&nbsp;
-        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="D"> zgony</label></label>&nbsp;&nbsp;
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="M"> małżeństwa</label></label>&nbsp;&nbsp;
+        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="D"> zgony</label></label>&nbsp;&nbsp;
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="ZAP"> zapowiedzi</label></label>&nbsp;&nbsp;
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="A"> aneksy</label></label>&nbsp;&nbsp;
     </div>
@@ -10,9 +10,9 @@
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th>Typ danych</th>
+                    <th>Rodzja księgi</th>
                     <th>Zakres lat</th>
-
+					<th>Typ dokumentu</th>
                     <th>Źródło</th>
                     <th></th>
                 </tr>
@@ -30,6 +30,8 @@
                     </td>
                     <td><span>{{ document_group.date_from }}-{{ document_group.date_to }}{% if document_group.note %} <span class="fa fa-info-circle" title="{{document_group.note}}"></span>{% endif %}</span></td>
 
+
+					<td>{{ document_group.copy_type_str }}</td>
                     <td>{% if document_group.source.group == 'PAR' %}
                             Archiwum parafialne: <strong>{{ document_group.source_parish.name }}, {{ document_group.source_parish.place }}</strong>
                         {% else %}
@@ -49,7 +51,7 @@
                 {% endfor %}
                 {% if not document_groups %}
                 <tr>
-                    <td colspan="3">Brak danych</td>
+                    <td colspan="4">Brak danych</td>
                 </tr>
                 {% endif %}
             </tbody>
@@ -61,11 +63,12 @@
         {% endif %}
         {% if not manager %}
             {% if manager_exists %}
-        <p>Parafia zarządzana jest przez <strong>{{manager_exists.first_name}} {{manager_exists.last_name}}</strong>. <a href="/parish/{{parish.id}}/message">Wiadomość do opiekuna</a></p>
+        <p>Parafia zarządzana jest przez <strong>{{manager_exists.first_name}} {{manager_exists.last_name|truncatechars:1}}.</strong> <a href="/parish/{{parish.id}}/message">Wiadomość do opiekuna</a></p>
             {% endif %}
             {% if not manager_exists %}
                 <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/request-access">Prośba o dostęp do edycji</button>
             {% endif %}
         {% endif %}
+        
     </div>
 </div>

@@ -31,7 +31,7 @@
                         {{form.year}}
                     </div>
                     <div class="col-md-6">
-                        <label>Wyznani</label>
+                        <label>Wyznanie</label>
                         {{form.religion}}
                     </div>
 
@@ -115,6 +115,14 @@
                         {{ form.geo_lng }}
                     </div>
                 </div>
+                
+                <div class="form-row">
+                    <div class="col-md-12">
+                    	<label>Lista miejscowości należących do parafii</label>
+                        {{ form.places }}
+                        <br/>
+                    </div>
+				</div>
 
                 {% csrf_token %}
 
@@ -124,7 +132,7 @@
                     </div>
                 </div>
             </form>
-
+			<br/><br/>
 
         </div>
     </div>

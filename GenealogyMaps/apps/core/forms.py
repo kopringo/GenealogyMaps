@@ -44,7 +44,9 @@ class ParishEditForm(forms.ModelForm):
 
             'geo_lat',
             'geo_lng',
-            'geo_validated'
+            'geo_validated',
+
+            'places'
         ]
 
 

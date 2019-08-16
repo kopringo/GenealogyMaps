@@ -77,7 +77,7 @@
                 <tr>
                     <td>{{request.manager_request_date|date:"Y-m-d H:s"}} UTC</td>
                     <td>{{request.user.first_name}} {{request.user.last_name}}</td>
-                    <td>{{request.parish.name}}</td>
+                    <td>{{request.parish.name}} ({{request.parish.year}}), {{request.parish.place}}</td>
                     <td><a href="?access&parish={{request.parish.id}}&user={{request.user.id}}" class="btn btn-light">DAJ DOSTĘP</a></td>
                 </tr>
                 {% endfor %}

@@ -135,10 +135,12 @@ def parish(request, parish_id):
     documents = ParishSource.objects.filter(parish=parish).order_by('date_from')
     documents_sorted = __prepare_report(documents)
 
+    parish_user = None
     try:
-        parish_user = ParishUser.objects.get(parish=parish, user=request.user)
+        if request.user.is_authenticated:
+            parish_user = ParishUser.objects.get(parish=parish, user=request.user)
     except ParishUser.DoesNotExist:
-        parish_user = None
+        pass
 
     # czy istnieje manager
     manager_exists = None
@@ -153,6 +155,7 @@ def parish(request, parish_id):
         'document_groups': documents,
         'document_groups_sorted': documents_sorted,
         'manager': parish.has_user_manage_permission(request.user),
+        'managers': ParishUser.objects.filter(parish=parish, manager=True),
         'parish_user': parish_user,
         'manager_exists': manager_exists
     })
@@ -185,6 +188,7 @@ def parish_edit(request, parish_id):
     return render(request, 'core/parish_edit.html', data)
 
 
+@login_required
 def parish_message(request, parish_id):
     """ Panel edycji parafii dla opiekuna """
     data = {}

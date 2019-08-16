@@ -120,21 +120,52 @@
 
                 <div class="tab-pane fade" id="tab4" role="tabpanel">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <h3>Ulubione</h3>
-                            <ul>
-                            {% for parish_user in favorite_list %}
-                                <li><a href="/parish/{{parish_user.parish.id}}">{{parish_user.parish}}</a></li>
-                            {% endfor %}
-                            </ul>
+                            <table class="table table-sm">
+				                <thead>
+				                    <tr>
+				                        <th>Parafia</th>
+				                        <th class="text-right">Miejsowość</th>
+				                        <th class="text-right">Powiat</th>
+				                    </tr>
+				                </thead>
+				                <tbody>
+				                	{% for parish_user in favorite_list %}
+				                	<tr>
+				                		<td>
+				                		<a href="/parish/{{parish_user.parish.id}}">{{parish_user.parish.name}} ({{parish_user.parish.year}})</a>
+				                		</td>
+				                		<td class="text-right">{{parish_user.parish.place}}</td>
+				                		<td class="text-right">{{ parish_user.parish.county.name }}</td>
+				                	</tr>
+	                            	{% endfor %}
+	                            </tbody>
+				            </table>
+                            
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <h3>Dostęp do edycji</h3>
-                            <ul>
-                            {% for parish_user in manager_list %}
-                                <li><a href="/parish/{{parish_user.parish.id}}">{{parish_user.parish}}</a></li>
-                            {% endfor %}
-                            </ul>
+                            <table class="table table-sm">
+				                <thead>
+				                    <tr>
+				                        <th>Parafia</th>
+				                        <th class="text-right">Miejsowość</th>
+				                        <th class="text-right">Powiat</th>
+				                    </tr>
+				                </thead>
+				                <tbody>
+				                	{% for parish_user in manager_list %}
+				                	<tr>
+				                		<td>
+				                		<a href="/parish/{{parish_user.parish.id}}">{{parish_user.parish.name}} ({{parish_user.parish.year}})</a>
+				                		</td>
+				                		<td class="text-right">{{parish_user.parish.place}}</td>
+				                		<td class="text-right">{{ parish_user.parish.county.name }}</td>
+				                	</tr>
+	                            	{% endfor %}
+	                            </tbody>
+				            </table>
                         </div>
                     </div>
 
