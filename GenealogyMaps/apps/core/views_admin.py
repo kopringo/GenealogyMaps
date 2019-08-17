@@ -11,9 +11,7 @@ def users(request):
     # przelacza dostep z pelnego na ograniczony i odwrotnie
     switch_access_for_user = request.GET.get('switch_access_for_user', None)
     if switch_access_for_user is not None:
-        print('! ')
         try:
-            print('!! ')
             user = User.objects.get(pk=int(switch_access_for_user))
             if not user.is_superuser:
                 g = Group.objects.get(name='FULL_DATA_ACCESS')
@@ -43,8 +41,25 @@ def users(request):
     query = 'SELECT * FROM `core_parish` INNER JOIN (SELECT parish_id, count(*) count FROM `core_parishuser` WHERE manager=1 group by parish_id HAVING count>1) c ON id=c.parish_id'
     parishes_with_more_managers = Parish.objects.raw(query)
 
+    # pobieranie userow + sortowanie
+    users = User.objects.all()
+    sort = request.GET.get('sort', None)
+    ord = '-' if request.GET.get('ord', None) == 'desc' else ''
+    if sort == 'date':
+        users = users.order_by('%s%s' % (ord, 'id'))
+    elif sort == 'name':
+        users = users.order_by('%s%s' % (ord, 'last_name'), '%s%s' % (ord, 'first_name'))
+    elif sort == 'email':
+        users = users.order_by('%s%s' % (ord, 'email'))
+    else:
+        sort = 'date'
+        ord = '-'
+        users = users.order_by('-id')
+
     data = {
-        'users': User.objects.all().order_by('-id'),
+        'users': users,
+        'sort': sort,
+        'r_ord': ('desc' if (ord == '') else 'asc'),
         'user_requests': ParishUser.objects.filter(manager_request=True).order_by('-manager_request_date'),
         'parishes_with_more_managers': parishes_with_more_managers
     }

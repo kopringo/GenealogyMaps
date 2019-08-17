@@ -71,12 +71,6 @@ class ParishResource(resources.ModelResource):
         except:
             row['dekanat'] = None
 
-        print(row)
-        print('')
-
-    #def before_save_instance(self, instance, using_transactions, dry_run):
-    #    print('before_save_instance', instance)
-
     def dehydrate_country(self, parish):
         if parish.country is not None:
             return '%s' % parish.country.code

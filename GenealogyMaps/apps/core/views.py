@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from datetime import datetime
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
 import numpy as np
 
@@ -131,7 +133,10 @@ def county(request, c_id):
 
 def parish(request, parish_id):
     """ Widok parafii """
-    parish = Parish.objects.get(pk=parish_id)
+    try:
+        parish = Parish.objects.get(pk=parish_id)
+    except Parish.DoesNotExist:
+        return redirect('home') # '?error=doesnotexist'
     documents = ParishSource.objects.filter(parish=parish).order_by('date_from')
     documents_sorted = __prepare_report(documents)
 
@@ -359,14 +364,19 @@ def parish_request_access(request, parish_id):
         parish_user.user = request.user
         parish_user.parish = parish
 
-    print(parish_user, parish_user.manager_request, parish_user.manager_request_date)
-
     if parish_user.manager_request:
         return render(request, 'parts/parish_request_access.html', {'error_already_clicked': True})
     else:
         parish_user.manager_request = True
         parish_user.manager_request_date = datetime.utcnow()
         parish_user.save()
+
+        # mail d admina
+        subject = '[katalog] Prosba o dostep'
+        url = 'https://katalog.projektpodlasie.pl/a/users'
+        message = u'Prosba o dostep od %s %s.\n%s' % (request.user.first_name, request.user.last_name, url, )
+        for stf in User.objects.filter(is_staff=True):
+            send_mail(subject, message, 'info@parafie.k37.ovh', (stf.email,) )
 
     return render(request, 'parts/parish_request_access.html', {
         #'parish': parish,
@@ -401,7 +411,7 @@ def __prepare_report(sorted_documents):
                 sizeof = len(all[attr])
                 if sizeof > 0:
                     last = all[attr][sizeof-1]
-                    if last[1] >= date_from:
+                    if last[1] >= date_from-1:
                         # nakladaja sie
                         all[attr][sizeof-1] = (all[attr][-1:][0][0], date_to)
                         continue

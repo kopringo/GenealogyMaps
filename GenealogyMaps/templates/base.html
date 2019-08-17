@@ -161,6 +161,16 @@
         //var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
         //pruneCluster.RegisterMarker(marker2);
 
+        var icon2 = L.icon({
+    iconUrl: '/static/img/marker-icon2.png',
+    iconSize: [38, 95],
+    iconAnchor: [22, 94],
+    popupAnchor: [-3, -76],
+    shadowUrl: 'my-icon-shadow.png',
+    shadowSize: [68, 95],
+    shadowAnchor: [22, 94]
+});
+        
         $.ajax({
             url: '/parish/list.json{% if limit_parish_on_the_map %}{{ limit_parish_on_the_map }}{% endif %}',
             dataType: 'json'
@@ -171,6 +181,7 @@
                 var marker = new PruneCluster.Marker(parish['geo_lat'], parish['geo_lng']);
                 marker.data.name = '<h2>' + parish['name'] + '</h2>' + parish['place'] + ', ' + parish['address'] + '<br/><a href="/parish/' + parish['id'] + '">Zobacz</a>';
                 marker.data.ID = parish['id'];
+                marker.data.icon = icon2;
                 marker.province_id = parish['province_id'];
                 marker.county_id = parish['county_id'];
 

@@ -30,9 +30,9 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        <th>Data rejestracji</th>
-                        <th>Osoba</th>
-                        <th>E-mail</th>
+                        <th><a href="/a/users?sort=date{% if sort == "date" %}&ord={{r_ord}}{% endif %}">Data rejestracji</a></th>
+                        <th><a href="/a/users?sort=name{% if sort == "name" %}&ord={{r_ord}}{% endif %}">Osoba</a></th>
+                        <th><a href="/a/users?sort=email{% if sort == "email" %}&ord={{r_ord}}{% endif %}">E-mail</a></th>
                         <th>Uprawnienia</th>
                     </tr>
                 </thead>
@@ -40,7 +40,7 @@
                     {% for user in users %}
                     <tr>
                         <td>{{user.date_joined|date:"Y-m-d H:s"}} UTC</td>
-                        <td>{{user.first_name}} {{user.last_name}}</td>
+                        <td>{{user.last_name}} {{user.first_name}}</td>
                         <td>{{user.email}}</td>
                         <td style="background: #eee;">
                             {% if user.is_superuser %}
