@@ -14,7 +14,7 @@ def sources(request):
     q = request.GET.get('q', None)
     
     items = None
-    if group == 'PAR': # archiwum parafialne, dajemy parafie a nie archiwa!
+    if group == 'PAR' and q is not None: # archiwum parafialne, dajemy parafie a nie archiwa!
         items = Parish.objects.all().filter(Q(name__icontains=q)|Q(place__icontains=q)).order_by('province__name', 'place', 'name')
         
         for item in items:

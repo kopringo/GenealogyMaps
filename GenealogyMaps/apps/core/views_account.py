@@ -58,6 +58,16 @@ class RegistrationForm(UserCreationForm):
     error_css_class = 'error'
     required_css_class = 'required'
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        users = User.objects.filter(email=email)
+        if len(users) > 0:
+            raise forms.ValidationError(
+                'Konto już istnieje',
+                code='email_exists',
+            )
+        return email
+
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
 
@@ -66,12 +76,6 @@ class RegistrationForm(UserCreationForm):
             reserved_names = self.reserved_names
         else:
             reserved_names = validators.DEFAULT_RESERVED_NAMES
-
-        #username_validators = [
-        #    validators.ReservedNameValidator(reserved_names),
-        #    validators.validate_confusables
-        #]
-        #self.fields[User.USERNAME_FIELD].validators.extend(username_validators)
 
         self.fields[email_field].validators.append(
             validators.validate_confusables_email
@@ -138,18 +142,21 @@ class RegistrationView(BaseRegistrationView):
     success_url = reverse_lazy('registration_complete')
 
     def register(self, form):
-        new_user = form.save(commit=False)
-        new_user.username = new_user.email
-        new_user.save()
-
-        new_user = authenticate(**{
-            User.USERNAME_FIELD: new_user.get_username(),
-            'password': form.cleaned_data['password1']
-        })
-        login(self.request, new_user)
-        signals_user_registered.send(
-            sender=self.__class__,
-            user=new_user,
-            request=self.request
-        )
-        return new_user
+        try:
+            new_user = form.save(commit=False)
+            new_user.username = new_user.email
+            new_user.save()
+    
+            new_user = authenticate(**{
+                User.USERNAME_FIELD: new_user.get_username(),
+                'password': form.cleaned_data['password1']
+            })
+            login(self.request, new_user)
+            signals_user_registered.send(
+                sender=self.__class__,
+                user=new_user,
+                request=self.request
+            )
+            return new_user
+        except:
+            return None
