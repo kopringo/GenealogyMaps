@@ -1,0 +1,39 @@
+<table class="table table-sm">
+    <colgroup>
+        <col width="200"/>
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Rodzaj aktów</th>
+            <th>Lista zarchiwizowanych roczników</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Urodzenia</td>
+            <td>lista roczników -> po kliknięciu: żródło, język, treść notatki.</td>
+        </tr>
+        <tr>
+            <td>Małżeństwa</td>
+            <td>info, ze sumariusz tylko "S".</td>
+        </tr>
+        <tr>
+            <td>Zgony</td>
+            <td>{% for item in document_groups_sorted.d %}{{item.0}}-{{item.1}}, {% endfor %}</td>
+        </tr>
+        {% if document_groups_sorted.zap %}
+        <tr>
+            <td>Zapowiedzi</td>
+            <td>{% for item in document_groups_sorted.zap %}{{item.0}}-{{item.1}}, {% endfor %}</td>
+        </tr>
+        {% endif %}
+        {% if document_groups_sorted.a %}
+        <tr>
+            <td>Aneksy</td>
+            <td>{% for item in document_groups_sorted.a %}{{item.0}}-{{item.1}}, {% endfor %}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+
+
+</table>

@@ -27,6 +27,7 @@ class Command(BaseCommand):
         try:
             Group.objects.bulk_create([
                 Group(pk=1, name='FULL_DATA_ACCESS'),
+                Group(pk=2, name='DATA_ACCESS'),
             ])
         except:
             pass

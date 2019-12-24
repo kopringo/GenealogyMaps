@@ -37,7 +37,7 @@
 
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" style="border: 1px solid black; margin-top: 10px;">
                     <div class="col-md-3">
                         <label>Kraj <span class="text-danger">*</span></label>
                         {{form.country}}
@@ -71,6 +71,55 @@
                     <div class="col-md-6">
                         <label>Adres</label>
                         {{form.address}}
+                    </div>
+                </div>
+                
+                <div class="form-row" style="border: 1px solid black; margin-top: 10px;">
+                    <div class="col-md-12">
+                        <strong>Okres II RP</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <label>kraj</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label>województwo</label>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Powiat</label>
+                        {{form.county_r2}}
+                    </div>
+                </div>
+                
+                <div class="form-row" style="border: 1px solid black; margin-top: 10px;">
+                    <div class="col-md-12">
+                        <strong>Okres Zaborów</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <label>kraj</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label>województwo</label>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Powiat</label>
+                        {{form.county_rz}}
+                    </div>
+                </div>
+                
+                <div class="form-row" style="border: 1px solid black; margin-top: 10px;">
+                    <div class="col-md-12">
+                        <strong>Okres I RP</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <label>kraj</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label>województwo</label>
+                        <span>{% if form.county_r1 %}{{form.county_r1.province.name}}{% endif %}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Powiat</label>
+                        {{form.county_r1}}
                     </div>
                 </div>
 

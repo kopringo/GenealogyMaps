@@ -30,6 +30,10 @@ class ParishEditForm(forms.ModelForm):
             'country',
             'province',
             'county',
+            
+            'county_r2',
+            'county_r1',
+            'county_rz',
 
             'diocese',
             'deanery',
@@ -62,6 +66,22 @@ class ParishSourceForm(forms.ModelForm):
                 field.widget.attrs['class'] = 'form-control'
             if field_name in ('date_excepts', 'note'):
                 field.widget.attrs['rows'] = '3'
+
+    def clean(self):
+        cleaned_data = super(ParishSourceForm, self).clean()
+        if not cleaned_data['type_b'] and \
+           not cleaned_data['type_m'] and \
+           not cleaned_data['type_d'] and \
+           not cleaned_data['type_a'] and \
+           not cleaned_data['type_zap']:
+            raise forms.ValidationError('Jeden typ dokumentu musi byc wybrany', code='type_all')
+        
+        date_from = int(cleaned_data['date_from'])
+        date_to = int(cleaned_data['date_to'])
+        if date_from > date_to:
+            self.add_error('date_from', 'Odwrócony zakres dat')
+        
+        return cleaned_data
 
     class Meta:
         model = ParishSource

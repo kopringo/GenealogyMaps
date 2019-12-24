@@ -26,6 +26,7 @@
                     <col width="200"/>
                     <col/>
                     <col/>
+                    <col/>
                     <col width="400"/>
                 </colgroup>
                 <thead>
@@ -33,7 +34,8 @@
                         <th><a href="/a/users?sort=date{% if sort == "date" %}&ord={{r_ord}}{% endif %}">Data rejestracji</a></th>
                         <th><a href="/a/users?sort=name{% if sort == "name" %}&ord={{r_ord}}{% endif %}">Osoba</a></th>
                         <th><a href="/a/users?sort=email{% if sort == "email" %}&ord={{r_ord}}{% endif %}">E-mail</a></th>
-                        <th>Uprawnienia</th>
+                        <th title="Konto zatwierdzone przez administratora; może przeglądać parafie." class="cursor-help">Zatwierdzony <i class="fa fa-question-circle"></i></th>
+                        <th>Prawo do edycji</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,23 +44,23 @@
                         <td>{{user.date_joined|date:"Y-m-d H:s"}} UTC</td>
                         <td>{{user.last_name}} {{user.first_name}}</td>
                         <td>{{user.email}}</td>
+                        <td>
+                        {% if user.is_superuser %}
+                            <span class="text-success">ADMINISTRATOR</span>
+                        {% elif user|has_group:"DATA_ACCESS" %}TAK <a href="?switch_ro_access_for_user={{user.id}}">cofnij</a>{% else %}<span class="text-danger">nie</span> <a href="?switch_ro_access_for_user={{user.id}}">nadaj</a>{% endif %}</td>
                         <td style="background: #eee;">
                             {% if user.is_superuser %}
-                            <span class="text-danger">ADMINISTRATOR</span>
+                            <span class="text-success">ADMINISTRATOR</span>
                             {% elif user|has_group:"FULL_DATA_ACCESS" %}
-                            <span class="text-success">Dostęp pełny</span> <a href="?switch_access_for_user={{user.id}}">ogranicz</a>
+                            <span class="text-success">Każda parafia</span> <a href="?switch_access_for_user={{user.id}}">ogranicz</a>
                             {% else %}
-                            <span class="">Dostęp ograniczony <a href="?switch_access_for_user={{user.id}}">zwiększ</a> | <a href="/a/users/{{user.id}}">daj dostęp</a></span>
+                            <span class="">Wybrane parafie: <a href="/a/users/{{user.id}}">wybierz</a> | <a href="?switch_access_for_user={{user.id}}">daj wszystkie</a></span>
                             {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
-
             </table>
-
-            <small>Dostęp ograniczony - oznacza dostęp do edycji wybranych parafii.<br/>
-                Dostęp pełny - oznacza dostęp do edycji wszystkich parafii.</small>
 
             <br/><br/>
 

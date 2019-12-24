@@ -1,7 +1,10 @@
+
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 from django.dispatch import receiver
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.core.exceptions import ValidationError
 
@@ -22,12 +25,24 @@ RELIGION_TYPE = (
     (RELIGION_TYPE__EA, 'Kościół Ewangelicko-Augsburski'),
     (RELIGION_TYPE__PRAWOSLAWNY, 'Polski Kościół Prawosławny')
 )
+RELIGION_TYPE_SHORT = {
+    RELIGION_TYPE__RC: 'RK',
+    RELIGION_TYPE__EA: 'EA',
+    RELIGION_TYPE__PRAWOSLAWNY: 'PR',
+}
 
 PARISH_ACCESS__OPEN = 0
 PARISH_ACCESS__CLOSED = 1
 PARISH_ACCESS = (
     (PARISH_ACCESS__OPEN, 'Otwarty'),
     (PARISH_ACCESS__CLOSED, 'Zamknięty'),
+)
+
+COUNTRY_HP = (
+    (1, 'I RP'),
+    (2, 'II RP'),
+    (3, 'III RP'),
+    (4, 'RZ'),
 )
 
 def my_year_validator(value):
@@ -50,6 +65,10 @@ class Country(models.Model):
     code = models.CharField(max_length=2, help_text='2 literowy kod kraju')
     name = models.CharField(max_length=32, help_text='Nazwa kraju')
     public = models.BooleanField(default=False)
+
+    historical_period = models.IntegerField(default=1, choices=COUNTRY_HP, help_text='Okres historyczny')
+    
+    description = models.TextField(blank=True, help_text='Opis na stronę główną')
 
     def get_provinces(self):
         return Province.objects.filter(country=self, public=True)
@@ -188,19 +207,34 @@ SOURCE_GROUP__OTHER='Other'
 SOURCE_GROUP = (
     ('AP', 'Archiwa Państwowe (PL)'),
     ('AD', 'Archiwa Kościelne (PL)'),
-    ('PAR', 'Archiwum Parafialne'),
+    ('PAR', 'Archiwum Parafialne (ALL)'),
     ('BIB', 'Biblioteki'),
     ('USC', 'Urzędy Stanu Cywilnego'),
+    
+    ('AP_UA', 'Archiwa Państwowe (UA)'),
+    ('AP_LT', 'Archiwa Państwowe (LT)'),
+    ('AP_BY', 'Archiwa Państwowe (BY)'),
+    ('AP_RU', 'Archiwa Państwowe (RU)'),
+    ('AP_LV', 'Archiwa Państwowe (LV)'),
+    ('AP_RO', 'Archiwa Państwowe (RO)'),
+    
+    ('A_Z', 'Archiwa Zagraniczne'),
+    
     (SOURCE_GROUP__OTHER, 'Inne'),
 )
 
 DOCUMENT_GROUP__COPY_TYPE = (
+    (None, ''),
+    (6, 'Ksiega'),
+    (4, 'Sumariusz'),
+    (7, 'Reptularz'),
+    (99, '-------------------'),
     (1, 'Oryginał'),
     (2, 'Duplikat ASC / USC'),
-    #(3, 'Odpis'),
+    (3, 'Odpis'),
     (5, 'Kopia dekanalna'),
-    (4, 'Sumariusz'),
 )
+
 
 COURT_BOOK_TYPE = (
     ('grodzkie', 'Grodzkie'),
@@ -217,7 +251,7 @@ COURT_BOOK_TYPE = (
 
 class SourceRef(models.Model):
 
-    copy_type = models.IntegerField(default=1, choices=DOCUMENT_GROUP__COPY_TYPE)
+    copy_type = models.IntegerField(default=None, choices=DOCUMENT_GROUP__COPY_TYPE)
     note = models.TextField(blank=True, help_text='Notatka')
     date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
     date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
@@ -265,17 +299,27 @@ class Parish(models.Model):
     name = models.CharField(max_length=32, help_text='Parafia pod wezwaniem')
     religion = models.IntegerField(default=1, choices=RELIGION_TYPE)
     year = models.IntegerField(blank=True, null=True, help_text='Data erygowania', validators=[my_year_validator])
+    year_inexact = models.BooleanField(default=False, help_text='Czy data niedokładna')
     access = models.IntegerField(default=0, choices=PARISH_ACCESS)
 
     # lokalizacja
     country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
-    province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING, help_text='Województwo')
-    county = models.ForeignKey(County, help_text='Powiat', on_delete=models.DO_NOTHING)
+    province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING, help_text='Województwo (R3)')
+    county = models.ForeignKey(County, on_delete=models.DO_NOTHING, help_text='Powiat (R3)', limit_choices_to=Q(province__country__historical_period=3))
     place = models.CharField(max_length=32, help_text='Miejscowość')
     place2 = models.CharField(max_length=32, help_text='Miejscowość, nazwa historyczna', blank=True)
     postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')
     postal_place = models.CharField(max_length=32, help_text='Poczta')
     address = models.CharField(max_length=32, help_text='Adres, ulica i numer')
+
+#    R1 966-1772
+#    RZ 1795-1918
+#    R2 1918-1939
+#    R3 1945-2019
+
+    county_r2 = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat (R2)', related_name='county_r2', limit_choices_to=Q(province__country__historical_period=2))
+    county_r1 = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat (R1)', related_name='county_r1', limit_choices_to=Q(province__country__historical_period=1))
+    county_rz = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat (RZ)', related_name='county_rz', limit_choices_to=Q(province__country__historical_period=4))
 
     # lokalizacja
     geo_lat = models.FloatField(blank=True, null=True)
@@ -302,6 +346,8 @@ class Parish(models.Model):
     places = models.TextField(help_text='Lista miejscowości', blank=True)
     main_parish = models.ForeignKey('Parish', blank=True, null=True, on_delete=models.SET_NULL, related_name='main_parish2', \
                                     help_text='Parafia główna jeśli to jest filia')
+
+    date_updated = models.DateTimeField(default=None, null=True, help_text='Data aktualizacji')
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
@@ -494,7 +540,25 @@ class CourtBookSource(SourceRef):
         verbose_name = 'Księga sądowa - zbiór danych'
         verbose_name_plural = 'Księgi sądowe - zbiory danych'#_("countries")
     
-    
+
+# 
+def save_parish(sender, instance, **kwargs):
+    try:
+        if isinstance(instance, Parish):
+            instance.date_updated = datetime.utcnow()
+            instance.save()
+        else:
+            instance.parish.date_updated = datetime.utcnow()
+            instance.parish.save()
+    except:
+        pass
+
+post_save.connect(save_parish, sender=Parish)
+post_save.connect(save_parish, sender=ParishPlace)
+post_save.connect(save_parish, sender=ParishComment)
+post_save.connect(save_parish, sender=ParishSource)
+post_save.connect(save_parish, sender=ParishSourceExt)
+
 """
 class ParishRawData(models.Model):
     # Surowe dane na temat parafii

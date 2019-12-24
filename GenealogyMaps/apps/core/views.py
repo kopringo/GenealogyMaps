@@ -10,7 +10,7 @@ import numpy as np
 # Create your views here.
 from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP
 from .forms import ParishSourceForm, ParishEditForm, ParishMessageForm
-
+from .decorators import group_required
 
 def __prepare_common_params():
     return {
@@ -33,13 +33,14 @@ def home(request):
     data['manager_list'] = ParishUser.objects.filter(user=request.user, manager=True).select_related('parish').all()
 
     try:
-        data['country'] = Country.objects.get(code=request.GET.get('country', 'pl'))
+        data['country'] = Country.objects.get(code=request.GET.get('country', None))
     except:
         pass
 
     return render(request, 'core/home.html', data)
 
 
+@login_required
 def diocese(request, d_id):
     """ Diecezja """
 
@@ -63,6 +64,8 @@ def diocese(request, d_id):
 
     return render(request, 'core/diocese.html', data)
 
+
+@login_required
 def deanery(request, d_id):
     """ Dekanat """
 
@@ -84,6 +87,8 @@ def deanery(request, d_id):
     })
     return render(request, 'core/deanery.html', data)
 
+
+@login_required
 def province(request, p_id):
     """
     Show the provice
@@ -112,6 +117,7 @@ def province(request, p_id):
     return render(request, 'core/province.html', data)
 
 
+@login_required
 def county(request, c_id):
 
     try:
@@ -131,6 +137,8 @@ def county(request, c_id):
     return render(request, 'core/county.html', data)
 
 
+@login_required
+@group_required('DATA_ACCESS')
 def parish(request, parish_id):
     """ Widok parafii """
     try:
@@ -168,6 +176,7 @@ def parish(request, parish_id):
     return render(request, 'core/parish.html', data)
 
 
+@login_required
 def parish_edit(request, parish_id):
     """ Panel edycji parafii dla opiekuna """
     data = {}
@@ -384,12 +393,16 @@ def parish_request_access(request, parish_id):
     })
 
 
+def validation_required(request):
+    return render(request, 'core/validation_required.html')
+
 ###############################################################################
 
 def contact(request):
     return render(request, 'core/contact.html')
 
 
+@login_required
 def profile(request):
     return render(request, 'accounts/profile.html')
 

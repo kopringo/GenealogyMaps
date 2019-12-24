@@ -17,6 +17,7 @@
 
 <div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map">
   <div id="mapid"></div>
+  
 </div>
 <div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
     <div class="row">
@@ -28,24 +29,33 @@
         	}
         	</style>
 
-            <h3>{{ parish.place }}{% if parish.place2 %} (<i>{{parish.place2}}</i>){% endif %}. {{ parish.name }}
-                    <a data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/favourite" title="Oznacz jako ważną dla Ciebie"><i class="fa fa-star{% if not parish_user.favorite %}-o{% endif %}" id="favourite-icon"></i></a>
-					{{ parish.any_issues |safe}}
+            <h3>{{ parish.place }} - {{ parish.name }}
+                    
             </h3>
+            <p>{% if parish.place2 %} (<i>Nazwa historyczna: {{parish.place2}}</i>){% endif %}</p>
             <div style="margin-bottom: 10px;">
                 {% if manager %}<a href="/parish/{{ parish.id }}/edit" class="btn btn-sm btn-primary">edycja</a>{% endif %}
                 {% if user.is_staff %}<a href="/admin/core/parish/{{ parish.id }}/change/" target="_blank" class="btn btn-sm btn-danger">edycja admin</a>{% endif %}
-                
+                <a data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/favourite" title="Oznacz jako ważną dla Ciebie"><i class="fa fa-star{% if not parish_user.favorite %}-o{% endif %}" id="favourite-icon"></i></a>
+                    {{ parish.any_issues |safe}}
             </div>
 
             <div>
                 <p class="nomargin">Diecezja: {% if parish.diocese %}{{ parish.diocese.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
                                     Dekanat: {% if parish.deanery %}{{ parish.deanery.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
                 </p>
+                {% if parish.county_r2 %}<p class="nomargin">II RP: {{ parish.county_r2 }}</p>{% endif %}
+                {% if parish.county_r1 %}<p class="nomargin">I RP: {{ parish.county_r1 }}</p>{% endif %}
+                {% if parish.county_rz %}<p class="nomargin">RZ: {{ parish.county_rz }}</p>{% endif %}
+                
                 <p class="nomargin">Adres pocztowy: {{ parish.address }}, {{ parish.postal_code }} {{ parish.postal_place }}</p>
+                
+                
+                
                 <p class="nomargin">Wyznanie: {{ parish.get_religion_description }}</p>
                 <p class="nomargin">Ziemia I RP: {% if parish.ziemia_i_rp %}{{ parish.ziemia_i_rp.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
                 <p class="nomargin">Rok utworzenia: {% if parish.year %}{{ parish.year }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
+                {% if parish.date_updated %}<p><i>Data modyfikacji: {{parish.date_updated}}</i></p>{% endif %}
             </div>
             <br/>
 
@@ -87,11 +97,17 @@
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-selected="true">Źródła</a>
+                        <a class="nav-link active" id="tab-documents3" data-toggle="tab" href="#tab-documents3-content" role="tab" aria-selected="true"><strong>Źródła - raport</strong></a>
                     </li>
+                    {% if manager %}
                     <li class="nav-item">
-                        <a class="nav-link" id="tab-documents3" data-toggle="tab" href="#tab-documents3-content" role="tab" aria-selected="true"><strong>Źródła - raport</strong></a>
+                        <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents4-content" role="tab" aria-selected="true">Roczniki</a>
                     </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-selected="true">Źródła</a>
+                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" id="tab-documents2" data-toggle="tab" href="#tab-documents2-content" role="tab" aria-selected="false">Zasoby</a>
                     </li>
@@ -103,12 +119,18 @@
                 </ul>
 
                 <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="tab-documents-content" role="tabpanel">
-                        {% include "parts/documents.html" %}
-                    </div>
-                    <div class="tab-pane fade" id="tab-documents3-content" role="tabpanel">
+                    <div class="tab-pane fade show active" id="tab-documents3-content" role="tabpanel">
                         {% include "core/parish/documents_report.html" %}
                     </div>
+                    {% if manager %}
+                    <div class="tab-pane fade" id="tab-documents4-content" role="tabpanel">
+                        {% include "core/parish/documents_report4.html" %}
+                    </div>
+                    {% endif %}
+                    <div class="tab-pane fade" id="tab-documents-content" role="tabpanel">
+                        {% include "parts/documents.html" %}
+                    </div>
+                    
                     <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
                 </div>
 

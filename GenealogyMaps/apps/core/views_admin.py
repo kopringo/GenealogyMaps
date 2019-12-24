@@ -6,7 +6,27 @@ from .models import ParishUser, Parish
 
 
 @staff_member_required
+def parishes(request):
+    data = {}
+    return render(request, 'core/_admin/parishes.html', data)
+
+@staff_member_required
 def users(request):
+
+    # przelacza aktyacje usera
+    switch_ro_access_for_user = request.GET.get('switch_ro_access_for_user', None)
+    if switch_ro_access_for_user is not None:
+        try:
+            user = User.objects.get(pk=int(switch_ro_access_for_user))
+            if not user.is_superuser:
+                g = Group.objects.get(name='DATA_ACCESS')
+                if user.groups.filter(name='DATA_ACCESS').exists():
+                    g.user_set.remove(user)
+                else:
+                    g.user_set.add(user)
+        except User.DoesNotExist:
+            pass
+        return redirect('/a/users')
 
     # przelacza dostep z pelnego na ograniczony i odwrotnie
     switch_access_for_user = request.GET.get('switch_access_for_user', None)
@@ -19,7 +39,7 @@ def users(request):
                     g.user_set.remove(user)
                 else:
                     g.user_set.add(user)
-        except User.DoesNotExists:
+        except User.DoesNotExist:
             pass
         return redirect('/a/users')
 

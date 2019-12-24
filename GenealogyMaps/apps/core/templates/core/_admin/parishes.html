@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content0 %}
+
+<div class="container-fluid" >
+
+    <div class="row">
+        <div class="col-md-12">
+        filtrowanie parafii..
+        </div>
+
+        <div class="col-md-12">
+
+            
+
+            <script src="/static/libs/handsontable/handsontable.full.min.js"></script>
+            <link href="/static/libs/handsontable/handsontable.full.min.css" rel="stylesheet">
+
+
+            <div id="hot"></div>
+            <script type="text/javascript">var dataObject = [];
+            var flagRenderer = function (instance, td, row, col, prop, value, cellProperties) {
+              var currencyCode = value;
+              while (td.firstChild) {
+                td.removeChild(td.firstChild);
+              }
+              if (currencyCodes.indexOf(currencyCode) > -1) {
+                var flagElement = document.createElement('DIV');
+                flagElement.className = 'flag ' + currencyCode.toLowerCase();
+                td.appendChild(flagElement);
+              } else {
+                var textNode = document.createTextNode(value === null ? '' : value);
+                td.appendChild(textNode);
+              }
+            };
+            var hotElement = document.querySelector('#hot');
+            var hotElementContainer = hotElement.parentNode;
+            var hotSettings = {
+              data: dataObject,
+              colHeaders: ['Zespół', 'Sygnatura', 'Rok od', 'Rok do', 'Notatka', ],
+              columns: [
+                {
+                  data: 'zespol',
+                  type: 'text',
+                  width: 60
+                },
+                {
+                  data: 'sygnatura',
+                  type: 'text',
+                  width: 60
+                },
+                {
+                  data: 'year_from',
+                  type: 'numeric',
+                  width: 40
+                },
+                {
+                  data: 'year_to',
+                  type: 'numeric',
+                  width: 40
+                },
+                {
+                  data: 'note',
+                  type: 'text',
+                  width: 60
+                }
+
+              ],
+
+              stretchH: 'all',
+
+              autoWrapRow: true,
+              height: 400,
+              maxRows: 200,
+              minSpareRows: 15,
+              manualRowResize: true,
+              manualColumnResize: true,
+              rowHeaders: true,
+              manualRowMove: true,
+              manualColumnMove: false,
+              contextMenu: true,
+              filters: false,
+              dropdownMenu: true,
+              licenseKey: "non-commercial-and-evaluation"
+            };
+            var hot = new Handsontable(hotElement, hotSettings);
+
+
+            </script>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <select name="source" class="form-control" id="source">
+                        {% for source in sources %}
+                        <option value="{{source.id}}">{{source.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-primary" id="save-all">Zapisz</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+{% block content_js %}
+<script type="text/javascript">
+    $(function(){
+        $(document).on('click', '#save-all', function(){
+            var data = JSON.stringify(hot.getData());
+            $.ajax({
+              type: "POST",
+              url: '/courts/book/{{book.id}}',
+              data: {
+                'source': $('#source').val(),
+                'data': data,
+                'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+              },
+              success: function(){
+                window.location.reload();
+              },
+              dataType: 'json'
+            });
+        });
+    });
+</script>
+{% endblock %}

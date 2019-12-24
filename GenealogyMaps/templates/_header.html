@@ -7,7 +7,7 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and not hide_search %}
     <form class="form-inline my-2 my-lg-0" action="/search">
       <input class="form-control mr-sm-2" type="search" placeholder="Nazwa parafii" aria-label="Search" name="q">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search2">Szukaj</button>
@@ -49,6 +49,7 @@
             {% if request.user.is_superuser %}
             <a class="nav-link text-danger" href="/admin">Administrator</a>
             <a class="nav-link text-danger" href="/a/users" target="_blank">Użytkownicy</a>
+            <a class="nav-link text-danger" href="/a/parishes" target="_blank">Parafie arkusz</a>
             <a class="nav-link text-danger" href="/admin/core/source/" target="_blank">Źródła</a>
             {% endif %}
 

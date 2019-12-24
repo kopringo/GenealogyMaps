@@ -7,6 +7,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import Signal
+from django.core.mail import send_mail
 
 from . import validators
 
@@ -52,7 +53,7 @@ class RegistrationForm(UserCreationForm):
             'password1',
             'password2',
             'first_name',
-            'last_name'
+            'last_name',
         ]
 
     error_css_class = 'error'
@@ -160,3 +161,12 @@ class RegistrationView(BaseRegistrationView):
             return new_user
         except:
             return None
+
+def after_registration(sender, user, request, **kwargs):
+    # mail d admina
+    subject = '[katalog] Nowe konto'
+    url = 'https://katalog.projektpodlasie.pl/a/users'
+    message = u'Nowe konto do akceptacji %s %s.\n%s' % (user.first_name, user.last_name, url, )
+    for stf in User.objects.filter(is_staff=True):
+        send_mail(subject, message, 'info@parafie.k37.ovh', (stf.email,) )
+signals_user_registered.connect(after_registration)

@@ -41,6 +41,7 @@ urlpatterns = [
     # for admin
     path('a/users/<int:user_id>', views_admin.users_user),
     path('a/users', views_admin.users),
+    path('a/parishes', views_admin.parishes),
 
     #path('accounts/register/', views_account.register),
     url(r'^accounts/register/$', views_account.RegistrationView.as_view(), name='registration_register'),
@@ -54,5 +55,7 @@ urlpatterns = [
             template_name='django_registration/registration_complete.html'
         ),
         name='registration_complete'),
+
+    path('login-validation-required', views.validation_required),
 
 ]

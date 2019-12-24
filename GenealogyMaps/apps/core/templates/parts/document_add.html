@@ -133,6 +133,8 @@
                 <div class="col-md-3 form-check">
                     <label class="form-check-label">{{form.type_a}} Aneksy</label>
                 </div>
+                
+                <small class="text-danger">{% for error in form.errors  %}{% if error == '__all__' %}Jedno z pól musi być wybrane.{% endif %}{% endfor %}</small>
                 <!-- 
                 <div class="col-md-3 form-check">
 

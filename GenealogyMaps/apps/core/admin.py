@@ -164,8 +164,9 @@ class ParishAdmin(ImportExportModelAdmin):
 
     fieldsets = [
         (None, {'fields': ['name', 'year', 'religion', ]}),
-        ('Location', {'fields': ['country', 'province', 'county', 'place', 'address', 'geo_lat', 'geo_lng', 'not_exist_anymore']}),
-        ('Location2', {'fields': ['diocese', 'deanery']})
+        ('Location', {'fields': ['country', 'province', 'county', 'place', 'place2', 'address', 'geo_lat', 'geo_lng', 'not_exist_anymore']}),
+        ('Location2', {'fields': ['diocese', 'deanery']}),
+        ('Location3', {'fields': ['county_r1', 'county_r2', 'county_rz']}),
     ]
 
     inlines = [
