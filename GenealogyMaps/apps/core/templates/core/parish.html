@@ -55,7 +55,7 @@
                 <p class="nomargin">Wyznanie: {{ parish.get_religion_description }}</p>
                 <p class="nomargin">Ziemia I RP: {% if parish.ziemia_i_rp %}{{ parish.ziemia_i_rp.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
                 <p class="nomargin">Rok utworzenia: {% if parish.year %}{{ parish.year }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
-                {% if parish.date_updated %}<p><i>Data modyfikacji: {{parish.date_updated}}</i></p>{% endif %}
+                {% if parish.date_updated %}<br/><p><small><i>Data modyfikacji: {{parish.date_updated}}</i></small></p>{% endif %}
             </div>
             <br/>
 
@@ -97,7 +97,7 @@
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="tab-documents3" data-toggle="tab" href="#tab-documents3-content" role="tab" aria-selected="true"><strong>Źródła - raport</strong></a>
+                        <a class="nav-link active" id="tab-documents3" data-toggle="tab" href="#tab-documents3-content" role="tab" aria-selected="true"><strong>Podsumowanie</strong></a>
                     </li>
                     {% if manager %}
                     <li class="nav-item">

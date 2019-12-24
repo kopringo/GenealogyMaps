@@ -4,7 +4,7 @@
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="M"> małżeństwa</label></label>&nbsp;&nbsp;
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="D"> zgony</label></label>&nbsp;&nbsp;
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="ZAP"> zapowiedzi</label></label>&nbsp;&nbsp;
-        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="A"> aneksy</label></label>&nbsp;&nbsp;
+        <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="A"> alegata</label></label>&nbsp;&nbsp;
     </div>
     <div class="col-md-12">
         <table class="table table-sm">
@@ -24,7 +24,7 @@
                         {% if document_group.type_b %}urodzenia{% else %} {% endif %}
                         {% if document_group.type_d %}zgony{% else %} {% endif %}
                         {% if document_group.type_m %}małżeństwa{% else %} {% endif %}
-                        {% if document_group.type_a %}aneksy{% else %} {% endif %}
+                        {% if document_group.type_a %}alegata{% else %} {% endif %}
                         {% if document_group.type_zap %}zapowiedzi{% else %} {% endif %}
                         {% if document_group.type_sum_only %}sumariusz{% else %}{% endif %}
                     </td>

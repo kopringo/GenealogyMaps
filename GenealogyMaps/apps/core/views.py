@@ -147,6 +147,7 @@ def parish(request, parish_id):
         return redirect('home') # '?error=doesnotexist'
     documents = ParishSource.objects.filter(parish=parish).order_by('date_from')
     documents_sorted = __prepare_report(documents)
+    documents_yby = __prepare_report_yby(documents)
 
     parish_user = None
     try:
@@ -167,6 +168,7 @@ def parish(request, parish_id):
         'parish': parish,
         'document_groups': documents,
         'document_groups_sorted': documents_sorted,
+        'document_groups_yby': documents_yby,
         'manager': parish.has_user_manage_permission(request.user),
         'managers': ParishUser.objects.filter(parish=parish, manager=True),
         'parish_user': parish_user,
@@ -431,6 +433,31 @@ def __prepare_report(sorted_documents):
                 all[attr].append((date_from, date_to))
     return all
 
+
+def __prepare_report_yby(documents):
+    all = {
+        'b': {},
+        'd': {},
+        'm': {},
+        'a': {},
+        'zap': {}
+    }
+    
+    for document in documents:
+        date_from = document.date_from
+        date_to = document.date_to
+        for attr in ['b', 'd', 'm', 'a', 'zap']:
+            if getattr(document, 'type_%s' % attr):
+                for year in range(date_from, date_to+1):
+                    if not year in all[attr].keys():
+                        all[attr][year] = []
+                    all[attr][year].append({
+                        'copy_type': document.copy_type_str(),
+                        'note': document.note,
+                        'source': document.source.name,
+                        'source_group': document.source.group
+                    })
+    return all
 
 
 def _load_root_items():
