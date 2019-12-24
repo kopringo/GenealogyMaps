@@ -99,15 +99,16 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="tab-documents3" data-toggle="tab" href="#tab-documents3-content" role="tab" aria-selected="true"><strong>Podsumowanie</strong></a>
                     </li>
-                    {% if manager %}
+                    
                     <li class="nav-item">
                         <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents4-content" role="tab" aria-selected="true">Roczniki</a>
                     </li>
-                    {% endif %}
+                    
+                    {% if manager %}
                     <li class="nav-item">
                         <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-selected="true">Źródła</a>
                     </li>
-                    
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" id="tab-documents2" data-toggle="tab" href="#tab-documents2-content" role="tab" aria-selected="false">Zasoby</a>
                     </li>
@@ -122,15 +123,16 @@
                     <div class="tab-pane fade show active" id="tab-documents3-content" role="tabpanel">
                         {% include "core/parish/documents_report.html" %}
                     </div>
-                    {% if manager %}
+                    
                     <div class="tab-pane fade" id="tab-documents4-content" role="tabpanel">
                         {% include "core/parish/documents_report4.html" %}
                     </div>
-                    {% endif %}
+                    
+                    {% if manager %}
                     <div class="tab-pane fade" id="tab-documents-content" role="tabpanel">
                         {% include "parts/documents.html" %}
                     </div>
-                    
+                    {% endif %}
                     <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
                 </div>
 
