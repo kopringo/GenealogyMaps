@@ -11,6 +11,8 @@ urlpatterns = [
     path('contact', views.contact),
     path('accounts/profile', views.profile, name='accounts_profile'),
 
+    path('set', views.set_param, name='set_param'),
+
     path('', views.home, name='home'),
     path('parish/<int:parish_id>', views.parish, name='view_parish'),
     path('parish/<int:parish_id>/documents', views.documents, name='parish_documents'),

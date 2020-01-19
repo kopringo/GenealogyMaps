@@ -64,8 +64,20 @@
         }
     </style>
     {% block content_css %}{% endblock %}
+    {% if request.session.theme == 'dark' %}
+    <style>
+    body{
+        background: #191a1c;
+        color: #ccc;
+    }
+    .table thead th {
+        border-top: 1px solid #111;
+        border-bottom: 2px solid #111;
+    }
+    </style>
+    {% endif %}
 
-    <title>Dokumenty archiwalne</title>
+    <title>Katalog Ksiąg Metrykalnych</title>
   </head>
   <body class="{% if body_map %}map{% endif %}">
 
@@ -81,21 +93,42 @@
             
           {% block content0 %}
           <div class="container">
+            {% if request.user.is_authenticated %}
             {% if not request.user|has_group:"DATA_ACCESS" and not request.user.is_superuser %}
             <div class="row">
                 <div class="col-md-12">
-                    <div class="alert alert-danger">Konto czeka na zatwierdzenie przez administratora.</div>
+                    <div class="alert alert-danger" style="margin-top: 1rem;">Konto czeka na zatwierdzenie przez administratora.</div>
                 </div>
             </div>
+            {% endif %}
             {% endif %}
             <div class="row">
 
               {% block content %}{% endblock %}
 
             </div>
+            <div class="row" id="footer">
+              <div class="col-md-12">
+                <hr/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-9">
+                <img src="/static/logo.jpg"/>
+                &copy; 2019-2020 https://katalog.projektpodlasie.pl
+              </div>
+              <div class="col-md-3">
+                {% if request.session.theme != 'dark' %}
+                <a href="/set?theme=dark&next={{ request.get_full_path }}">Wersja ciemna</a>
+                {% else %}
+                <a href="/set?theme=light&next={{ request.get_full_path }}">Wersja jasna</a>
+                {% endif %}
+              </div>
+            </div>
           </div>
           {% endblock %}
       </div>
+
     </div>
 
     {% include "parts/_modals.html" %}
@@ -293,15 +326,15 @@ alert('!');
 
     {% block content_js %}{% endblock %}
 
-    {% if GA %}
+    {% if settings.GA %}
     <!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-15071969-19"></script>
+	<script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.GA }}"></script>
 	<script>
 	  window.dataLayer = window.dataLayer || [];
 	  function gtag(){dataLayer.push(arguments);}
 	  gtag('js', new Date());
 	
-	  gtag('config', '{{ GA }}');
+	  gtag('config', '{{ settings.GA }}');
 	</script>
     {% endif %}
 

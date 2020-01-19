@@ -1,4 +1,6 @@
+{% load sort_dict_by_key %}
 <!-- lista roczników -> po kliknięciu: żródło, język, treść notatki. -->
+
 <table class="table table-sm">
     <colgroup>
         <col width="200"/>
@@ -12,26 +14,26 @@
     <tbody>
         <tr>
             <td>Urodzenia</td>
-            <td>{% for item, details in document_groups_yby.b.items %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
+            <td>{% for item, details in document_groups_yby.b.items|sort_dict_by_key %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
         </tr>
         <tr>
             <td>Małżeństwa</td>
-            <td>{% for item, details in document_groups_yby.m.items %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
+            <td>{% for item, details in document_groups_yby.m.items|sort_dict_by_key %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
         </tr>
         <tr>
             <td>Zgony</td>
-            <td>{% for item, details in document_groups_yby.d.items %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
+            <td>{% for item, details in document_groups_yby.d.items|sort_dict_by_key %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
         </tr>
         {% if document_groups_sorted.zap %}
         <tr>
             <td>Zapowiedzi</td>
-            <td>{% for item, details in document_groups_yby.zap.items %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
+            <td>{% for item, details in document_groups_yby.zap.items|sort_dict_by_key %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
         </tr>
         {% endif %}
         {% if document_groups_sorted.a %}
         <tr>
             <td>Aneksy</td>
-            <td>{% for item, details in document_groups_yby.a.items %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
+            <td>{% for item, details in document_groups_yby.a.items|sort_dict_by_key %}<span title="{% for detail in details %}{{detail.copy_type}}, {{detail.source}} ({{detail.source_group}}) | {% endfor %}" class="cursor-help">{{item}}</span>, {% endfor %}</td>
         </tr>
         {% endif %}
     </tbody>

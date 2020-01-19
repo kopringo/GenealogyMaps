@@ -19,6 +19,14 @@ def __prepare_common_params():
     }
 
 
+def set_param(request):
+    theme = request.GET.get('theme', None)
+    if theme is not None:
+        request.session['theme'] = theme
+
+    next_url = request.GET.get('next', '/')
+    return redirect(next_url)
+
 @login_required
 def home(request):
     data = __prepare_common_params()
@@ -452,6 +460,7 @@ def __prepare_report_yby(documents):
                     if not year in all[attr].keys():
                         all[attr][year] = []
                     all[attr][year].append({
+                        'year': year,
                         'copy_type': document.copy_type_str(),
                         'note': document.note,
                         'source': document.source.name,
