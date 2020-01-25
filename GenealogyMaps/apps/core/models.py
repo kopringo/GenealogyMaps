@@ -300,6 +300,7 @@ class Parish(models.Model):
     religion = models.IntegerField(default=1, choices=RELIGION_TYPE)
     year = models.IntegerField(blank=True, null=True, help_text='Data erygowania', validators=[my_year_validator])
     year_inexact = models.BooleanField(default=False, help_text='Czy data niedokładna')
+    century = models.CharField(blank=True, null=True, max_length=8, help_text='Wiek powstania')
     access = models.IntegerField(default=0, choices=PARISH_ACCESS)
 
     # lokalizacja
@@ -310,7 +311,7 @@ class Parish(models.Model):
     place2 = models.CharField(max_length=32, help_text='Miejscowość, nazwa historyczna', blank=True)
     postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')
     postal_place = models.CharField(max_length=32, help_text='Poczta')
-    address = models.CharField(max_length=32, help_text='Adres, ulica i numer')
+    address = models.CharField(max_length=32, help_text='Adres, ulica i numer', blank=True, null=True)
 
 #    R1 966-1772
 #    RZ 1795-1918

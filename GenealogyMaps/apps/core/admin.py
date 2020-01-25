@@ -21,6 +21,7 @@ class ParishResource(resources.ModelResource):
     name = Field(attribute='name', column_name='nazwa')
     wyznanie = Field(attribute='religion', column_name='wyznanie')
     year = Field(attribute='year', column_name='rok')
+    century = Field(attribute='century', column_name='wiek')
     country = Field(attribute='country', column_name='kraj')
     province = Field(attribute='province', column_name='wojewodztwo')
     county = Field(attribute='county', column_name='powiat')
@@ -29,7 +30,7 @@ class ParishResource(resources.ModelResource):
     place = Field(attribute='place', column_name='miejscowosc')
 
     def before_import_row(self, row, **kwargs):
-        print('before_import_row' ,row, kwargs)
+        #print('before_import_row' ,row, kwargs)
 
 
         try:
@@ -71,6 +72,18 @@ class ParishResource(resources.ModelResource):
         except:
             row['dekanat'] = None
 
+        try:
+            geo_lat = row.get('geo_lat')
+            row['geo_lat'] = geo_lat.replace(',', '.')
+        except:
+            pass
+        try:
+            geo_lng = row.get('geo_lng')
+            row['geo_lng'] = geo_lng.replace(',', '.')
+        except:
+            pass
+
+
     def dehydrate_country(self, parish):
         if parish.country is not None:
             return '%s' % parish.country.code
@@ -82,8 +95,11 @@ class ParishResource(resources.ModelResource):
         return ''
 
     def dehydrate_county(self, parish):
-        if parish.county is not None:
-            return '%s' % parish.county.name
+        try:
+            if parish.county is not None:
+                return '%s' % parish.county.name
+        except:
+            dir(parish)
         return ''
 
     def dehydrate_diocese(self, parish):
@@ -111,6 +127,7 @@ class ParishResource(resources.ModelResource):
         #        'published': {'format': '%d.%m.%Y'},
         #        }
 
+
 class ParishSourceResource(resources.ModelResource):
     class Meta:
         model = ParishSource
@@ -122,9 +139,11 @@ class CourtBookSourceResource(resources.ModelResource):
 
 ###############################################################################
 
+
 class ParishUserInline(admin.TabularInline):
     model = ParishUser
     extra = 1
+
 
 class SourceInline(admin.TabularInline):
     model = Source
@@ -149,6 +168,7 @@ class ParishSourceInline(admin.TabularInline):
     fields = ['source', 'copy_type', 'type_b', 'type_m', 'type_d', 'type_a', 'type_sum_only', 'date_from', 'date_to', 'user', 'date_modified']
     readonly_fields = ('source', 'user', 'date_modified')
     fk_name = 'parish'
+
 
 class SourceAdmin(admin.ModelAdmin):
     list_display = ['name', 'short', 'group']
@@ -180,9 +200,11 @@ class ParishAdmin(ImportExportModelAdmin):
 class ParishRefAdmin(admin.ModelAdmin):
     pass
 
+
 class ParishUserAdmin(admin.ModelAdmin):
     list_display = ['parish', 'user', 'favorite', 'manager', ]
     list_filter = ['favorite', 'manager']
+
 
 class ParishSourceExtAdmin(admin.ModelAdmin):
     pass
@@ -200,11 +222,13 @@ class CourtBookAdmin(admin.ModelAdmin):
     list_display = ['name', 'office', 'owner', ]
     list_filter = ['office', ]
 
+
 class CourtBookSourceAdmin(ImportExportModelAdmin):
     list_display = ['book', 'source', 'copy_type', 'date_from', 'date_to']
     resource_class = CourtBookSourceResource
 
 ##########################################################
+
 
 class CountryAdmin(admin.ModelAdmin):
     list_display = ['name', 'code']
@@ -214,6 +238,7 @@ class ProvinceAdmin(admin.ModelAdmin):
     list_display = ['name', 'country', 'county_number', 'parish_number', 'public', ]
     list_editable = ('public', )
     list_filter = ['country', 'public', ]
+
 
 class CountyAdmin(admin.ModelAdmin):
     list_display = ['name', 'province', 'parish_number', ]
@@ -237,8 +262,6 @@ class ZiemiaIRPAdmin(admin.ModelAdmin):
 class ParishRawDataAdmin(admin.ModelAdmin):
     list_display = ['data_source', 'data_key', 'parish', ]
     list_filter = ['data_source', ]
-
-
 
 
 admin.site.register(Country, CountryAdmin)
