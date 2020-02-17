@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 # Create your models here.
 
@@ -546,19 +547,19 @@ class CourtBookSource(SourceRef):
 def save_parish(sender, instance, **kwargs):
     try:
         if isinstance(instance, Parish):
-            instance.date_updated = datetime.utcnow()
+            instance.date_updated = timezone.now()
             instance.save()
         else:
-            instance.parish.date_updated = datetime.utcnow()
+            instance.parish.date_updated = timezone.now()
             instance.parish.save()
     except:
         pass
 
-post_save.connect(save_parish, sender=Parish)
-post_save.connect(save_parish, sender=ParishPlace)
-post_save.connect(save_parish, sender=ParishComment)
-post_save.connect(save_parish, sender=ParishSource)
-post_save.connect(save_parish, sender=ParishSourceExt)
+#post_save.connect(save_parish, sender=Parish)
+#post_save.connect(save_parish, sender=ParishPlace)
+#post_save.connect(save_parish, sender=ParishComment)
+#post_save.connect(save_parish, sender=ParishSource)
+#post_save.connect(save_parish, sender=ParishSourceExt)
 
 """
 class ParishRawData(models.Model):

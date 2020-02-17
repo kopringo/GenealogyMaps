@@ -43,21 +43,19 @@ class ParishResource(resources.ModelResource):
             country = row.get('kraj')
             row['kraj'] = Country.objects.get(code__iexact=country)
         except Exception as e:
-            print(e)
-            row['kraj'] = Country.objects.get(pk=1)
+            print('!!!!', e, country)
+            row['kraj'] = None #Country.objects.get(pk=1)
 
         try:
             province = row.get('wojewodztwo')
             row['wojewodztwo'] = Province.objects.get(name__iexact=province)
         except Exception as e:
-            print(e)
             row['wojewodztwo'] = '-'
 
         try:
             county = row.get('powiat')
             row['powiat'] = County.objects.get(name__iexact=county)
         except Exception as e:
-            print(e, county)
             row['powiat'] = '-'
 
         try:
@@ -80,6 +78,11 @@ class ParishResource(resources.ModelResource):
         try:
             geo_lng = row.get('geo_lng')
             row['geo_lng'] = geo_lng.replace(',', '.')
+        except:
+            pass
+
+        try:
+            row['religion'] = int(row.get('wyznanie'))
         except:
             pass
 
