@@ -36,8 +36,8 @@
                         <th title="Rok utworzenia">Rok</th>
                         <th class="text-left">Miejsowość</th>
                         <th>Parafia</th>
-                        <th class="text-right">Powiat</th>
-                        <th class="text-right">Województwo</th>
+                        <th class="text-center">Wyznanie</th>
+                        <th class="text-right">Powiat / Województwo / Kraj</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,8 +46,8 @@
                         <td>{% if parish.year %}{{ parish.year }}{% else %}-{% endif %}</td>
                         <td class="text-left">{{ parish.place }}{% if parish.place2 %} (<i>{{parish.place2}}</i>){% endif %}</td>
                         <td><a href="/parish/{{parish.id}}">{{ parish.name }}{% if not parish.name %}(brak wezwania){% endif %}</a></td>
-                        <td class="text-right">{{ parish.county.name }}</td>
-                        <td class="text-right">{{ parish.province.country.code }} / {{ parish.province.name }}</td>
+                        <td class="text-center">{{ parish.get_religion_short }}</td>
+                        <td class="text-right">{{ parish.county.name }} / {{ parish.province.name }} / {{ parish.province.country.code }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

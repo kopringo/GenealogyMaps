@@ -226,7 +226,7 @@ SOURCE_GROUP = (
 
 DOCUMENT_GROUP__COPY_TYPE = (
     (None, ''),
-    (6, 'Ksiega'),
+    (6, 'Księga'),
     (4, 'Sumariusz'),
     (7, 'Reptularz'),
     (99, '-------------------'),
@@ -357,6 +357,11 @@ class Parish(models.Model):
     def get_religion_description(self):
         try:
             return RELIGION_TYPE[self.religion-1][1]
+        except:
+            return ''
+    def get_religion_short(self):
+        try:
+            return RELIGION_TYPE_SHORT[self.religion]
         except:
             return ''
 
