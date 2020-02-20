@@ -43,14 +43,13 @@ class ParishResource(resources.ModelResource):
             country = row.get('kraj')
             row['kraj'] = Country.objects.get(code__iexact=country)
         except Exception as e:
-            print('!!!!', e, country)
             row['kraj'] = None #Country.objects.get(pk=1)
 
         try:
             province = row.get('wojewodztwo')
-            row['wojewodztwo'] = Province.objects.get(name__iexact=province)
+            row['wojewodztwo'] = Province.objects.get(name__iexact=province, country=row['kraj'])
         except Exception as e:
-            row['wojewodztwo'] = '-'
+            row['wojewodztwo'] = None
 
         try:
             county = row.get('powiat')
@@ -60,7 +59,7 @@ class ParishResource(resources.ModelResource):
 
         try:
             diocese = row.get('diecezja')
-            row['diecezja'] = Diocese.objects.get(name__iexact=diocese)
+            row['diecezja'] = Diocese.objects.get(name__iexact=diocese, country=row['kraj'])
         except:
             row['diecezja'] = None
 
