@@ -55,7 +55,7 @@ class ParishResource(resources.ModelResource):
             county = row.get('powiat')
             row['powiat'] = County.objects.get(name__iexact=county)
         except Exception as e:
-            row['powiat'] = '-'
+            row['powiat'] = None
 
         try:
             diocese = row.get('diecezja')
