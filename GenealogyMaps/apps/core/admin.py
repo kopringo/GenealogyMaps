@@ -199,6 +199,13 @@ class ParishAdmin(ImportExportModelAdmin):
     resource_class = ParishResource
 
 
+class ParishLocationsAdmin(admin.ModelAdmin):
+    list_display = ['name', 'place', 'year', 'diocese', 'country', 'province', 'county', 'county_r2', 'county_r1', 'county_rz' ]
+    list_filter = ['country', 'province', 'diocese', 'not_exist_anymore', ]
+    list_editable = ('country', 'province', 'county', 'county_r2', 'county_r1', 'county_rz', )
+    search_fields = ['name', 'place']
+
+
 class ParishRefAdmin(admin.ModelAdmin):
     pass
 
@@ -274,6 +281,7 @@ admin.site.register(Deanery, DeaneryAdmin)
 admin.site.register(ZiemiaIRP, ZiemiaIRPAdmin)
 
 admin.site.register(Parish, ParishAdmin)
+admin.site.register(ParishLocations, ParishLocationsAdmin)
 admin.site.register(ParishSource, ParishSourceAdmin)
 admin.site.register(ParishUser, ParishUserAdmin)
 admin.site.register(ParishSourceExt, ParishSourceExtAdmin)
