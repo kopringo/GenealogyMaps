@@ -412,7 +412,14 @@ class Parish(models.Model):
 
     class Meta:
         verbose_name = 'Parafia'
-        verbose_name_plural = 'Parafie'#"parishes"
+        verbose_name_plural = 'Parafie'
+
+
+class ParishLocations(Parish):
+    class Meta:
+        proxy = True
+        verbose_name = 'Parafia - lokalizacja'
+        verbose_name_plural = 'Parafie - lokalizacje'
 
 
 class ParishUser(models.Model):
