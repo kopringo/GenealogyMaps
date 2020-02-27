@@ -125,6 +125,7 @@ class County(models.Model):
     class Meta:
         verbose_name = 'Powiat'
         verbose_name_plural = 'Region - Powiaty'
+        ordering = ['name']
 
 
 class Diocese(models.Model):
