@@ -107,6 +107,7 @@ class Province(models.Model):
     class Meta:
         verbose_name = 'Województwo'
         verbose_name_plural = 'Region - Województwa'#_("provinces")
+        ordering = ['name']
 
 
 class County(models.Model):
