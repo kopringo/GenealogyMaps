@@ -204,6 +204,7 @@ class ParishLocationsAdmin(admin.ModelAdmin):
     list_filter = ['country', 'province', 'diocese', 'not_exist_anymore', ]
     list_editable = ('country', 'province', 'county', 'county_r2', 'county_r1', 'county_rz', )
     search_fields = ['name', 'place']
+    list_per_page = 20
 
 
 class ParishRefAdmin(admin.ModelAdmin):
@@ -239,6 +240,14 @@ class CourtBookSourceAdmin(ImportExportModelAdmin):
 ##########################################################
 
 
+class CountyInline(admin.TabularInline):
+    model = County
+    extra = 1
+    fields = ['name', ]
+
+##########################################################
+
+
 class CountryAdmin(admin.ModelAdmin):
     list_display = ['name', 'code']
 
@@ -248,6 +257,9 @@ class ProvinceAdmin(admin.ModelAdmin):
     list_editable = ('public', )
     list_filter = ['country', 'public', ]
 
+    inlines = [
+        CountyInline
+    ]
 
 class CountyAdmin(admin.ModelAdmin):
     list_display = ['name', 'province', 'parish_number', ]
