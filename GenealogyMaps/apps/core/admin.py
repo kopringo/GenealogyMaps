@@ -201,7 +201,7 @@ class ParishAdmin(ImportExportModelAdmin):
 
 class ParishLocationsAdmin(admin.ModelAdmin):
     list_display = ['name', 'place', 'year', 'diocese', 'country', 'province', 'county', 'county_r2', 'county_r1', 'county_rz' ]
-    list_filter = ['country', 'province', 'diocese', 'not_exist_anymore', ]
+    list_filter = [ 'diocese', 'not_exist_anymore', ]
     list_editable = ('country', 'province', 'county', 'county_r2', 'county_r1', 'county_rz', )
     search_fields = ['name', 'place']
     list_per_page = 20
