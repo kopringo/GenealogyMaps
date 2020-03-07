@@ -65,7 +65,7 @@ class ParishResource(resources.ModelResource):
 
         try:
             deanery = row.get('dekanat')
-            row['dekanat'] = Deanery.objects.get(name__iexact=deanery)
+            row['dekanat'] = Deanery.objects.get(name__iexact=deanery, diocese=row['diecezja'])
         except:
             row['dekanat'] = None
 
