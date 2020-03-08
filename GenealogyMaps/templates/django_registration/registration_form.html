@@ -60,6 +60,24 @@
                     {{ form.password2.errors }}
                 </div>
 
+                <div class="form-group">
+                    {{ form.parishes.label_tag }}
+                    <textarea name="parishes" id="id_parishes" class="form-control"></textarea>
+                    <small>{{ form.parishes.help_text }}</small>
+                    {{ form.parishes.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.lastnames.label_tag }}
+                    <textarea name="lastnames" id="id_lastnames" class="form-control"></textarea>
+                    <small>{{ form.lastnames.help_text }}</small>
+                    {{ form.lastnames.errors }}
+                </div>
+
+                <p>
+                    Akceptuję <a href="https://indeksy.projektpodlasie.pl/index.php/polityka-prywatnosci" target="_blank">politykę prywatności</a> grupy projektpodlasie.pl i wyrażam zgodę na przetwarzanie moich danych osobowych
+
+                </p>
+
                 {{ form.non_field_errors }}
 
                 {% csrf_token %}

@@ -10,6 +10,7 @@ def parishes(request):
     data = {}
     return render(request, 'core/_admin/parishes.html', data)
 
+
 @staff_member_required
 def users(request):
 

@@ -186,6 +186,9 @@ class UserProfile(models.Model):
     lastname = models.CharField(max_length=64, blank=True, help_text='Nazwisko')
     full_access = models.BooleanField(default=False, help_text='Pełen dostęp do danych')
 
+    parishes = models.TextField(blank=True, help_text='Parafie ktorymi interesuje sie uzytkownik')
+    lastnames = models.TextField(blank=True, help_text='Nazwiska ktorymi interesuje sie uzytkownik')
+
     def __unicode__(self):
         return u'Profile of user: %s' % self.user.username
 
@@ -353,6 +356,8 @@ class Parish(models.Model):
 
     date_updated = models.DateTimeField(default=None, null=True, help_text='Data aktualizacji')
 
+    slug = models.CharField(max_length=16, null=True, unique=True, help_text='Unikatowy losowy identyfikator parafii')
+
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
 
@@ -468,6 +473,8 @@ class ParishSource(SourceRef):
 
     date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800, validators=[my_year_validator])
     date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900, validators=[my_year_validator])
+
+    meta_record = models.BooleanField(default=False, help_text='Meta rekord oznacza serię ksiąg parafialnych w podanym zakresie')
 
     def __str__(self):
         return u'%s (%s - %s)' % (self.parish, str(self.date_from), str(self.date_to))

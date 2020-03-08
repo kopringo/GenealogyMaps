@@ -54,7 +54,12 @@ class RegistrationForm(UserCreationForm):
             'password2',
             'first_name',
             'last_name',
+            'parishes',
+            'lastnames'
         ]
+
+    parishes = forms.CharField(label='Parafie którymi się interesuję', widget=forms.Textarea)
+    lastnames = forms.CharField(label='Nazwiska których szukam', widget=forms.Textarea)
 
     error_css_class = 'error'
     required_css_class = 'required'
@@ -85,6 +90,7 @@ class RegistrationForm(UserCreationForm):
 
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
+
 
 class BaseRegistrationView(FormView):
     """

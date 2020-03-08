@@ -93,15 +93,6 @@
             
           {% block content0 %}
           <div class="container">
-            {% if request.user.is_authenticated %}
-            {% if not request.user|has_group:"DATA_ACCESS" and not request.user.is_superuser %}
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="alert alert-danger" style="margin-top: 1rem;">Konto czeka na zatwierdzenie przez administratora.</div>
-                </div>
-            </div>
-            {% endif %}
-            {% endif %}
             <div class="row">
 
               {% block content %}{% endblock %}
