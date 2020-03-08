@@ -180,6 +180,7 @@ class ZiemiaIRP(models.Model):
 # User
 ###############################################################################
 
+
 class UserProfile(models.Model):  
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     firstname = models.CharField(max_length=64, blank=True, help_text='Imię')
@@ -192,11 +193,12 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return u'Profile of user: %s' % self.user.username
 
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-    instance.userprofile.save()
+
+#@receiver(post_save, sender=User)
+#def create_or_update_user_profile(sender, instance, created, **kwargs):
+#    if created:
+#        UserProfile.objects.create(user=instance)
+#    instance.userprofile.save()
 
 ###############################################################################
 # Refs

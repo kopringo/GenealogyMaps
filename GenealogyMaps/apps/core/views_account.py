@@ -10,6 +10,7 @@ from django.dispatch import Signal
 from django.core.mail import send_mail
 
 from . import validators
+from .models import UserProfile
 
 class OwnUserCreationForm(UserCreationForm):
     first_name = forms.CharField(label=_("Imię"))
@@ -90,6 +91,8 @@ class RegistrationForm(UserCreationForm):
 
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
+        self.fields['parishes'].required = True
+        self.fields['lastnames'].required = True
 
 
 class BaseRegistrationView(FormView):
@@ -153,6 +156,11 @@ class RegistrationView(BaseRegistrationView):
             new_user = form.save(commit=False)
             new_user.username = new_user.email
             new_user.save()
+
+            up = UserProfile.objects.create(user=new_user)
+            up.parishes = form.cleaned_data['parishes']
+            up.lastnames = form.cleaned_data['lastnames']
+            up.save()
     
             new_user = authenticate(**{
                 User.USERNAME_FIELD: new_user.get_username(),
@@ -168,6 +176,7 @@ class RegistrationView(BaseRegistrationView):
         except:
             return None
 
+
 def after_registration(sender, user, request, **kwargs):
     # mail d admina
     subject = '[katalog] Nowe konto'
@@ -175,4 +184,6 @@ def after_registration(sender, user, request, **kwargs):
     message = u'Nowe konto do akceptacji %s %s.\n%s' % (user.first_name, user.last_name, url, )
     for stf in User.objects.filter(is_staff=True):
         send_mail(subject, message, 'info@parafie.k37.ovh', (stf.email,) )
+
+
 signals_user_registered.connect(after_registration)
