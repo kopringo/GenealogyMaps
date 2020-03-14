@@ -30,8 +30,6 @@ class ParishResource(resources.ModelResource):
     place = Field(attribute='place', column_name='miejscowosc')
 
     def before_import_row(self, row, **kwargs):
-        #print('before_import_row' ,row, kwargs)
-
 
         try:
             rok = row.get('rok')
@@ -124,15 +122,56 @@ class ParishResource(resources.ModelResource):
             'geo_lat', 'geo_lng', 'not_exist_anymore',
             )
         export_order = fields
-        
-        #widgets = {
-        #        'published': {'format': '%d.%m.%Y'},
-        #        }
 
 
 class ParishSourceResource(resources.ModelResource):
+
+    parish = Field(attribute='parish', column_name='ID parafii')
+    parish_name = Field(column_name='Nazwa parafii')
+    source = Field(attribute='source', column_name='Źródło')
+    copy_type = Field(attribute='copy_type', column_name='Typ dokumentu')
+    date_from = Field(attribute='date_from', column_name='Lata od')
+    date_to = Field(attribute='date_to', column_name='Lata do')
+    meta_record = Field(attribute='meta_record', column_name='Meta roczniki')
+    type = Field(column_name='Rodzaj akt')
+    note = Field(attribute='note', column_name='Notatka')
+
+    def dehydrate_parish(self, parish_source):
+        return '%s' % parish_source.parish.id
+
+    def dehydrate_parish_name(self, parish_source):
+        return parish_source.parish.name
+
+    def dehydrate_type(self, parish_source):
+        types = []
+        if parish_source.type_b:
+            types.append('B')
+        if parish_source.type_d:
+            types.append('D')
+        if parish_source.type_m:
+            types.append('M')
+        if parish_source.type_a:
+            types.append('A')
+        if parish_source.type_zap:
+            types.append('ZAP')
+
+        return ' '.join(types)
+
+    def dehydrate_copy_type(self, parish_source):
+        return parish_source.copy_type_str()
+
+    def dehydrate_meta_record(self, parish_source):
+        if parish_source.meta_record:
+            return 'Tak'
+        return ''
+
+
     class Meta:
         model = ParishSource
+        fields = (
+            'id', 'parish', 'parish_name', 'source', 'copy_type', 'type', 'date_from', 'date_to', 'note', 'meta_record'
+        )
+        export_order = fields
 
 
 class CourtBookSourceResource(resources.ModelResource):
