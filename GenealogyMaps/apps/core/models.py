@@ -51,7 +51,7 @@ COUNTRY_HP = (
 def my_year_validator(value):
     if value < 1000 or value > 2100:
         raise ValidationError(
-            _('%(value)s is not a correcrt year!'),
+            _('%(value)s is not a correct year!'),
             params={'value': value},
         )
 
