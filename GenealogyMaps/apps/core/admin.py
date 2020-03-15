@@ -28,6 +28,7 @@ class ParishResource(resources.ModelResource):
     diocese = Field(attribute='diocese', column_name='diecezja')
     deanery = Field(attribute='deanery', column_name='dekanat')
     place = Field(attribute='place', column_name='miejscowosc')
+    #place2 = Field(attribute='place2', column_name='miejscowosc 2')
 
     def before_import_row(self, row, **kwargs):
 
@@ -79,9 +80,29 @@ class ParishResource(resources.ModelResource):
             pass
 
         try:
-            row['religion'] = int(row.get('wyznanie'))
+            wyznanie = row.get('wyznanie')
+            wyznanie_id = wyznanie
+
+            if wyznanie == 'grekokatolickie':
+                wyznanie_id = 7
+            if wyznanie == 'prawosławne':
+                wyznanie_id = 6
+            if wyznanie == 'ewangelicko-augsburskie':
+                wyznanie_id = 5
+            row['wyznanie'] = int(wyznanie_id)
         except:
             pass
+
+        postal_code = row.get('postal_code', None)
+        if postal_code is None:
+            row['postal_code'] = ''
+        postal_place = row.get('postal_place', None)
+        if postal_place is None:
+            row['postal_place'] = ''
+        place2 = row.get('place2', None)
+        if place2 is None:
+            row['place2'] = ''
+
 
 
     def dehydrate_country(self, parish):
@@ -284,11 +305,20 @@ class CountyInline(admin.TabularInline):
     extra = 1
     fields = ['name', ]
 
+class ProvinceInline(admin.TabularInline):
+    model = Province
+    extra = 1
+    fields = ['name', ]
+
 ##########################################################
 
 
 class CountryAdmin(admin.ModelAdmin):
     list_display = ['name', 'code']
+
+    inlines = [
+        ProvinceInline
+    ]
 
 
 class ProvinceAdmin(admin.ModelAdmin):

@@ -18,13 +18,15 @@ RELIGION_TYPE__WSCHODNI = 3
 RELIGION_TYPE__MUZULMANSKI = 4
 RELIGION_TYPE__EA = 5
 RELIGION_TYPE__PRAWOSLAWNY = 6
+RELIGION_TYPE__GK = 7
 RELIGION_TYPE = (
     (RELIGION_TYPE__RC, 'Kościół rzymskokatolicki'),
     (RELIGION_TYPE__SZ, 'Żydowski Związek Wyznaniowy'),
     (RELIGION_TYPE__WSCHODNI, 'Wschodni Kościół Staroobrzędowy'),
     (RELIGION_TYPE__MUZULMANSKI, 'Muzułmański Związek Religijny'),
     (RELIGION_TYPE__EA, 'Kościół Ewangelicko-Augsburski'),
-    (RELIGION_TYPE__PRAWOSLAWNY, 'Polski Kościół Prawosławny')
+    (RELIGION_TYPE__PRAWOSLAWNY, 'Polski Kościół Prawosławny'),
+    (RELIGION_TYPE__GK, 'Kościół Greckokatolicki')
 )
 RELIGION_TYPE_SHORT = {
     RELIGION_TYPE__RC: 'RK',
@@ -319,7 +321,7 @@ class Parish(models.Model):
     place2 = models.CharField(max_length=32, help_text='Miejscowość, nazwa historyczna', blank=True)
     postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')
     postal_place = models.CharField(max_length=32, help_text='Poczta')
-    address = models.CharField(max_length=32, help_text='Adres, ulica i numer', blank=True, null=True)
+    address = models.CharField(max_length=64, help_text='Adres, ulica i numer', blank=True, null=True)
 
 #    R1 966-1772
 #    RZ 1795-1918
