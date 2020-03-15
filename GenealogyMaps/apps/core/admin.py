@@ -102,6 +102,9 @@ class ParishResource(resources.ModelResource):
         place2 = row.get('place2', None)
         if place2 is None:
             row['place2'] = ''
+        nazwa = row.get('nazwa', None)
+        if nazwa is None:
+            row['nazwa'] = ''
 
 
 

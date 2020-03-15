@@ -194,6 +194,45 @@ RAVEN_CONFIG = {
     #'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level':'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+        'log_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'var/logs/django.log'),
+            'maxBytes': 16777216, # 16megabytes
+            'formatter': 'verbose'
+        },
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'sentry', 'log_file', ],
+        },
+        'raven': {
+            'level': 'INFO',
+        }
+    }
+}
+
 try:
     from .settings_local import *
 except Exception as e:
