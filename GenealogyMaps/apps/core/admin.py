@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
+from import_export import widgets
 
 from .models import *
 
@@ -161,10 +162,15 @@ class ParishSourceResource(resources.ModelResource):
     note = Field(attribute='note', column_name='Notatka')
 
     def dehydrate_parish(self, parish_source):
-        return '%s' % parish_source.parish.id
+        #print(parish_source)
+        if parish_source.parish:
+            return '%s' % parish_source.parish.id
+        return None
 
     def dehydrate_parish_name(self, parish_source):
-        return parish_source.parish.name
+        if parish_source.parish:
+            return '%s' % parish_source.parish.name
+        return None
 
     def dehydrate_type(self, parish_source):
         types = []
@@ -189,12 +195,101 @@ class ParishSourceResource(resources.ModelResource):
             return 'Tak'
         return ''
 
+    def before_import_row(self, row, **kwargs):
+
+        parish_id = row.get('ID parafii')
+        try:
+            parish = Parish.objects.get(pk=parish_id)
+
+            row['ID parafii'] = parish
+        except Exception as e:
+            row['ID parafii'] = '<brak parafi o id: %s>' % str(parish_id)
+
+        source_short = row.get('Źródło')
+        try:
+            source = Source.objects.get(short=source_short)
+            row['Źródło'] = source
+        except:
+            row['Źródło'] = '<bledna nazwa zrodla: %s>' % source_short
+
+        try:
+            copy_type = str(row.get('Typ dokumentu')).lower()
+
+            copy_type_id = SourceRef.str_to_copy_type(copy_type)
+            if copy_type_id is None:
+                copy_type_id = 6
+
+            row['copy_type'] = copy_type_id
+            row['Typ dokumentu'] = copy_type_id
+        except Exception as e:
+            print(str(e))
+
+        try:
+            rodzaj = str(row.get('Rodzaj akt')).strip().upper()
+            _rodzaje = rodzaj.split(' ')
+
+            for row_type in ['type_b', 'type_d', 'type_m', 'type_a', 'type_zap']:
+                row[row_type] = False
+
+            for _rodzaj in _rodzaje:
+
+                if _rodzaj == 'B':
+                    row['type_b'] = True
+                if _rodzaj == 'D':
+                    row['type_d'] = True
+                if _rodzaj == 'M':
+                    row['type_m'] = True
+                if _rodzaj == 'A':
+                    row['type_a'] = True
+                if _rodzaj == 'ZAP':
+                    row['type_zap'] = True
+        except Exception as e:
+            print(str(e))
+
+        meta_r = row.get('Meta roczniki')
+        if meta_r is not None:
+            row['Meta roczniki'] = True
+        else:
+            row['Meta roczniki'] = False
+
+        note = row.get('Notatka')
+        if note is None:
+            note = ''
+        row['Notatka'] = note
+
+
+    def get_or_init_instance(self, instance_loader, row):
+        instance, new = super(ParishSourceResource, self).get_or_init_instance(instance_loader, row)
+
+        instance.parish = row.get('ID parafii')
+        instance.type_b = row.get('type_b')
+        instance.type_d = row.get('type_d')
+        instance.type_m = row.get('type_m')
+        instance.type_a = row.get('type_a')
+        instance.type_zap = row.get('type_zap')
+
+        return instance, new
+
+#    def before_save_instance(self, instance, using_transactions, dry_run):
+#        print(instance)
+
+#    def after_import_row(self, row, row_result, **kwargs):
+#        print('after_import_row', row, row_result)
+
+#    def import_obj(self, obj, data, dry_run):
+#        ret = super(ParishSourceResource, self).import_obj(obj, data, dry_run)
+#        print('import_obj', obj, data)
+#        print(obj.parish)
+#        print('---')
+#        return ret
+
 
     class Meta:
         model = ParishSource
         fields = (
             'id', 'parish', 'parish_name', 'source', 'copy_type', 'type', 'date_from', 'date_to', 'note', 'meta_record'
         )
+        #exclude = ('type_b', )
         export_order = fields
 
 

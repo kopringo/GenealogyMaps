@@ -237,17 +237,18 @@ SOURCE_GROUP = (
     (SOURCE_GROUP__OTHER, 'Inne'),
 )
 
+DOCUMENT_GROUP__COPY_TYPE__NONE = 0
 DOCUMENT_GROUP__COPY_TYPE = (
-    (None, ''),
+    (DOCUMENT_GROUP__COPY_TYPE__NONE, ''),
     (6, 'Księga'),
     (4, 'Sumariusz'),
     (7, 'Reptularz'),
-    (99, '-------------------'),
-    (1, 'Oryginał'),
-    (2, 'Duplikat ASC / USC'),
-    (3, 'Odpis'),
-    (5, 'Kopia dekanalna'),
 )
+#    (99, '-------------------'),
+#    (1, 'Oryginał'),
+#    (2, 'Duplikat ASC / USC'),
+#    (3, 'Odpis'),
+#    (5, 'Kopia dekanalna'),
 
 
 COURT_BOOK_TYPE = (
@@ -265,7 +266,7 @@ COURT_BOOK_TYPE = (
 
 class SourceRef(models.Model):
 
-    copy_type = models.IntegerField(default=None, choices=DOCUMENT_GROUP__COPY_TYPE)
+    copy_type = models.IntegerField(default=DOCUMENT_GROUP__COPY_TYPE__NONE, choices=DOCUMENT_GROUP__COPY_TYPE)
     note = models.TextField(blank=True, help_text='Notatka')
     date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
     date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
@@ -276,6 +277,14 @@ class SourceRef(models.Model):
             if ct[0] == self.copy_type:
                 return ct[1]
         return ''
+
+    @classmethod
+    def str_to_copy_type(cls, name):
+        lower_name = name.lower()
+        for ct in DOCUMENT_GROUP__COPY_TYPE:
+            if ct[1].lower() == lower_name:
+                return ct[0]
+        return None
 
     class Meta:
         abstract = True
@@ -369,7 +378,7 @@ class Parish(models.Model):
     slug = models.CharField(max_length=16, null=True, unique=True, help_text='Unikatowy losowy identyfikator parafii')
 
     def __str__(self):
-        return u'%d. %s' % (self.id, self.name)
+        return u'%s. %s' % (str(self.id), self.name)
 
     def get_religion_description(self):
         try:
@@ -424,7 +433,7 @@ class Parish(models.Model):
             all_done = '<span class="span-icon text-secondary fa fa-circle-o" title="Parafia nieuzupełniona"></span>'
         else:
             if self.partial_done:
-                all_done = '<span class="span-icon text-warning fa fa-check-circle" title="Parafia w trakcie uzupełniania"></span>'
+                all_done = '<span class="span-icon text-warning fa fa-circle-o" title="Parafia w trakcie uzupełniania"></span>'
             if self.all_done:
                 all_done = '<span class="span-icon text-success fa fa-check-circle" title="Parafia w pełni uzupełniona"></span>'
 
@@ -502,8 +511,9 @@ class ParishSource(SourceRef):
 
     meta_record = models.BooleanField(default=False, help_text='Meta rekord oznacza serię ksiąg parafialnych w podanym zakresie')
 
-    def __str__(self):
-        return u'%s (%s - %s)' % (self.parish, str(self.date_from), str(self.date_to))
+#    def __str__(self):
+#        return u'%s' % str(self.id)
+#        #return u'%s (%s - %s)' % (self.parish, str(self.date_from), str(self.date_to))
 
     def id_with_dates(self):
         return u'%d. %d-%d' % (self.id, self.date_from, self.date_to)
