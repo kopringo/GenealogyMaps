@@ -352,7 +352,8 @@ class Parish(models.Model):
     gen_id = models.IntegerField(unique=True, blank=True, null=True)
     szwa_id = models.CharField(blank=True, max_length=64)  # 53/1847/0
     fs_catalog_id = models.CharField(blank=True, max_length=64)
-    all_done = models.BooleanField(default=False, help_text='Oznacza parafię całkowicie uzuepłnioną (wg wiedzy opiekunów)')
+    partial_done = models.BooleanField(default=False, help_text='Częściowo wypełniona, tj. są księgi jakieś wpisane.')
+    all_done = models.BooleanField(default=False, help_text='Oznacza parafię całkowicie uzuepłnioną (wg wiedzy opiekunów). To pole nadpisuje pole częściowego wypełnienia.')
 
     places = models.TextField(help_text='Lista miejscowości', blank=True)
     main_parish = models.ForeignKey('Parish', blank=True, null=True, on_delete=models.SET_NULL, related_name='main_parish2', \
@@ -376,8 +377,12 @@ class Parish(models.Model):
         except:
             return ''
 
-    def refresh_summary(self):
-        pass
+    def refresh_summary(self, save_partial_done=False):
+        # todo refresh summary
+
+        # partial done
+        self.partial_done = True
+        self.save()
 
     def any_issues(self):
         diocese_str = ''
@@ -393,20 +398,32 @@ class Parish(models.Model):
         if not self.deanery:
             deanery_str = 'brak dekanatu'
         if diocese_str != '' or deanery_str != '':
-            missing_sth = '<span class="text-danger fa fa-exclamation-triangle" title="%s %s"></span>' % (diocese_str, deanery_str)
+            missing_sth = '<span class="span-icon text-danger fa fa-exclamation-triangle" title="%s %s"></span>' % (diocese_str, deanery_str)
 
+        # lokalizacja
         if (not self.geo_lat) or (not self.geo_lng):
-            geo_str = '<span class="text-danger fa fa-map-marker" title="brak współrzędnych"></span>'
-        if self.geo_validated:
-            geo_str2 = '<span class="text-success fa fa-map-marker" title="współrzedne zatwierdzone"></span>'
+            geo_str = '<span class="span-icon text-danger fa fa-map-marker" title="Brak współrzędnych"></span>'
+        else:
+            if self.geo_validated:
+                geo_str = '<span class="span-icon text-success fa fa-map-marked" title="Współrzedne zatwierdzone"></span>'
+            else:
+                geo_str = '<span class="span-icon text-warning fa fa-map-marker" title="Współrzedne nie zatwierdzone"></span>'
 
+
+        # nie istnieje
         if self.not_exist_anymore:
-            not_exists = '<span class="text-danger fa fa-ban" title="Parafia nie istnieje obecnie."></span>'
+            not_exists = '<span class="span-icon text-danger fa fa-ban" title="Parafia nie istnieje obecnie."></span>'
 
-        if self.all_done:
-            all_done = '<span class="text-success fa fa-check-circle" title="Parafia w pełni uzupełniona."></span>'
+        # wypelnienie
+        if not self.partial_done and not self.all_done:
+            all_done = '<span class="span-icon text-secondary fa fa-circle-o" title="Parafia nieuzupełniona"></span>'
+        else:
+            if self.partial_done:
+                all_done = '<span class="span-icon text-warning fa fa-check-circle" title="Parafia w trakcie uzupełniania"></span>'
+            if self.all_done:
+                all_done = '<span class="span-icon text-success fa fa-check-circle" title="Parafia w pełni uzupełniona"></span>'
 
-        return u'%s%s%s%s%s' % (missing_sth, geo_str, geo_str2, not_exists, all_done)
+        return u'%s%s%s%s' % (all_done, geo_str, missing_sth, not_exists)
 
     def has_user_manage_permission(self, user):
         if not user.is_authenticated:

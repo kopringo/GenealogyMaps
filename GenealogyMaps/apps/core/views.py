@@ -310,7 +310,7 @@ def document_add(request, parish_id):
                     pass
 
             document_group.save()
-            parish.refresh_summary()
+            parish.refresh_summary(True)
 
             saved = True
 

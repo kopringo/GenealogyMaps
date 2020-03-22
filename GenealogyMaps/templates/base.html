@@ -62,6 +62,11 @@
         .cursor-help {
             cursor: help;        
         }
+
+        .span-icon {
+            width: 17px;
+            text-align: center;
+        }
     </style>
     {% block content_css %}{% endblock %}
     {% if request.session.theme == 'dark' %}
@@ -181,7 +186,7 @@
     var markers = {};
     var pruneCluster = null;
     $(function(){
-        map = L.map('mapid').setView([51.95, 19.08], 7);
+        map = L.map('mapid').setView([51.95, 19.08], 6);
         map.on('moveend', function() {
             //console.log('a');
         });

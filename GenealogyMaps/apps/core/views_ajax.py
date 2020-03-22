@@ -37,6 +37,10 @@ def parishes(request):
     if q is not None and len(q) >=3:
         items = Parish.objects.all().filter(Q(name__icontains=q) | Q(place__icontains=q)).order_by('province__name', 'place', 'name')
         for item in items:
-            data['results'].append({'id': item.id, 'text': '%s, %s: %s (%d)' % (str(item.province), item.place, item.name, item.year)})
+            year = str(item.year)
+            if item.year is None:
+                year = '-'
+
+            data['results'].append({'id': item.id, 'text': '%s, %s: %s (%s)' % (str(item.province), item.place, item.name, year)})
 
     return JsonResponse(data)
