@@ -162,14 +162,19 @@ class ParishSourceResource(resources.ModelResource):
     note = Field(attribute='note', column_name='Notatka')
 
     def dehydrate_parish(self, parish_source):
-        #print(parish_source)
-        if parish_source.parish:
-            return '%s' % parish_source.parish.id
+        try:
+            if parish_source.parish:
+                return '%s' % parish_source.parish.id
+        except:
+            pass
         return None
 
     def dehydrate_parish_name(self, parish_source):
-        if parish_source.parish:
-            return '%s' % parish_source.parish.name
+        try:
+            if parish_source.parish:
+                return '%s' % parish_source.parish.name
+        except:
+            pass
         return None
 
     def dehydrate_type(self, parish_source):
@@ -207,9 +212,15 @@ class ParishSourceResource(resources.ModelResource):
 
         source_short = row.get('Źródło')
         try:
-            source = Source.objects.get(short=source_short)
+            if 'Archiwum Parafialne'.lower() == source_short.lower().strip() or \
+               'Archiwum Parafii'.lower() == source_short.lower().strip():
+                source = Source.objects.get(a_par_for_auto_import=True)
+
+            else:
+                source = Source.objects.get(short=source_short)
             row['Źródło'] = source
-        except:
+        except Exception as e:
+            print(str(e))
             row['Źródło'] = '<bledna nazwa zrodla: %s>' % source_short
 
         try:
@@ -261,7 +272,7 @@ class ParishSourceResource(resources.ModelResource):
     def get_or_init_instance(self, instance_loader, row):
         instance, new = super(ParishSourceResource, self).get_or_init_instance(instance_loader, row)
 
-        instance.parish = row.get('ID parafii')
+        #instance.parish = row.get('ID parafii')
         instance.type_b = row.get('type_b')
         instance.type_d = row.get('type_d')
         instance.type_m = row.get('type_m')
@@ -270,18 +281,12 @@ class ParishSourceResource(resources.ModelResource):
 
         return instance, new
 
-#    def before_save_instance(self, instance, using_transactions, dry_run):
-#        print(instance)
-
-#    def after_import_row(self, row, row_result, **kwargs):
-#        print('after_import_row', row, row_result)
-
-#    def import_obj(self, obj, data, dry_run):
-#        ret = super(ParishSourceResource, self).import_obj(obj, data, dry_run)
-#        print('import_obj', obj, data)
-#        print(obj.parish)
-#        print('---')
-#        return ret
+    def after_save_instance(self, instance, using_transactions, dry_run):
+        try:
+            instance.parish.partial_done = True
+            instance.parish.save()
+        except Exception as e:
+            print(str(e))
 
 
     class Meta:
@@ -338,7 +343,7 @@ class SourceAdmin(admin.ModelAdmin):
 
 class ParishAdmin(ImportExportModelAdmin):
     list_display = ['name', 'year', 'province', 'county', 'place', 'geo_lat', 'geo_lng', 'diocese', 'deanery', 'access', ]
-    list_filter = ['country', 'province', 'diocese', 'not_exist_anymore', ]
+    list_filter = ['country', 'province', 'diocese', 'not_exist_anymore', 'all_done', 'partial_done']
     list_editable = ('access', )
     search_fields = ['name', 'place']
 

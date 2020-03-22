@@ -201,7 +201,7 @@ def parish_edit(request, parish_id):
         if form.is_valid():
             form.save()
 
-            return redirect('/parish/%d/edit?saved=1' % parish.id)
+            return redirect('/parish/%d' % parish.id)
 
     data.update({
         'parish': parish,
