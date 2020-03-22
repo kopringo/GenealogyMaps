@@ -254,7 +254,7 @@ def parish_message(request, parish_id):
 
 
 def parish_list_json(request):
-    _items = list(Parish.objects.values('id', 'name', 'geo_lat', 'geo_lng', 'province__id', 'county__id', 'place', 'address'))
+    _items = list(Parish.objects.filter(visible=True).values('id', 'name', 'geo_lat', 'geo_lng', 'province__id', 'county__id', 'place', 'address'))
     items = {}
     for _item in _items:
         items[_item['id']] = _item

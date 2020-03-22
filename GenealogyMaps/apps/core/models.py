@@ -30,8 +30,12 @@ RELIGION_TYPE = (
 )
 RELIGION_TYPE_SHORT = {
     RELIGION_TYPE__RC: 'RK',
+    RELIGION_TYPE__SZ: 'Ż',
+    RELIGION_TYPE__WSCHODNI: 'W',
+    RELIGION_TYPE__MUZULMANSKI: 'M',
     RELIGION_TYPE__EA: 'EA',
     RELIGION_TYPE__PRAWOSLAWNY: 'PR',
+    RELIGION_TYPE__GK: 'GK',
 }
 
 PARISH_ACCESS__OPEN = 0
@@ -312,6 +316,7 @@ class Parish(models.Model):
     year_inexact = models.BooleanField(default=False, help_text='Czy data niedokładna')
     century = models.CharField(blank=True, null=True, max_length=8, help_text='Wiek powstania')
     access = models.IntegerField(default=0, choices=PARISH_ACCESS)
+    visible = models.BooleanField(default=True, help_text='Czy parafia ma być widoczna na mapie/liście', db_index=True)
 
     # lokalizacja
     country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)

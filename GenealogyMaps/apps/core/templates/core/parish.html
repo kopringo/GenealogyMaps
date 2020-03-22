@@ -29,6 +29,12 @@
         	}
         	</style>
 
+            {% if not parish.visible %}
+            <div class="alert alert-danger">
+                Parafia ukryta (niewidoczna na mapie)
+            </div>
+            {% endif %}
+
             <h3>{{ parish.place }} - {{ parish.name }}
                     
             </h3>
