@@ -31,6 +31,7 @@
                         <th>Parafia</th>
                         
                         <th>Rok</th>
+                        <th>!</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,6 +45,7 @@
                     <td>
                         {% if item.year %} {{ item.year}}{% else %}-{%endif%}
                     </td>
+                    <td>{{ item.any_issues|safe }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
