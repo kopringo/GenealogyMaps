@@ -144,7 +144,7 @@ def county(request, c_id):
     })
     return render(request, 'core/county.html', data)
 
-#@group_required('DATA_ACCESS')
+@group_required('DATA_ACCESS')
 @login_required
 def parish(request, parish_id):
     """ Widok parafii """

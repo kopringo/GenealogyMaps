@@ -387,6 +387,7 @@ class Parish(models.Model):
             return RELIGION_TYPE[self.religion-1][1]
         except:
             return ''
+
     def get_religion_short(self):
         try:
             return RELIGION_TYPE_SHORT[self.religion]
@@ -438,20 +439,29 @@ class Parish(models.Model):
                 all_done = '<span class="span-icon text-warning fa fa-circle-o" title="Parafia w trakcie uzupełniania"></span>'
             if self.all_done:
                 all_done = '<span class="span-icon text-success fa fa-check-circle" title="Parafia w pełni uzupełniona"></span>'
+        if (self.year is not None) and (self.year >= 1946):
+            all_done = '<span class="span-icon text-success fa fa-check-circle" title="Parafia erygowana po 1946"></span>'
 
         return u'%s%s%s%s' % (all_done, geo_str, missing_sth, not_exists)
 
     def has_user_manage_permission(self, user):
+
+        # sprawdzenie czy admin
         if not user.is_authenticated:
             return False
         if user.is_staff:
             return True
+
+        # przypisanie parafii do usera
         try:
             parish_user = ParishUser.objects.get(user=user, parish=self)
             if parish_user.manager:
                 return True
         except:
             pass
+
+        #
+
         return False
 
     class Meta:
