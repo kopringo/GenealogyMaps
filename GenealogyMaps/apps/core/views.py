@@ -432,10 +432,18 @@ def __prepare_report(sorted_documents):
             if getattr(document, 'type_%s' % attr):
                 sizeof = len(all[attr])
                 if sizeof > 0:
+
+                    # ostatni zakres z listy biore
                     last = all[attr][sizeof-1]
+
+                    # jezeli istniejacy zakres konczy sie dalej niż nowy dokument zaczyna tzn. ze moga sie pokrywac
+                    # pierwsze roczniki. nie bedzie przerwy, nie trzeba konczyc zakresu (koniecznie CONTINUE)
                     if last[1] >= date_from-1:
-                        # nakladaja sie
-                        all[attr][sizeof-1] = (all[attr][-1:][0][0], date_to)
+
+                        # nowy zakres musi sie jednak konczyc dalej, wtedy aktualizujemy date_to.
+                        # to jest zabezpieczenie na wypadek zakresu ujetego w calosci w istniejacym
+                        if date_to > last[1]:
+                            all[attr][sizeof-1] = (all[attr][-1:][0][0], date_to)
                         continue
                 all[attr].append((date_from, date_to))
     return all

@@ -35,6 +35,10 @@
       </li>
       -->
 
+      <li class="nav-item">
+        <a class="nav-link {% if flatpage.url == '/pages/about/' %}active{% endif %}" href="/pages/about/">O projekcie</a>
+      </li>
+
       {% if request.user.is_anonymous %}
       <li class="nav-item">
         <a class="nav-link" href="{% url "login" %}">Login</a>
@@ -53,6 +57,7 @@
             <a class="nav-link text-danger" href="/a/users" target="_blank">Użytkownicy</a>
             <a class="nav-link text-danger" href="/a/parishes" target="_blank">Parafie arkusz</a>
             <a class="nav-link text-danger" href="/admin/core/source/" target="_blank">Źródła</a>
+            <a class="nav-link text-danger" href="/admin/flatpages/flatpage/" target="_blank">Strony statyczne</a>
             {% endif %}
 
             <!-- <div class="dropdown-divider"></div> -->

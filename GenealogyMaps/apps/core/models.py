@@ -238,9 +238,10 @@ SOURCE_GROUP = (
 )
 
 DOCUMENT_GROUP__COPY_TYPE__NONE = 0
+DOCUMENT_GROUP__COPY_TYPE__KSIEGA = 6
 DOCUMENT_GROUP__COPY_TYPE = (
     (DOCUMENT_GROUP__COPY_TYPE__NONE, ''),
-    (6, 'Księga'),
+    (DOCUMENT_GROUP__COPY_TYPE__KSIEGA, 'Księga'),
     (4, 'Sumariusz'),
     (7, 'Reptularz'),
 )
@@ -266,7 +267,7 @@ COURT_BOOK_TYPE = (
 
 class SourceRef(models.Model):
 
-    copy_type = models.IntegerField(default=DOCUMENT_GROUP__COPY_TYPE__NONE, choices=DOCUMENT_GROUP__COPY_TYPE)
+    copy_type = models.IntegerField(default=DOCUMENT_GROUP__COPY_TYPE__KSIEGA, choices=DOCUMENT_GROUP__COPY_TYPE)
     note = models.TextField(blank=True, help_text='Notatka')
     date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
     date_modified = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')

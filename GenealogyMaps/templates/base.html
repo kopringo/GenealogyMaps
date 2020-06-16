@@ -6,6 +6,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="icon" href="/static/favicon.jpg">
+
     <!-- CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
           integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
@@ -49,12 +51,16 @@
             overflow-y: auto;
         }
         .breadcrumb{
-            background-color: white !important;
+            background-color: initial !important;
             padding-left: 0px !important;
         }
         .tab-content{
             padding: 10px;
             border-left: 1px solid #ddd;
+        }
+        .navbar {
+            z-index: 2000;
+            border-bottom: 1px solid #ccc;
         }
         .nav-link.active{
             border-bottom: 1px solid rgba(0,0,0,0.9);
@@ -69,7 +75,7 @@
         }
     </style>
     {% block content_css %}{% endblock %}
-    {% if request.session.theme == 'dark' %}
+    {% if request.session.theme != 'light' %}
     <style>
     body{
         background: #191a1c;
@@ -114,7 +120,7 @@
                 &copy; 2019-2020 https://katalog.projektpodlasie.pl
               </div>
               <div class="col-md-3">
-                {% if request.session.theme != 'dark' %}
+                {% if request.session.theme == 'light' %}
                 <a href="/set?theme=dark&next={{ request.get_full_path }}">Wersja ciemna</a>
                 {% else %}
                 <a href="/set?theme=light&next={{ request.get_full_path }}">Wersja jasna</a>
@@ -142,9 +148,10 @@
         $(function(){
 
             // bootstrap
-            $('body').on('click', '[data-toggle="popover"]', function(){
-                $(this).popover('toggle');
-            });
+            //$('body').on('click', '[data-toggle="popover"]', function(){
+            //    $(this).popover('toggle');
+            //});
+            $('[data-toggle="popover"]').popover();
 
             $('body').on('click', '[data-toggle="modal"]', function(){
                 $($(this).data("target")+' .modal-body').load($(this).data("remote"));
