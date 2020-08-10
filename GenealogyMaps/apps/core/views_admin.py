@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User, Group
-from .models import ParishUser, Parish
+from .models import ParishUser, Parish, County
 
 
 @staff_member_required
@@ -95,6 +95,7 @@ def users_user(request, user_id):
     except:
         return redirect('/a/users')
 
+    # usuwanie parafii
     remove_id = request.GET.get('remove', None)
     if remove_id is not None:
         try:
@@ -104,7 +105,17 @@ def users_user(request, user_id):
             parish_user.save()
         except Exception as e:
             print(e)
+        return redirect('/a/users/%d' % user.id)
 
+    # usuwanie powiatu
+    remove_id = request.GET.get('remove_c', None)
+    if remove_id is not None:
+        try:
+            group_name = 'county_{}'.format(str(remove_id))
+            group = Group.objects.get(name=group_name)
+            group.user_set.remove(user)
+        except:
+            pass
         return redirect('/a/users/%d' % user.id)
 
     if request.POST:
@@ -127,10 +138,36 @@ def users_user(request, user_id):
             except Exception as e:
                 print(e)
 
+        county_id = request.POST.get('county', None)
+        county = County.objects.get(pk=county_id)
+        if county is not None:
+            group_name = 'county_{}'.format(str(county.id))
+
+            try:
+                group = Group.objects.get(name=group_name)
+            except Group.DoesNotExist:
+                group = Group()
+                group.name = group_name
+                group.save()
+
+            group.user_set.add(user)
+
+        return redirect('/a/users/%d' % user.id)
+
+    counties_rels = []
+    for group in user.groups.exclude(name='FULL_DATA_ACCESS').exclude(name='DATA_ACCESS'):
+        try:
+            if group.name[0:7] == 'county_':
+                county_id = int(group.name[7:])
+                counties_rels.append(County.objects.get(pk=county_id))
+        except:
+            pass
 
     data = {
         'user': user,
         'parish_rels': ParishUser.objects.all().filter(user=user, manager=True),
+        'counties': County.objects.filter(province__country__historical_period=3),
+        'counties_rels': counties_rels,
         #'user_requests': ParishUser.objects.filter(manager_request=True).order_by('-manager_request_date')
     }
 

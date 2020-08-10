@@ -1,7 +1,7 @@
 
 from datetime import datetime
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.utils.translation import gettext as _
 from django.dispatch import receiver
 from django.db.models import Q
@@ -460,7 +460,14 @@ class Parish(models.Model):
         except:
             pass
 
-        #
+        # spr. przypisanie do powiatu
+        try:
+            group_name = 'county_{}'.format(str(self.county_id))
+            group = Group.objects.get(name=group_name)
+            if user in group.user_set.all():
+                return True
+        except:
+            pass
 
         return False
 
@@ -541,6 +548,23 @@ class ParishSourceExt(models.Model):
     name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów', blank=True)
     url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
 
+
+class ParishIndexSource(models.Model):
+
+    PARISH_INDEX_SOURCE__TEST = 0
+    PARISH_INDEX_SOURCE__PP = 1
+    PARISH_INDEX_SOURCE = (
+        (PARISH_INDEX_SOURCE__PP, 'Projekt Podlasie',
+        (PARISH_INDEX_SOURCE__TEST, 'Test'),
+    )
+
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
+    project = models.IntegerField(default=0, choices=PARISH_INDEX_SOURCE)
+    url = models.URLField(blank=True, help_text='Adres informacji o indexach')
+
+    checked_date = models.DateTimeField(blank=True, null=True)
+
+
 ###############################################################################
 # Ksiegi sadowe
 ###############################################################################
@@ -560,6 +584,11 @@ class CourtOffice(models.Model):
 
     # podzial ziem I RP.
     ziemia_i_rp = models.ForeignKey(ZiemiaIRP, blank=True, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')
+
+    #
+    # wiek_od
+    # wiek_do
+    # notes
 
     def book_number(self):
         return u'%s' % str(len(CourtBook.objects.filter(office=self)))

@@ -18,7 +18,7 @@
 
 
         <div class="col-md-12">
-
+            <h4>Nadawanie dostępu do parafii</h4>
 
 
             <table class="table table-sm">
@@ -69,11 +69,57 @@
                         </select>
                     </div>
                     <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary btn-sm" style="width: 100%">Nadaj dostęp do parafii</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+
+        <div class="col-md-12">
+            <br/><br/>
+            <h4>Nadawanie dostępu do całych powiatów</h4>
+
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th class="text-left">Powiat</th>
+                        <th class="text-right">Województwo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for county in counties_rels %}
+                    <tr>
+                        <td>{{ county.name }}</td>
+                        <td class="text-right">{{ county.province.country.code }} / {{ county.province.name }}</td>
+                        <td class="text-right"><a href="/a/users/{{ user.id }}?remove_c={{county.id}}"><span class="fa fa-trash"></span></a></td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-12">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-9">
+                        <select name="county">
+                            {% for county in counties %}
+                            <option value="{{county.id}}">{{county.name}} ({{county.province.name}} / {{county.province.country.name}} [{{county.province.country.code}}])</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <button type="submit" class="btn btn-primary btn-sm" style="width: 100%">Nadaj dostęp</button>
                     </div>
                 </div>
             </form>
         </div>
+
     </div>
 
 </div>

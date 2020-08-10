@@ -73,6 +73,13 @@
             width: 17px;
             text-align: center;
         }
+
+        @media (max-width: 767px){
+          .row {
+            margin-left: 0px;
+            margin-right: 0px;
+          }
+        }
     </style>
     {% block content_css %}{% endblock %}
     {% if request.session.theme != 'light' %}

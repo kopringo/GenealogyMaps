@@ -59,7 +59,7 @@
                 
                 
                 <p class="nomargin">Wyznanie: {{ parish.get_religion_description }}</p>
-                <p class="nomargin">Ziemia I RP: {% if parish.ziemia_i_rp %}{{ parish.ziemia_i_rp.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
+                {% if parish.year and parish.year < 1800 %}<p class="nomargin">Ziemia I RP: {% if parish.ziemia_i_rp %}{{ parish.ziemia_i_rp.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>{% endif %}
                 <p class="nomargin">Rok utworzenia: {% if parish.year %}{{ parish.year }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
                 {% if parish.date_updated %}<br/><p><small><i>Data modyfikacji: {{parish.date_updated}}</i></small></p>{% endif %}
             </div>
@@ -105,41 +105,40 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="tab-documents3" data-toggle="tab" href="#tab-documents3-content" role="tab" aria-selected="true"><strong>Podsumowanie</strong></a>
                     </li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents4-content" role="tab" aria-selected="true">Roczniki</a>
-                    </li>
-                    
-                    {% if manager %}
-                    <li class="nav-item">
-                        <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-selected="true">Źródła</a>
-                    </li>
+
+                    {% if request.user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents4-content" role="tab" aria-selected="true">Roczniki</a>
+                        </li>
+
+                        {% if manager %}
+                        <li class="nav-item">
+                            <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-selected="true">Źródła</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-documents2" data-toggle="tab" href="#tab-documents2-content" role="tab" aria-selected="false">Zasoby</a>
+                        </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" id="tab-documents2" data-toggle="tab" href="#tab-documents2-content" role="tab" aria-selected="false">Zasoby</a>
-                    </li>
-                    <!--
-                    <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tab-comments-content" role="tab" aria-controls="profile" aria-selected="false">Comments</a>
-                    </li>
-                    -->
                 </ul>
 
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="tab-documents3-content" role="tabpanel">
                         {% include "core/parish/documents_report.html" %}
                     </div>
-                    
-                    <div class="tab-pane fade" id="tab-documents4-content" role="tabpanel">
-                        {% include "core/parish/documents_report4.html" %}
-                    </div>
-                    
-                    {% if manager %}
-                    <div class="tab-pane fade" id="tab-documents-content" role="tabpanel">
-                        {% include "parts/documents.html" %}
-                    </div>
+
+                    {% if request.user.is_authenticated %}
+                        <div class="tab-pane fade" id="tab-documents4-content" role="tabpanel">
+                            {% include "core/parish/documents_report4.html" %}
+                        </div>
+
+                        {% if manager %}
+                        <div class="tab-pane fade" id="tab-documents-content" role="tabpanel">
+                            {% include "parts/documents.html" %}
+                        </div>
+                        {% endif %}
+                        <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
                     {% endif %}
-                    <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
                 </div>
 
 				{% if user.is_staff and managers %}

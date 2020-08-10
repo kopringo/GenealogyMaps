@@ -27,7 +27,7 @@ def set_param(request):
     next_url = request.GET.get('next', '/')
     return redirect(next_url)
 
-@login_required
+
 def home(request):
     data = __prepare_common_params()
     data.update(_load_root_items())
@@ -37,8 +37,9 @@ def home(request):
     data['test_ch'] = hull
 
     # favourite
-    data['favorite_list'] = ParishUser.objects.filter(user=request.user, favorite=True).select_related('parish').all()
-    data['manager_list'] = ParishUser.objects.filter(user=request.user, manager=True).select_related('parish').all()
+    if request.user.is_authenticated:
+        data['favorite_list'] = ParishUser.objects.filter(user=request.user, favorite=True).select_related('parish').all()
+        data['manager_list'] = ParishUser.objects.filter(user=request.user, manager=True).select_related('parish').all()
 
     try:
         data['country'] = Country.objects.get(code=request.GET.get('country', None))
@@ -48,7 +49,6 @@ def home(request):
     return render(request, 'core/home.html', data)
 
 
-@login_required
 def diocese(request, d_id):
     """ Diecezja """
 
@@ -73,7 +73,6 @@ def diocese(request, d_id):
     return render(request, 'core/diocese.html', data)
 
 
-@login_required
 def deanery(request, d_id):
     """ Dekanat """
 
@@ -96,7 +95,6 @@ def deanery(request, d_id):
     return render(request, 'core/deanery.html', data)
 
 
-@login_required
 def province(request, p_id):
     """
     Show the provice
@@ -125,7 +123,6 @@ def province(request, p_id):
     return render(request, 'core/province.html', data)
 
 
-@login_required
 def county(request, c_id):
 
     try:
@@ -144,8 +141,8 @@ def county(request, c_id):
     })
     return render(request, 'core/county.html', data)
 
-@group_required('DATA_ACCESS')
-@login_required
+#@group_required('DATA_ACCESS')
+#@login_required
 def parish(request, parish_id):
     """ Widok parafii """
     try:
