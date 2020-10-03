@@ -209,7 +209,7 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level':'DEBUG',
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
         },
         'log_file': {

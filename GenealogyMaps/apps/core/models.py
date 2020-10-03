@@ -554,7 +554,7 @@ class ParishIndexSource(models.Model):
     PARISH_INDEX_SOURCE__TEST = 0
     PARISH_INDEX_SOURCE__PP = 1
     PARISH_INDEX_SOURCE = (
-        (PARISH_INDEX_SOURCE__PP, 'Projekt Podlasie',
+        (PARISH_INDEX_SOURCE__PP, 'Projekt Podlasie'),
         (PARISH_INDEX_SOURCE__TEST, 'Test'),
     )
 
@@ -605,6 +605,11 @@ class CourtBook(models.Model):
     name = models.CharField(max_length=64, help_text='Nazwa księgi', blank=True)
     office = models.ForeignKey(CourtOffice, on_delete=models.DO_NOTHING)
     type = models.CharField(max_length=32, blank=True, choices=COURT_BOOK_TYPE)
+
+    #date_from = models.IntegerField(help_text='Zakres dat: od roku', default=1800)
+    #date_to = models.IntegerField(help_text='Zakres dat: do roku', default=1900)
+    #zespol = models.CharField(max_length=64, blank=True)
+    #sygnatura = models.CharField(max_length=64, blank=True)
 
     # autor rekordu
     owner = models.ForeignKey(User, null=True, help_text='Osoba dodająca księgę', on_delete=models.DO_NOTHING)
