@@ -349,9 +349,11 @@ class ParishAdmin(ImportExportModelAdmin):
 
     fieldsets = [
         (None, {'fields': ['name', 'year', 'religion', 'visible', ]}),
-        ('Location', {'fields': ['country', 'province', 'county', 'place', 'place2', 'address', 'geo_lat', 'geo_lng', 'not_exist_anymore']}),
-        ('Location2', {'fields': ['diocese', 'deanery']}),
-        ('Location3', {'fields': ['county_r1', 'county_r2', 'county_rz']}),
+        ('Location', {'fields': ['country', 'place', 'place2', 'address', 'geo_lat', 'geo_lng', 'not_exist_anymore']}),
+        ('Lokalizacja współczesna', {'fields': ['province', 'county', 'diocese', 'deanery']}),
+        ('Lokalizacje historyczne świeckie', {'fields': ['county_r1', 'county_r2', 'county_rz']}),
+        ('Lokalizacje historyczne kościelne', {'fields': ['deanery_r1', 'deanery_r2', 'deanery_rz']}),
+
     ]
 
     inlines = [
@@ -406,21 +408,40 @@ class CourtBookSourceAdmin(ImportExportModelAdmin):
 class CountyInline(admin.TabularInline):
     model = County
     extra = 1
+    show_change_link = True
     fields = ['name', ]
+
 
 class ProvinceInline(admin.TabularInline):
     model = Province
     extra = 1
+    show_change_link = True
+    fields = ['name', 'public', ]
+
+
+class DioceseInline(admin.TabularInline):
+    model = Diocese
+    extra = 1
+    show_change_link = True
+    fields = ['name', 'public', ]
+
+
+class DeaneryInline(admin.TabularInline):
+    model = Deanery
+    extra = 1
+    show_change_link = True
     fields = ['name', ]
 
 ##########################################################
 
 
 class CountryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'code']
+    list_display = ['name', 'code', 'public', 'historical_period']
+    list_filter = ['public', 'historical_period']
 
     inlines = [
-        ProvinceInline
+        ProvinceInline,
+        DioceseInline
     ]
 
 
@@ -433,19 +454,28 @@ class ProvinceAdmin(admin.ModelAdmin):
         CountyInline
     ]
 
+
 class CountyAdmin(admin.ModelAdmin):
     list_display = ['name', 'province', 'parish_number', ]
-    list_filter = ['province', ]
+    list_filter = ['province__country', ]
 
 
 class DioceseAdmin(admin.ModelAdmin):
-    list_display = ['name', 'deanery_number', 'parish_number', 'public', ]
-    list_editable = ('public', )
+    list_display = ['name', 'country', 'deanery_number', 'parish_number', 'public', 'religion', ]
+    list_editable = ('public', 'religion', )
+    list_filter = ['country', 'public', 'religion', ]
+
+    inlines = [
+        DeaneryInline
+    ]
 
 
 class DeaneryAdmin(admin.ModelAdmin):
     list_display = ['name', 'diocese']
     list_filter = ['diocese', ]
+
+
+##########################################################
 
 
 class ZiemiaIRPAdmin(admin.ModelAdmin):

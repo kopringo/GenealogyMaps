@@ -4,15 +4,45 @@
 
 <div class="col-md-12">
     <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
-                    <li class="breadcrumb-item"><a href="/area/province/{{ parish.province.id }}" class="ajax_link">Województwo {{ parish.province.name }}</a></li>
-                    <li class="breadcrumb-item"><a href="/area/county/{{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
+        <ol class="breadcrumb" style="padding: 0px;">
+            <li class="breadcrumb-item"><a href="/?country={{ parish.province.country.code }}">{{ parish.province.country.name_with_period }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/province/{{ parish.province.id }}" class="ajax_link">Województwo {{ parish.province.name }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/county/{{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
+        </ol>
 
-                    <li class="breadcrumb-item active" aria-current="page">{{ parish.name }}</li>
-                </ol>
+        {% if parish.county_r1 %}
+        <ol class="breadcrumb" style="padding: 0px;">
+            <li class="breadcrumb-item"><a href="/?country={{ parish.county_r1.province.country.code }}">{{ parish.county_r1.province.country.name_with_period }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/province/{{ parish.county_r1.province.id }}" class="ajax_link">Województwo {{ parish.county_r1.province.name }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/county/{{ parish.county_r1.id }}" class="ajax_link">{{ parish.county_r1.name }}</a></li>
+        </ol>
+        {% endif %}
 
-            </nav>
+        {% if parish.county_r2 %}
+        <ol class="breadcrumb" style="padding: 0px;">
+            <li class="breadcrumb-item"><a href="/?country={{ parish.county_r2.province.country.code }}">{{ parish.county_r2.province.country.name_with_period }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/province/{{ parish.county_r2.province.id }}" class="ajax_link">Województwo {{ parish.county_r2.province.name }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/county/{{ parish.county_r2.id }}" class="ajax_link">{{ parish.county_r2.name }}</a></li>
+        </ol>
+        {% endif %}
+
+        {% if parish.deanery_r1 %}
+        <ol class="breadcrumb" style="padding: 0px;">
+            <li class="breadcrumb-item"><a href="/?country={{ parish.deanery_r1.diocese.country.code }}">{{ parish.deanery_r1.diocese.country.name_with_period }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/province/{{ parish.deanery_r1.diocese.id }}" class="ajax_link">{{ parish.deanery_r1.diocese.name }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/county/{{ parish.deanery_r1.id }}" class="ajax_link">{{ parish.deanery_r1.name }}</a></li>
+        </ol>
+        {% endif %}
+
+        {% if parish.deanery_r2 %}
+        <ol class="breadcrumb" style="padding: 0px;">
+            <li class="breadcrumb-item"><a href="/?country={{ parish.deanery_r2.diocese.country.code }}">{{ parish.deanery_r2.diocese.country.name_with_period }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/province/{{ parish.deanery_r2.diocese.id }}" class="ajax_link">{{ parish.deanery_r2.diocese.name }}</a></li>
+            <li class="breadcrumb-item"><a href="/area/county/{{ parish.deanery_r2.id }}" class="ajax_link">{{ parish.deanery_r2.name }}</a></li>
+        </ol>
+        {% endif %}
+
+    </nav>
 </div>
 
 <div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map">
@@ -61,7 +91,25 @@
                 <p class="nomargin">Wyznanie: {{ parish.get_religion_description }}</p>
                 {% if parish.year and parish.year < 1800 %}<p class="nomargin">Ziemia I RP: {% if parish.ziemia_i_rp %}{{ parish.ziemia_i_rp.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>{% endif %}
                 <p class="nomargin">Rok utworzenia: {% if parish.year %}{{ parish.year }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
-                {% if parish.date_updated %}<br/><p><small><i>Data modyfikacji: {{parish.date_updated}}</i></small></p>{% endif %}
+                <br/><p><small><i>Data modyfikacji: {% if parish.date_updated %}{{parish.date_updated}}{%else %}brak danych{% endif %}</i></small></p>
+
+
+                {% if request.user.is_authenticated %}
+                    {% if manager %}
+                    <button type="button" id="btn-add-document" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-remote="/parish/{{parish.id}}/add-document">Dodaj</button>
+                    {% endif %}
+                    {% if not manager %}
+                        {% if manager_exists %}
+                    <p>Parafia zarządzana jest przez <strong>{{manager_exists.first_name}} {{manager_exists.last_name|truncatechars:1}}.</strong> <a href="/parish/{{parish.id}}/message">Wiadomość do opiekuna</a></p>
+                        {% endif %}
+                        {% if not manager_exists %}
+                            <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/request-access">Prośba o dostęp do edycji</button>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                <div class="alert alert-danger">Zaloguj się aby zarządzac parafią.</div>
+                {% endif %}
+
             </div>
             <br/>
 
@@ -99,59 +147,66 @@
 </div>
 
 <div class="col-md-12">
-          <br/>
+    <br/>
 
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="tab-documents3" data-toggle="tab" href="#tab-documents3-content" role="tab" aria-selected="true"><strong>Podsumowanie</strong></a>
-                    </li>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="tab-documents3" data-toggle="tab" href="#tab-summary" role="tab" aria-selected="true"><strong>Podsumowanie</strong></a>
+        </li>
 
-                    {% if request.user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents4-content" role="tab" aria-selected="true">Roczniki</a>
-                        </li>
+        <li class="nav-item">
+            <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-years" role="tab" aria-selected="true">Roczniki</a>
+        </li>
 
-                        {% if manager %}
-                        <li class="nav-item">
-                            <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-documents-content" role="tab" aria-selected="true">Źródła</a>
-                        </li>
-                        {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" id="tab-documents2" data-toggle="tab" href="#tab-documents2-content" role="tab" aria-selected="false">Zasoby</a>
-                        </li>
-                    {% endif %}
-                </ul>
+        <li class="nav-item">
+            <a class="nav-link" id="tab-documents2" data-toggle="tab" href="#tab-indexes" role="tab" aria-selected="false">Indexy</a>
+        </li>
 
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="tab-documents3-content" role="tabpanel">
-                        {% include "core/parish/documents_report.html" %}
-                    </div>
+        <li class="nav-item">
+            <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-sources" role="tab" aria-selected="true">Źródła</a>
+        </li>
+    </ul>
 
-                    {% if request.user.is_authenticated %}
-                        <div class="tab-pane fade" id="tab-documents4-content" role="tabpanel">
-                            {% include "core/parish/documents_report4.html" %}
-                        </div>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="tab-summary" role="tabpanel">
+            {% include "core/parish/documents_report.html" %}
+        </div>
 
-                        {% if manager %}
-                        <div class="tab-pane fade" id="tab-documents-content" role="tabpanel">
-                            {% include "parts/documents.html" %}
-                        </div>
-                        {% endif %}
-                        <div class="tab-pane fade" id="tab-documents2-content" role="tabpanel">@todo zasoby sieciowe</div>
-                    {% endif %}
-                </div>
+        <div class="tab-pane fade" id="tab-years" role="tabpanel">
+            {% if request.user.is_authenticated %}
+            {% include "core/parish/documents_report4.html" %}
+            {% else %}
+            Widok dostępny dla zalogowanych użytkowników.
+            {% endif %}
+        </div>
 
-				{% if user.is_staff and managers %}
-				<br/>
-		        <div class="alert alert-danger">
-		        	<p>Lista opiekunów (info dla administratora)</p>
-		        	<ul>
-		        	{% for p_manager in managers %}
-		        		<li><a href="/a/users/{{p_manager.user.id}}" target="_blank">{{p_manager.user.first_name}} {{p_manager.user.last_name}}</a>
-		        	{% endfor %}
-		        	</ul>
-		        </div>
-		        {% endif %}
+        <div class="tab-pane fade" id="tab-indexes" role="tabpanel">
+            Widok dostępny dla zalogowanych użytkowników.
+        </div>
+
+        <div class="tab-pane fade" id="tab-sources" role="tabpanel">
+            {% if manager %}
+            {% include "parts/documents.html" %}
+            {% else %}
+            Widok dostępny dla opiekuna parafii.
+            {% endif %}
+        </div>
+
+
+
+    </div>
+
+    {% if user.is_staff and managers %}
+    <br/>
+    <div class="alert alert-danger">
+        <p>Lista opiekunów (info dla administratora)</p>
+        <ul>
+        {% for p_manager in managers %}
+            <li><a href="/a/users/{{p_manager.user.id}}" target="_blank">{{p_manager.user.first_name}} {{p_manager.user.last_name}}</a>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
 
 </div>

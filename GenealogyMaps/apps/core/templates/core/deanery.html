@@ -11,7 +11,7 @@
         <div class="col-md-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+                    <li class="breadcrumb-item"><a href="/?country={{ deanery.diocese.country.code }}">{{ deanery.diocese.country.name_with_period }}</a></li>
                     <li class="breadcrumb-item"><a href="/area/diocese/{{ deanery.diocese.id }}">Diecezja {{ deanery.diocese.name }}</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ deanery.name }}</li>
                 </ol>

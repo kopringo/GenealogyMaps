@@ -17,6 +17,22 @@
     <div class="row">
 
 
+        <table class="table table-sm">
+            <tr>
+
+            </tr>
+            <tr>
+                <td>Anonimowi</td>
+            </tr>
+            <tr>
+                <td><strong>Zalogowani</strong> (oraz zaakceptowani)</td>
+            </tr>
+            <tr>
+                <td><strong>Przypisana parafia</strong></td>
+            </tr>
+
+        </table>
+
         <div class="col-md-12">
 
             <h3>Zarejestrowane konta</h3>
@@ -34,7 +50,7 @@
                         <th><a href="/a/users?sort=date{% if sort == "date" %}&ord={{r_ord}}{% endif %}">Data rejestracji</a></th>
                         <th><a href="/a/users?sort=name{% if sort == "name" %}&ord={{r_ord}}{% endif %}">Osoba</a></th>
                         <th><a href="/a/users?sort=email{% if sort == "email" %}&ord={{r_ord}}{% endif %}">E-mail</a></th>
-                        <th title="Konto zatwierdzone przez administratora; może przeglądać parafie." class="cursor-help">Zatwierdzony <i class="fa fa-question-circle"></i></th>
+                        <th title="Konto zatwierdzone przez administratora; może logować się do systemu. po kliknięci użytkownik otrzyma emaila." class="cursor-help">Zatwierdzony <i class="fa fa-question-circle"></i></th>
                         <th>Prawo do edycji</th>
                     </tr>
                 </thead>
@@ -45,10 +61,15 @@
                         <td>{{user.last_name}} {{user.first_name}}</td>
                         <td>{{user.email}}</td>
                         <td>
-                        {% if user.is_superuser %}
-                            <span class="text-success">ADMINISTRATOR</span>
-                        {% elif user|has_group:"DATA_ACCESS" %}TAK <a href="?switch_ro_access_for_user={{user.id}}">cofnij</a>{% else %}<span class="text-danger">nie</span> <a href="?switch_ro_access_for_user={{user.id}}">nadaj</a>{% endif %}</td>
-                        <td style="background: #eee;">
+                            {% if user.is_superuser %}
+                                <span class="text-success">ADMINISTRATOR</span>
+                            {% elif user.is_active %}
+                                TAK <a href="?switch_ro_access_for_user={{user.id}}">cofnij</a>
+                                {% else %}
+                                <span class="text-danger">nie</span> <a href="?switch_ro_access_for_user={{user.id}}">nadaj</a>
+                                {% endif %}
+                        </td>
+                        <td>
                             {% if user.is_superuser %}
                             <span class="text-success">ADMINISTRATOR</span>
                             {% elif user|has_group:"FULL_DATA_ACCESS" %}

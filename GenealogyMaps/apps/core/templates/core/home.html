@@ -7,15 +7,38 @@
     
     <div class="col-md-6" style="padding-top: 30px;">
         <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Okres</th>
+                    <th>Kraj</th>
+                    <th>Opis</th>
+                </tr>
+            </thead>
 	        {% for country in countries %}
 	        <tr>
+                <td>
+                    {% if country.historical_period == 1 %}I RP, 966-1772{% endif %}
+                    {% if country.historical_period == 2 %}II RP, 1918-1944{% endif %}
+                    {% if country.historical_period == 3 %}III RP, 1945-{% endif %}
+                </td>
 	            <td><a href="?country={{country.code}}">{{country.name}}</a></td>
 	            <td>{{country.description}}</td>
 	        </tr>
 	        {% endfor %}
 	    </table>
     </div>
-    
+    <div class="col-md-6" style="padding-top: 30px;">
+        <table>
+            <tr>
+                <th>Liczba parafii</th>
+                <td>{{ stats.parish_count }}</td>
+            </tr>
+            <tr>
+                <th>Liczba zbiorów archiwalnych</th>
+                <td>{{ stats.source_count }}</td>
+            </tr>
+        </table>
+    </div>
     
     
 	
@@ -26,7 +49,7 @@
   <div id="mapid"></div>
 </div>
 <div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
-    <div class="row">
+    <div class="row" style="display:none;">
         <div class="col-md-12">
 
             <div class="form-row align-items-center">
@@ -73,7 +96,11 @@
     <div class="row">
         <div class="col-md-12">
         
-            
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active">{{ country.name_with_period }}</li>
+                </ol>
+            </nav>
         
 
             <ul class="nav nav-tabs" id="myTab" role="tablist">

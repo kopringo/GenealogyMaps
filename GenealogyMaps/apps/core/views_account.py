@@ -4,10 +4,11 @@ from django.http import JsonResponse
 from datetime import datetime
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import Signal
 from django.core.mail import send_mail
+
 
 from . import validators
 from .models import UserProfile
@@ -155,6 +156,7 @@ class RegistrationView(BaseRegistrationView):
         try:
             new_user = form.save(commit=False)
             new_user.username = new_user.email
+            new_user.is_active = False
             new_user.save()
 
             up = UserProfile.objects.create(user=new_user)
@@ -162,11 +164,11 @@ class RegistrationView(BaseRegistrationView):
             up.lastnames = form.cleaned_data['lastnames']
             up.save()
     
-            new_user = authenticate(**{
-                User.USERNAME_FIELD: new_user.get_username(),
-                'password': form.cleaned_data['password1']
-            })
-            login(self.request, new_user)
+            #new_user = authenticate(**{
+            #    User.USERNAME_FIELD: new_user.get_username(),
+            #    'password': form.cleaned_data['password1']
+            #})
+            # login(self.request, new_user)
             signals_user_registered.send(
                 sender=self.__class__,
                 user=new_user,
@@ -187,3 +189,13 @@ def after_registration(sender, user, request, **kwargs):
 
 
 signals_user_registered.connect(after_registration)
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        if not user.is_active:
+            print('!!!', user.is_active)
+            raise forms.ValidationError(
+                _("Konto czeka na aktywację przez administratora."),
+                code='inactive',
+            )

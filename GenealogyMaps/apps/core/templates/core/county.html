@@ -12,7 +12,7 @@
 
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+                    <li class="breadcrumb-item"><a href="/?country={{ county.province.country.code }}">{{ county.province.country.name_with_period }}</a></li>
                     <li class="breadcrumb-item"><a href="/area/province/{{ county.province.id }}">Województwo {{ county.province.name }}</a></li>
 
                     <li class="breadcrumb-item active" aria-current="page">powiat {{ county.name }}</li>

@@ -25,6 +25,7 @@
             left: 0px;
             bottom: 0px;
             flex-wrap: initial;
+                padding-top: 20px;
         }
         body.map #main-row-content{
             //position: fixed !important;
@@ -45,6 +46,7 @@
         #main-col-map{
             padding-right: 0px;
             max-height: 500px;
+
         }
         #main-col-details{
             padding-top: 15px;
@@ -114,15 +116,7 @@
             
           {% block content0 %}
           <div class="container">
-            {% if request.user.is_authenticated %}
-            {% if not request.user|has_group:"DATA_ACCESS" and not request.user.is_superuser %}
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="alert alert-danger" style="margin-top: 1rem;">Konto czeka na zatwierdzenie przez administratora.</div>
-                </div>
-            </div>
-            {% endif %}
-            {% endif %}
+
             <div class="row">
 
               {% block content %}{% endblock %}
@@ -136,7 +130,7 @@
             <div class="row">
               <div class="col-md-9">
                 <img src="/static/logo.jpg"/>
-                &copy; 2019-2020 https://katalog.projektpodlasie.pl
+                &copy; 2019-2021 https://katalog.projektpodlasie.pl
               </div>
               <div class="col-md-3">
                 {% if request.session.theme == 'light' %}

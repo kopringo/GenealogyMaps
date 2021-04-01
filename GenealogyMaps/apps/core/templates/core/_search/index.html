@@ -8,7 +8,7 @@
 
         <div class="col-md-12">
             <br/>
-            <div class="alert alert-success">Wyszukiwarka przeszukuje miejscowości oraz nazwy parafii.</div>
+            <div class="alert alert-success">Wyszukiwarka przeszukuje miejscowości parafii.</div>
         </div>
         
     </div>
@@ -17,7 +17,7 @@
         
             <form class="form-inline my-2" action="/search">
 		      <input class="form-control mr-sm-2" type="search" placeholder="Nazwa parafii" aria-label="Search" name="q" value="{{q}}">
-		      <label class="form-check-label"><input type="checkbox" name="hide_a_1800" {% if hide_a_1800 %}checked{% endif %}/>Ukryj parafie po 1800r.</label>
+		      <label class="form-check-label" title="Ukrywa parafie po 1800 roku oraz parafie bez daty."><input type="checkbox" name="hide_a_1800" {% if hide_a_1800 %}checked{% endif %}/>Ukryj parafie po 1800r.</label>
 		      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search2" style="margin-left: 10px;">Szukaj</button>
 		    </form>
         

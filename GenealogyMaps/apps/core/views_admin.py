@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User, Group
 from .models import ParishUser, Parish, County
-
+from django.core.mail import send_mail
 
 @staff_member_required
 def parishes(request):
@@ -19,12 +19,21 @@ def users(request):
     if switch_ro_access_for_user is not None:
         try:
             user = User.objects.get(pk=int(switch_ro_access_for_user))
-            if not user.is_superuser:
-                g = Group.objects.get(name='DATA_ACCESS')
-                if user.groups.filter(name='DATA_ACCESS').exists():
-                    g.user_set.remove(user)
-                else:
-                    g.user_set.add(user)
+            user.is_active = not user.is_active
+            user.save()
+            #if not user.is_superuser:
+            #    g = Group.objects.get(name='DATA_ACCESS')
+            #    if user.groups.filter(name='DATA_ACCESS').exists():
+            #        g.user_set.remove(user)
+            #    else:
+            #        g.user_set.add(user)
+
+            if user.is_active:
+                subject = '[katalog.projektpodlasie.pl] aktywacja konta'
+                url = 'https://katalog.projektpodlasie.pl'
+                message = u'Twoje konto zostało aktywowane przez administratora.\n%s' % (url,)
+                send_mail(subject, message, 'info@katalog.projektpodlasie.pl', (user.email,))
+
         except User.DoesNotExist:
             pass
         return redirect('/a/users')
@@ -87,6 +96,7 @@ def users(request):
 
     return render(request, 'core/_admin/users.html', data)
 
+
 @staff_member_required
 def users_user(request, user_id):
 
@@ -139,18 +149,19 @@ def users_user(request, user_id):
                 print(e)
 
         county_id = request.POST.get('county', None)
-        county = County.objects.get(pk=county_id)
-        if county is not None:
-            group_name = 'county_{}'.format(str(county.id))
+        if county_id is not None:
+            county = County.objects.get(pk=county_id)
+            if county is not None:
+                group_name = 'county_{}'.format(str(county.id))
 
-            try:
-                group = Group.objects.get(name=group_name)
-            except Group.DoesNotExist:
-                group = Group()
-                group.name = group_name
-                group.save()
+                try:
+                    group = Group.objects.get(name=group_name)
+                except Group.DoesNotExist:
+                    group = Group()
+                    group.name = group_name
+                    group.save()
 
-            group.user_set.add(user)
+                group.user_set.add(user)
 
         return redirect('/a/users/%d' % user.id)
 

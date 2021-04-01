@@ -177,6 +177,9 @@ AUTH_PASSWORD_VALIDATORS = [{
 #    },
 ]
 
+# W django 3.3 to juz nie jest potrzebne
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.AllowAllUsersModelBackend', ]
+
 DEFAULT_FROM_EMAIL = 'noreply@parafie.k37.ovh'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

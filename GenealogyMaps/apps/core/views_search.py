@@ -5,7 +5,6 @@ from django.db.models import Q
 # Create your views here.
 from .models import Parish
 
-@login_required
 def index(request):
 
     data = {}
@@ -15,9 +14,9 @@ def index(request):
         return redirect('/')
     if len(q) < 3:
         return redirect('/?error=to-short')
-    parishes = Parish.objects.filter(Q(name__icontains=q) | Q(place__icontains=q) | Q(place2__icontains=q) )
+    parishes = Parish.objects.filter(Q(place__icontains=q) | Q(place2__icontains=q) )
     if hide_a_1800:
-        parishes = parishes.filter(year__lt=1800)
+        parishes = parishes.filter(year__lt=1800).exclude(year=0)
     parishes = parishes.order_by('year')
     data['parishes'] = parishes
     data['hide_search'] = True

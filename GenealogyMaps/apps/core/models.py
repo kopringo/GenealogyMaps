@@ -51,6 +51,11 @@ COUNTRY_HP = (
     (3, 'III RP'),
     (4, 'RZ'),
 )
+def country_hp_to_name(number):
+    for CHP in COUNTRY_HP:
+        if number == CHP[0]:
+            return CHP[1]
+    return ''
 
 def my_year_validator(value):
     if value < 1000 or value > 2100:
@@ -73,7 +78,7 @@ class Country(models.Model):
     name = models.CharField(max_length=32, help_text='Nazwa kraju')
     public = models.BooleanField(default=False)
 
-    historical_period = models.IntegerField(default=1, choices=COUNTRY_HP, help_text='Okres historyczny')
+    historical_period = models.IntegerField('Okres historyczny', default=1, choices=COUNTRY_HP, help_text='Kraje z dane okresu historycznego będą prezentowane wspólnie')
     
     description = models.TextField(blank=True, help_text='Opis na stronę główną')
 
@@ -81,11 +86,14 @@ class Country(models.Model):
         return Province.objects.filter(country=self, public=True)
 
     def __str__(self):
-        return u'%d. %s' % (self.id, self.name)
+        return u'%d. %s (%s)' % (self.id, self.name, country_hp_to_name(self.historical_period))
+
+    def name_with_period(self):
+        return '{} ({})'.format(self.name, country_hp_to_name(self.historical_period))
 
     class Meta:
         verbose_name = 'Kraj'
-        verbose_name_plural = 'Kraje'#_("countries")
+        verbose_name_plural = 'Region - Kraje'#_("countries")
 
 
 class Province(models.Model):
@@ -105,7 +113,7 @@ class Province(models.Model):
         return u'%s' % str(len(Parish.objects.filter(province=self)))
 
     def __unicode__(self):
-        return u'<%s>' % (self.name)
+        return '{} -> {}. {}'.format(self.country, self.id, self.name)
 
     def __str__(self):
         return self.__unicode__()
@@ -143,6 +151,8 @@ class Diocese(models.Model):
     url = models.URLField(max_length=128, blank=True, null=True)
     public = models.BooleanField(default=False)
 
+    religion = models.IntegerField(default=1, choices=RELIGION_TYPE)
+
     def deanery_number(self):
         return u'%s' % str(len(Deanery.objects.filter(diocese=self)))
 
@@ -150,7 +160,7 @@ class Diocese(models.Model):
         return u'%s' % str(len(Parish.objects.filter(diocese=self)))
 
     def __str__(self):
-        return u'%d. %s' % (self.id, self.name)
+        return '{} -> {}. {}'.format(self.country, self.id, self.name)
 
     class Meta:
         verbose_name = 'Diecezja'
@@ -344,9 +354,9 @@ class Parish(models.Model):
 #    R2 1918-1939
 #    R3 1945-2019
 
-    county_r2 = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat (R2)', related_name='county_r2', limit_choices_to=Q(province__country__historical_period=2))
-    county_r1 = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat (R1)', related_name='county_r1', limit_choices_to=Q(province__country__historical_period=1))
-    county_rz = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat (RZ)', related_name='county_rz', limit_choices_to=Q(province__country__historical_period=4))
+    county_r1 = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat w R1', related_name='county_r1', limit_choices_to=Q(province__country__historical_period=1))
+    county_r2 = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat w R2', related_name='county_r2', limit_choices_to=Q(province__country__historical_period=2))
+    county_rz = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL, help_text='Powiat w RZ', related_name='county_rz', limit_choices_to=Q(province__country__historical_period=4))
 
     # lokalizacja
     geo_lat = models.FloatField(blank=True, null=True)
@@ -356,7 +366,11 @@ class Parish(models.Model):
 
     # podzial administracyjny koscielny
     diocese = models.ForeignKey(Diocese, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Diecezja')
-    deanery = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat')
+    deanery = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat', limit_choices_to=Q(diocese__country__historical_period=3))
+
+    deanery_r1 = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat w R1', related_name='deanery_r1', limit_choices_to=Q(diocese__country__historical_period=1))
+    deanery_r2 = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat w R2', related_name='deanery_r2', limit_choices_to=Q(diocese__country__historical_period=2))
+    deanery_rz = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat w RZ', related_name='deanery_rz', limit_choices_to=Q(diocese__country__historical_period=4))
 
     # podzial ziem I RP.
     ziemia_i_rp = models.ForeignKey(ZiemiaIRP, blank=True, null=True, on_delete=models.DO_NOTHING, help_text='Ziemia I RP')

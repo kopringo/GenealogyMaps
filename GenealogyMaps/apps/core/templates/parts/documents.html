@@ -58,17 +58,7 @@
         </table>
     </div>
     <div class="col-md-12">
-        {% if manager %}
-        <button type="button" id="btn-add-document" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-remote="/parish/{{parish.id}}/add-document">Dodaj</button>
-        {% endif %}
-        {% if not manager %}
-            {% if manager_exists %}
-        <p>Parafia zarządzana jest przez <strong>{{manager_exists.first_name}} {{manager_exists.last_name|truncatechars:1}}.</strong> <a href="/parish/{{parish.id}}/message">Wiadomość do opiekuna</a></p>
-            {% endif %}
-            {% if not manager_exists %}
-                <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal2" data-remote="/parish/{{parish.id}}/request-access">Prośba o dostęp do edycji</button>
-            {% endif %}
-        {% endif %}
+
         
     </div>
 </div>
