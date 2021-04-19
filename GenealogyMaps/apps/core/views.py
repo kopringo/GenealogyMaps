@@ -47,8 +47,8 @@ def home(request):
         pass
 
     data['stats'] = {
-        'parish_count': len(Parish.objects.all()),
-        'source_count': len(ParishSource.objects.all()),
+        'parish_count': Parish.objects.count(),
+        'source_count': ParishSource.objects.count(),
     }
 
     return render(request, 'core/home.html', data)
@@ -70,7 +70,6 @@ def profile(request):
 def _load_root_items():
     data ={}
     data['countries'] = Country.objects.all().filter(public=True)
-    data['dioceses'] = Diocese.objects.all().filter(public=True)
     return data
 
 
