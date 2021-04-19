@@ -11,4 +11,4 @@ def show_toolbar(request):
     """
     Default function to determine whether to show the toolbar on a given page.
     """
-    return config.DEBUG
+    return config.DEBUG or request.user.is_superuser
