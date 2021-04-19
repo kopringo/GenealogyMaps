@@ -5,3 +5,10 @@ def global_settings(request):
     return {
         'settings': config,
     }
+
+
+def show_toolbar(request):
+    """
+    Default function to determine whether to show the toolbar on a given page.
+    """
+    return config.DEBUG
