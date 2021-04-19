@@ -168,6 +168,7 @@ class Diocese(models.Model):
     class Meta:
         verbose_name = 'Diecezja'
         verbose_name_plural = 'Region - Diecezje'#_("dioceses")
+        ordering = ['name']
 
 
 class Deanery(models.Model):
@@ -183,6 +184,7 @@ class Deanery(models.Model):
     class Meta:
         verbose_name = 'Dekanat'
         verbose_name_plural = 'Region - Dekanaty'#"deaneries"
+        ordering = ['name']
 
 
 class ZiemiaIRP(models.Model):
