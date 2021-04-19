@@ -130,15 +130,15 @@
                                 <th>Parafie</th>
                             </tr>
                         </thead>
-                    {% for wojewodztwo in country.get_provinces %}
-                        {% if wojewodztwo.name %}
-                        <tr>
-                            <td><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a></td>
-                            <td><span title="powiaty">{{ wojewodztwo.county_number}}</span></td>
-                            <td><span title="parafie">{{wojewodztwo.parish_number}}</span></td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
+                        {% for wojewodztwo in country.get_provinces %}
+                            {% if wojewodztwo.name %}
+                            <tr>
+                                <td><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a></td>
+                                <td><span title="powiaty">{{ wojewodztwo.county_number}}</span></td>
+                                <td><span title="parafie">{{wojewodztwo.parish_number}}</span></td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
                     </table>
                 </div>
 
@@ -152,15 +152,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                    {% for diecezja in dioceses %}
-                        {% if diecezja.name %}
-                        <tr>
-                            <td><a href="/area/diocese/{{ diecezja.id }}">{{ diecezja.name }}</a></td>
-                            <td>{{ diecezja.deanery_number }}</td>
-                            <td>{{ diecezja.parish_number }}</td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
+                        {% for diecezja in country.get_dioceses %}
+                            {% if diecezja.name %}
+                            <tr>
+                                <td><a href="/area/diocese/{{ diecezja.id }}">{{ diecezja.name }}</a></td>
+                                <td>{{ diecezja.deanery_number }}</td>
+                                <td>{{ diecezja.parish_number }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>

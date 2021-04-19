@@ -85,6 +85,9 @@ class Country(models.Model):
     def get_provinces(self):
         return Province.objects.filter(country=self, public=True)
 
+    def get_dioceses(self):
+        return Diocese.objects.filter(country=self, public=True)
+
     def __str__(self):
         return u'%d. %s (%s)' % (self.id, self.name, country_hp_to_name(self.historical_period))
 
