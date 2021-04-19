@@ -178,7 +178,7 @@ class Deanery(models.Model):
     url = models.URLField(max_length=128, blank=True)
 
     def __str__(self):
-        return u'%d. %s' % (self.id, self.name)
+        return '{}. {}'.format(self.id, self.name)
 
     class Meta:
         verbose_name = 'Dekanat'
