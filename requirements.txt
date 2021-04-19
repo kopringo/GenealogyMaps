@@ -6,3 +6,4 @@ django-import-export==2.0.1
 raven
 #git+git://github.com/kopringo/django-messages.git@0.5.3-django2.2
 requests
+django-debug-toolbar==3.2.1

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'import_export',
     'django_messages',
     'raven.contrib.django.raven_compat',
+
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -55,11 +57,19 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': 'GenealogyMaps.apps.core.context_processors.show_toolbar'
+}
 
 ROOT_URLCONF = 'GenealogyMaps.urls'
 
@@ -198,6 +208,8 @@ RAVEN_CONFIG = {
     # release based on the git info.
     #'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
+
+
 
 LOGGING = {
     'version': 1,
