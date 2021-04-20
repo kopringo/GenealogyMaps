@@ -52,7 +52,8 @@ def parish(request, parish_id):
         'manager': parish.has_user_manage_permission(request.user),
         'managers': ParishUser.objects.filter(parish=parish, manager=True),
         'parish_user': parish_user,
-        'manager_exists': manager_exists
+        'manager_exists': manager_exists,
+        'subtitle': parish.place
     })
 
     return render(request, 'core/parish.html', data)

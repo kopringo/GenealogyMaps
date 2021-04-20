@@ -14,7 +14,7 @@ def index(request):
         return redirect('/')
     if len(q) < 3:
         return redirect('/?error=to-short')
-    parishes = Parish.objects.filter(Q(place__icontains=q) | Q(place2__icontains=q) )
+    parishes = Parish.objects.filter(Q(place__istartswith=q) | Q(place2__istartswith=q) )
     if hide_a_1800:
         parishes = parishes.filter(year__lt=1800).exclude(year=0)
     parishes = parishes.order_by('year')
