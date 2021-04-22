@@ -93,6 +93,15 @@
             margin-right: 0px;
           }
         }
+
+        input.filter-type {
+              transform: scale(1.5);
+              -ms-transform: scale(1.5); /* IE */
+              -moz-transform: scale(1.5); /* FF */
+              -webkit-transform: scale(1.5); /* Safari and Chrome */
+              -o-transform: scale(1.5); /* Opera */
+              margin-right: 5px;
+        }
     </style>
     {% block content_css %}{% endblock %}
     {% if request.session.theme != 'light' %}

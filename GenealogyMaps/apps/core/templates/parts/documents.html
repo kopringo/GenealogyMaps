@@ -5,12 +5,18 @@
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="D"> zgony</label></label>&nbsp;&nbsp;
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="ZAP"> zapowiedzi</label></label>&nbsp;&nbsp;
         <label class="form-check-label"><input type="checkbox" checked class="filter-type" data-type="A"> alegata</label></label>&nbsp;&nbsp;
+        <select class="filter-type2">
+            <option value="">Wszystkie</option>
+            {% for SOURCE_GROUP_ITEM in SOURCE_GROUP %}
+                <option value="{{ SOURCE_GROUP_ITEM.0 }}">{{SOURCE_GROUP_ITEM.1}}</option>
+            {% endfor %}
+        </select>
     </div>
     <div class="col-md-12">
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th>Rodzja księgi</th>
+                    <th>Rodzaj księgi</th>
                     <th>Zakres lat</th>
 					<th>Typ dokumentu</th>
                     <th>Źródło</th>
@@ -19,7 +25,7 @@
             </thead>
             <tbody>
                 {% for document_group in document_groups %}
-                <tr class="document_group {%if document_group.type_b%}B{%endif%} {%if document_group.type_d%}D{%endif%} {%if document_group.type_m%}M{%endif%} {%if document_group.type_zap%}ZAP{%endif%} {%if document_group.type_a%}A{%endif%}">
+                <tr class="document_group group_{{document_group.source.group}} {%if document_group.type_b%}B{%endif%} {%if document_group.type_d%}D{%endif%} {%if document_group.type_m%}M{%endif%} {%if document_group.type_zap%}ZAP{%endif%} {%if document_group.type_a%}A{%endif%}">
                     <td style="font-family: mono">
                         {% if document_group.type_b %}urodzenia{% else %} {% endif %}
                         {% if document_group.type_d %}zgony{% else %} {% endif %}

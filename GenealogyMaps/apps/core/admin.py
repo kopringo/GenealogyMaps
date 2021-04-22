@@ -364,6 +364,11 @@ class ParishAdmin(ImportExportModelAdmin):
     resource_class = ParishResource
 
 
+class ParishIndexSourceAdmin(admin.ModelAdmin):
+    pass
+
+
+
 class ParishLocationsAdmin(admin.ModelAdmin):
     list_display = ['name', 'place', 'year', 'diocese', 'country', 'province', 'county', 'county_r2', 'county_r1', 'county_rz' ]
     list_filter = [ 'diocese', 'not_exist_anymore', ]
@@ -499,6 +504,7 @@ admin.site.register(ParishLocations, ParishLocationsAdmin)
 admin.site.register(ParishSource, ParishSourceAdmin)
 admin.site.register(ParishUser, ParishUserAdmin)
 admin.site.register(ParishSourceExt, ParishSourceExtAdmin)
+admin.site.register(ParishIndexSource, ParishIndexSourceAdmin)
 
 admin.site.register(CourtOffice, CourtOfficeAdmin)
 admin.site.register(CourtBook, CourtBookAdmin)

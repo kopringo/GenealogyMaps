@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 import numpy as np
 
 # Create your views here.
-from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP
+from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP, ParishIndexSource
 from .forms import ParishSourceForm, ParishEditForm, ParishMessageForm
 from .decorators import group_required
 
@@ -28,6 +28,8 @@ def parish(request, parish_id):
     documents = ParishSource.objects.filter(parish=parish).order_by('date_from')
     documents_sorted = __prepare_report(documents)
     documents_yby = __prepare_report_yby(documents)
+
+    documents_indexes = ParishIndexSource.objects.filter(parish=parish)
 
     parish_user = None
     try:
@@ -49,11 +51,14 @@ def parish(request, parish_id):
         'document_groups': documents,
         'document_groups_sorted': documents_sorted,
         'document_groups_yby': documents_yby,
+        'documents_indexes': documents_indexes,
         'manager': parish.has_user_manage_permission(request.user),
         'managers': ParishUser.objects.filter(parish=parish, manager=True),
         'parish_user': parish_user,
         'manager_exists': manager_exists,
-        'subtitle': parish.place
+        'subtitle': parish.place,
+        'SOURCE_GROUP': SOURCE_GROUP,
+
     })
 
     return render(request, 'core/parish.html', data)

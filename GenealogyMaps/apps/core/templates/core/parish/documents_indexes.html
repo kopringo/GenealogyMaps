@@ -1,0 +1,27 @@
+{% load sort_dict_by_key %}
+<!-- lista roczników -> po kliknięciu: żródło, język, treść notatki. -->
+
+<table class="table table-sm">
+    <colgroup>
+        <col width="200"/>
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Baza</th>
+            <th>Typ</th>
+            <th>Zakres roczników</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for index in documents_indexes %}
+        <tr>
+            <td><a href="{{ index.url }}" target="_blank">{{ index.project_name }}</a></td>
+            <td></td>
+            <td></td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+
+
+</table>

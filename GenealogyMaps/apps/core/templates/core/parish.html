@@ -90,7 +90,11 @@
                 
                 <p class="nomargin">Wyznanie: {{ parish.get_religion_description }}</p>
                 {% if parish.year and parish.year < 1800 %}<p class="nomargin">Ziemia I RP: {% if parish.ziemia_i_rp %}{{ parish.ziemia_i_rp.name }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>{% endif %}
-                <p class="nomargin">Rok utworzenia: {% if parish.year %}{{ parish.year }}{% else %}<span class="text-danger">brak danych</span>{% endif %}</p>
+                <p class="nomargin">{% if parish.year %}
+                    Rok powstania: {{ parish.year }}
+                {% else %}
+                    {% if parish.century %}Wiek powstania: {{ parish.century }}{% else %}<span class="text-danger">brak danych</span>{% endif %}
+                {% endif %}</p>
                 <br/><p><small><i>Data modyfikacji: {% if parish.date_updated %}{{parish.date_updated}}{%else %}brak danych{% endif %}</i></small></p>
 
 
@@ -174,14 +178,18 @@
 
         <div class="tab-pane fade" id="tab-years" role="tabpanel">
             {% if request.user.is_authenticated %}
-            {% include "core/parish/documents_report4.html" %}
+                {% include "core/parish/documents_report4.html" %}
             {% else %}
             Widok dostępny dla zalogowanych użytkowników.
             {% endif %}
         </div>
 
         <div class="tab-pane fade" id="tab-indexes" role="tabpanel">
+            {% if request.user.is_authenticated %}
+                {% include "core/parish/documents_indexes.html" %}
+            {% else %}
             Widok dostępny dla zalogowanych użytkowników.
+            {% endif %}
         </div>
 
         <div class="tab-pane fade" id="tab-sources" role="tabpanel">
@@ -254,18 +262,31 @@
             }
         });
 
+        var filter_rows = function(){
+            $('.document_group').hide();
+
+            var group = $( ".filter-type2" ).val();
+
+            $( ".filter-type" ).each(function( index ) {
+                if( $(this).is(':checked') ){
+                    var type = $(this).data('type');
+                    $('.document_group.'+type).show();
+                }
+            });
+
+            if (group != ''){
+                $('.document_group:not(.group_'+group+')').hide();
+            }
+        }
+
         $(function(){
             $(document).on('click', '.filter-type', function(){
-                $('.document_group').hide();
-                $( ".filter-type" ).each(function( index ) {
-                    if( $(this).is(':checked') ){
-                        var type = $(this).data('type');
-                        $('.document_group.'+type).show();
-                    }
-                });
+                filter_rows();
+            });
 
+            $(document).on('click', '.filter-type2', function(){
+                filter_rows();
 
-                //
             });
         });
 

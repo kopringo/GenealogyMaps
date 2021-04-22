@@ -25,7 +25,7 @@ class ParishEditForm(forms.ModelForm):
         model = Parish
         fields = [
 
-            'name', 'religion', 'year', 'not_exist_anymore', 'all_done',
+            'name', 'religion', 'year', 'century', 'not_exist_anymore', 'all_done',
 
             'country',
             'province',

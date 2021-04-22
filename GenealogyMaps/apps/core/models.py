@@ -237,15 +237,15 @@ SOURCE_GROUP = (
     ('AP', 'Archiwa Państwowe (PL)'),
     ('AD', 'Archiwa Kościelne (PL)'),
     ('PAR', 'Archiwum Parafialne (ALL)'),
-    ('BIB', 'Biblioteki'),
-    ('USC', 'Urzędy Stanu Cywilnego'),
-    
-    ('AP_UA', 'Archiwa Państwowe (UA)'),
-    ('AP_LT', 'Archiwa Państwowe (LT)'),
-    ('AP_BY', 'Archiwa Państwowe (BY)'),
-    ('AP_RU', 'Archiwa Państwowe (RU)'),
-    ('AP_LV', 'Archiwa Państwowe (LV)'),
-    ('AP_RO', 'Archiwa Państwowe (RO)'),
+
+#    ('BIB', 'Biblioteki'),
+#    ('USC', 'Urzędy Stanu Cywilnego'),
+#    ('AP_UA', 'Archiwa Państwowe (UA)'),
+#    ('AP_LT', 'Archiwa Państwowe (LT)'),
+#    ('AP_BY', 'Archiwa Państwowe (BY)'),
+#    ('AP_RU', 'Archiwa Państwowe (RU)'),
+#    ('AP_LV', 'Archiwa Państwowe (LV)'),
+#    ('AP_RO', 'Archiwa Państwowe (RO)'),
     
     ('A_Z', 'Archiwa Zagraniczne'),
     
@@ -332,6 +332,7 @@ class Source(models.Model):
 ###############################################################################
 # Parafie
 ###############################################################################
+
 
 class Parish(models.Model):
 
@@ -517,10 +518,20 @@ class ParishUser(models.Model):
 
 
 class ParishPlace(models.Model):
+
+    PLACE_TYPE__OTHER = 0
+    PLACE_TYPE__CEMETERY = 1
+    PLACE_TYPE = (
+        (PLACE_TYPE__OTHER, 'Inny'),
+        (PLACE_TYPE__CEMETERY, 'Cmentarz'),
+    )
+
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
-    name = models.CharField(max_length=32)
+    name = models.CharField(max_length=32, help_text='Opis')
+    type = models.IntegerField(choices=PLACE_TYPE, default=1)
     geo_lat = models.FloatField(blank=True)
     geo_lng = models.FloatField(blank=True)
+    existing = models.BooleanField(default=True, help_text='Obiekt istniejący')
 
 
 class ParishComment(models.Model):
@@ -529,6 +540,7 @@ class ParishComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, help_text='Autor komentarza')
     date_created = models.DateTimeField(blank=True, null=True, help_text='Data utworzenia')
     visible = models.BooleanField(default=True, help_text='Widocznosc komentarza')
+
 
 class ParishSource(SourceRef):
 
@@ -560,6 +572,7 @@ class ParishSource(SourceRef):
         verbose_name = 'Parafia - Zbiór danych'
         verbose_name_plural = 'Parafie - zbiory danych'#_("countries")
 
+
 class ParishSourceExt(models.Model):
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
@@ -573,8 +586,8 @@ class ParishIndexSource(models.Model):
     PARISH_INDEX_SOURCE__TEST = 0
     PARISH_INDEX_SOURCE__PP = 1
     PARISH_INDEX_SOURCE = (
-        (PARISH_INDEX_SOURCE__PP, 'Projekt Podlasie'),
         (PARISH_INDEX_SOURCE__TEST, 'Test'),
+        (PARISH_INDEX_SOURCE__PP, 'Projekt Podlasie'),
     )
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
@@ -582,6 +595,11 @@ class ParishIndexSource(models.Model):
     url = models.URLField(blank=True, help_text='Adres informacji o indexach')
 
     checked_date = models.DateTimeField(blank=True, null=True)
+    raw_data = models.TextField(blank=True)
+
+    def project_name(self):
+
+        return ParishIndexSource.PARISH_INDEX_SOURCE[self.project][1]
 
 
 ###############################################################################
@@ -619,6 +637,7 @@ class CourtOffice(models.Model):
         verbose_name = 'Kancelaria'
         verbose_name_plural = 'Kancelarie'
 
+
 class CourtBook(models.Model):
 
     name = models.CharField(max_length=64, help_text='Nazwa księgi', blank=True)
@@ -641,6 +660,7 @@ class CourtBook(models.Model):
     class Meta:
         verbose_name = 'Księga sądowa'
         verbose_name_plural = 'Księgi sądowe'
+
 
 class CourtBookSource(SourceRef):
 
