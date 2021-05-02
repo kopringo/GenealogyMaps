@@ -110,10 +110,10 @@ class Province(models.Model):
     public = models.BooleanField(default=False)
 
     def county_number(self):
-        return u'%s' % str(len(County.objects.filter(province=self)))
+        return u'%s' % str(County.objects.filter(province=self).count())
 
     def parish_number(self):
-        return u'%s' % str(len(Parish.objects.filter(province=self)))
+        return u'%s' % str(Parish.objects.filter(province=self).count())
 
     def __unicode__(self):
         return '{} -> {}. {}'.format(self.country, self.id, self.name)
@@ -134,7 +134,7 @@ class County(models.Model):
     name = models.CharField(max_length=32, help_text='Powiat')
 
     def parish_number(self):
-        return u'%s' % str(len(Parish.objects.filter(county=self)))
+        return u'%s' % str(Parish.objects.filter(county=self).count())
 
     def __str__(self):
         return u'%d. %s' % (self.id, self.name)
@@ -157,10 +157,10 @@ class Diocese(models.Model):
     religion = models.IntegerField(default=1, choices=RELIGION_TYPE)
 
     def deanery_number(self):
-        return u'%s' % str(len(Deanery.objects.filter(diocese=self)))
+        return u'%s' % str(Deanery.objects.filter(diocese=self).count())
 
     def parish_number(self):
-        return u'%s' % str(len(Parish.objects.filter(diocese=self)))
+        return u'%s' % str(Parish.objects.filter(diocese=self).count())
 
     def __str__(self):
         return '{} -> {}. {}'.format(self.country, self.id, self.name)
@@ -505,7 +505,7 @@ class ParishLocations(Parish):
 
 class ParishUser(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     note = models.TextField(blank=True)
 
     favorite = models.BooleanField(default=False, help_text='Czy parafia nalezy do ulubionych usera')
@@ -628,7 +628,7 @@ class CourtOffice(models.Model):
     # notes
 
     def book_number(self):
-        return u'%s' % str(len(CourtBook.objects.filter(office=self)))
+        return u'%s' % str(CourtBook.objects.filter(office=self).count())
 
     def __str__(self):
         return u'%s' % (self.name)
