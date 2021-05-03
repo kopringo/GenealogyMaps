@@ -430,9 +430,9 @@ class Parish(models.Model):
         not_exists = ''
         all_done = ''
 
-        if not self.diocese:
+        if not self.diocese_id:
             diocese_str = 'brak diecezji'
-        if not self.deanery:
+        if not self.deanery_id:
             deanery_str = 'brak dekanatu'
         if diocese_str != '' or deanery_str != '':
             missing_sth = '<span class="span-icon text-danger fa fa-exclamation-triangle" title="%s %s"></span>' % (diocese_str, deanery_str)
