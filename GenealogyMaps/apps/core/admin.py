@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from django.db.models import Q
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -19,17 +20,37 @@ class CourtOfficeResource(resources.ModelResource):
 
 
 class ParishResource(resources.ModelResource):
+
+    # obligatoryjne
     name = Field(attribute='name', column_name='nazwa')
-    wyznanie = Field(attribute='religion', column_name='wyznanie')
+    place = Field(attribute='place', column_name='miejscowosc')
+    religion = Field(attribute='religion', column_name='wyznanie')
+
+    country = Field(attribute='country', column_name='kraj r3')
+    province = Field(attribute='province', column_name='wojewodztwo r3')
+    county = Field(attribute='county', column_name='powiat r3')
+
+    # opcjonalne
     year = Field(attribute='year', column_name='rok')
     century = Field(attribute='century', column_name='wiek')
-    country = Field(attribute='country', column_name='kraj')
-    province = Field(attribute='province', column_name='wojewodztwo')
-    county = Field(attribute='county', column_name='powiat')
-    diocese = Field(attribute='diocese', column_name='diecezja')
-    deanery = Field(attribute='deanery', column_name='dekanat')
-    place = Field(attribute='place', column_name='miejscowosc')
-    #place2 = Field(attribute='place2', column_name='miejscowosc 2')
+    diocese = Field(attribute='diocese', column_name='diecezja r3')
+    deanery = Field(attribute='deanery', column_name='dekanat r3')
+
+    #postal_code = Field(attribute='postal_code', column_name='postal_code')
+    #postal_place = Field(attribute='postal_place', column_name='postal_place')
+    #address = Field(attribute='address', column_name='address')
+
+    county_r1 = Field(attribute='county_r1', column_name='powiat r1')
+    county_r2 = Field(attribute='county_r2', column_name='powiat r2')
+    county_rz = Field(attribute='county_rz', column_name='powiat rz')
+    deanery_r1 = Field(attribute='deanery_r1', column_name='dekanat r1')
+    deanery_r2 = Field(attribute='deanery_r2', column_name='dekanat r2')
+    deanery_rz = Field(attribute='deanery_rz', column_name='dekanat rz')
+
+    # geo_lat
+    # geo_lng
+    # geo_validated
+    # not_exist_anymore
 
     def before_import_row(self, row, **kwargs):
 
@@ -40,34 +61,62 @@ class ParishResource(resources.ModelResource):
             row['rok'] = 0
 
         try:
-            country = row.get('kraj')
-            row['kraj'] = Country.objects.get(code__iexact=country)
+            wyznanie = row.get('wyznanie')
+            wyznanie_id = wyznanie
+
+            if wyznanie == 'grekokatolickie':
+                wyznanie_id = 7
+            if wyznanie == 'prawosławne':
+                wyznanie_id = 6
+            if wyznanie == 'ewangelicko-augsburskie':
+                wyznanie_id = 5
+            if wyznanie.upper() in RELIGION_TYPE_SHORT.values():
+                inverted_RELIGION_TYPE_SHORT = {value: key for key, value in RELIGION_TYPE_SHORT.items()}
+                wyznanie_id = inverted_RELIGION_TYPE_SHORT[wyznanie.upper()]
+            row['wyznanie'] = int(wyznanie_id)
         except Exception as e:
-            row['kraj'] = None #Country.objects.get(pk=1)
+            pass
 
         try:
-            province = row.get('wojewodztwo')
-            row['wojewodztwo'] = Province.objects.get(name__iexact=province, country=row['kraj'])
+            country = row.get('kraj r3')
+            row['kraj r3'] = Country.objects.get(Q(Q(code__iexact=country)|Q(name__iexact=country))&Q(historical_period=3))
         except Exception as e:
-            row['wojewodztwo'] = None
+            row['kraj r3'] = None #Country.objects.get(pk=1)
 
         try:
-            county = row.get('powiat')
-            row['powiat'] = County.objects.get(name__iexact=county, province=row['wojewodztwo'])
+            province = row.get('wojewodztwo r3')
+            row['wojewodztwo r3'] = Province.objects.get(name__iexact=province, country__historical_period=3)
         except Exception as e:
-            row['powiat'] = '-'
+            row['wojewodztwo r3'] = None
 
         try:
-            diocese = row.get('diecezja')
-            row['diecezja'] = Diocese.objects.get(name__iexact=diocese, country=row['kraj'])
+            diocese = row.get('diecezja r3')
+            row['diecezja r3'] = Diocese.objects.get(name__iexact=diocese, country__historical_period=3)
         except:
-            row['diecezja'] = None
+            row['diecezja r3'] = None
 
-        try:
-            deanery = row.get('dekanat')
-            row['dekanat'] = Deanery.objects.get(name__iexact=deanery, diocese=row['diecezja'])
-        except:
-            row['dekanat'] = None
+#        try:
+#            deanery = row.get('dekanat r3')
+#            row['dekanat r3'] = Deanery.objects.get(name__iexact=deanery, diocese__country__historical_period=3)
+#        except Except as e:
+#            print(e)
+#            row['dekanat r3'] = None
+
+        for obj in [('powiat r2', 2), ('powiat r1', 1), ('powiat rz', 4), ('powiat r3', 3)]:
+            try:
+                county = row.get(obj[0])
+                row[obj[0]] = County.objects.get(name__iexact=county, province__country__historical_period=obj[1])
+            except Exception as e:
+                print(e)
+                row[obj[0]] = None
+
+        for obj in [('dekanat r2', 2), ('dekanat r1', 1), ('dekanat rz', 4), ('dekanat r3', 3)]:
+            try:
+                deanery = row.get(obj[0])
+                row[obj[0]] = Deanery.objects.get(name__iexact=deanery, diocese__country__historical_period=obj[1])
+            except Exception as e:
+                row[obj[0]] = None
+
 
         try:
             geo_lat = row.get('geo_lat')
@@ -80,34 +129,19 @@ class ParishResource(resources.ModelResource):
         except:
             pass
 
-        try:
-            wyznanie = row.get('wyznanie')
-            wyznanie_id = wyznanie
-
-            if wyznanie == 'grekokatolickie':
-                wyznanie_id = 7
-            if wyznanie == 'prawosławne':
-                wyznanie_id = 6
-            if wyznanie == 'ewangelicko-augsburskie':
-                wyznanie_id = 5
-            row['wyznanie'] = int(wyznanie_id)
-        except:
-            pass
-
-        postal_code = row.get('postal_code', None)
-        if postal_code is None:
-            row['postal_code'] = ''
-        postal_place = row.get('postal_place', None)
-        if postal_place is None:
-            row['postal_place'] = ''
-        place2 = row.get('place2', None)
-        if place2 is None:
-            row['place2'] = ''
-        nazwa = row.get('nazwa', None)
-        if nazwa is None:
-            row['nazwa'] = ''
 
 
+        # pola ktore moga byc puste nie moga byc nullami
+        for field in ['postal_code', 'postal_place', 'place2', 'nazwa', 'wiek', ]:
+            val = row.get(field, None)
+            if val is None:
+                row[field] = ''
+
+
+    def dehydrate_religion(self, parish):
+        if parish.religion in RELIGION_TYPE_SHORT.keys():
+            return RELIGION_TYPE_SHORT[parish.religion]
+        return parish.religion
 
     def dehydrate_country(self, parish):
         if parish.country is not None:
@@ -127,6 +161,8 @@ class ParishResource(resources.ModelResource):
             dir(parish)
         return ''
 
+
+
     def dehydrate_diocese(self, parish):
         if parish.diocese is not None:
             return '%s' % parish.diocese.name
@@ -137,14 +173,47 @@ class ParishResource(resources.ModelResource):
             return '%s' % parish.deanery.name
         return ''
 
+    def dehydrate_county_r1(self, parish):
+        if parish.county_r1 is not None:
+            return '%s' % parish.county_r1.name
+        return ''
+
+    def dehydrate_county_r2(self, parish):
+        if parish.county_r2 is not None:
+            return '%s' % parish.county_r2.name
+        return ''
+
+    def dehydrate_county_rz(self, parish):
+        if parish.county_rz is not None:
+            return '%s' % parish.county_rz.name
+        return ''
+
+    def dehydrate_deanery_r1(self, parish):
+        if parish.deanery_r1 is not None:
+            return '%s' % parish.deanery_r1.name
+        return ''
+
+    def dehydrate_deanery_r2(self, parish):
+        if parish.deanery_r2 is not None:
+            return '%s' % parish.deanery_r2.name
+        return ''
+
+    def dehydrate_deanery_rz(self, parish):
+        if parish.deanery_rz is not None:
+            return '%s' % parish.deanery_rz.name
+        return ''
+
     class Meta:
         model = Parish
         fields = (
+
             'id',
-            'name', 'year', 'wyznanie', 
-            'country', 'province', 'county', 'diocese', 'deanery',
-            'place', 'postal_code', 'postal_place', 'address',
-            'geo_lat', 'geo_lng', 'not_exist_anymore',
+            'name', 'religion', 'country', 'province', 'county', 'place',
+
+            'year', 'century', 'diocese', 'deanery', 'postal_code', 'postal_place', 'address',
+            'county_r1', 'county_r2', 'county_rz', 'deanery_r1', 'deanery_r2', 'deanery_rz', 'geo_lat', 'geo_lng',
+            'geo_validated', 'not_exist_anymore'
+
             )
         export_order = fields
 

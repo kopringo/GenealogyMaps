@@ -95,6 +95,10 @@
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 17 18 21 24 26  27 28 29 30 31 32 33 34 35 36 37 38 39 41 42 45 48 49 50 \
     51 52 53 54 55 56 58 59 60 62 63 64 65 66 67 68 69 71 72 73 75 76 78 79 82 83 84 85 86 88 89 92 93; do
 
+    if [[ "$i" != "4" ]] && [[ "$i" != "5" ]]; then
+        continue
+    fi
+
     if [[ ! -f cache/szwa_zasob_$i ]]; then
         wget "https://szukajwarchiwach.pl/$i/str/1/100?sort=tytul" --no-check-certificate -q -O cache/szwa_zasob_$i;
     fi
@@ -113,7 +117,9 @@ for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 17 18 21 24 26  27 28 29 30 31 32 3
             TITLE=`cat cache/szwa_zasob_single2 | head -n 3 | tail -n 1`
             YEARS=`cat cache/szwa_zasob_single2 | head -n 4 | tail -n 1`
             PHOTOS=`cat cache/szwa_zasob_single2 | head -n 5 | tail -n 1`
-            echo "$NUMBER; $TITLE; $YEARS; $PHOTOS";
+	    if [[ "`echo "$TITLE" | grep "akta stanu cywilnego"`" != "" ]] || [[ "`echo "$TITLE" | grep "Parafii "`" != "" ]] || [[ "`echo "$TITLE" | grep "Parafia "`" != "" ]]; then
+	            echo "$NUMBER; $TITLE; $YEARS; $PHOTOS";
+		fi
         done
     done
 done

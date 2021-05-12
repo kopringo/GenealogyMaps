@@ -82,7 +82,6 @@ def province(request, p_id):
     except Province.DoesNotExist:
         return redirect('home')
 
-
     counties = list(map(lambda x: {'name': x.name, 'link': '/area/county/%d' % x.id}, County.objects.filter(province=province).order_by('name')))
     items = __get_parish_list(province=province)
 
@@ -93,7 +92,9 @@ def province(request, p_id):
         'counties': counties,
         'items': items,
         'province': province,
-        'convex_hull': convex_hull
+        'convex_hull': convex_hull,
+        'limit_parish_on_the_map': '?lt=province&lv={}'.format(p_id),
+        'mapid_fixed': True
     })
     return render(request, 'core/province.html', data)
 
@@ -113,7 +114,8 @@ def county(request, c_id):
     data.update({
         'items': items,
         'county': county,
-        'convex_hull': convex_hull
+        'convex_hull': convex_hull,
+        'limit_parish_on_the_map': '?lt=county&lv={}'.format(c_id),
     })
     return render(request, 'core/county.html', data)
 

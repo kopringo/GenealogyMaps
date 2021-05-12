@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    
+    <div class="col-md-8" style="padding-top: 30px;">
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Okres</th>
+                    <th>Podział administracyjny</th>
+                    <th>Podział kościelny</th>
+                </tr>
+            </thead>
+            {% for period in periods %}
+            <tr>
+                <td>
+                    {{ period.1 }}
+                </td>
+	            <td>
+                    {% for country in period.2 %}
+                    <a href="?country={{country.code}}">{{country.name}}</a><br/>
+                    {% endfor %}
+                </td>
+	            <td>
+                    {% for area in period.3 %}
+                    <a href="?country={{area.0}}&religion={{area.1}}">{{area.2}}</a><br/>
+                    {% endfor %}
+                </td>
+	        </tr>
+            {% endfor %}
+
+        </table>
+
+        <!--
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Okres</th>
+                    <th>Kraj</th>
+                    <th>Opis</th>
+                </tr>
+            </thead>
+	        {% for country in countries %}
+	        <tr>
+                <td>
+                    {% if country.historical_period == 1 %}I RP, 966-1772{% endif %}
+                    {% if country.historical_period == 2 %}II RP, 1918-1944{% endif %}
+                    {% if country.historical_period == 3 %}III RP, 1945-{% endif %}
+                </td>
+	            <td><a href="?country={{country.code}}">{{country.name}}</a></td>
+	            <td>{{country.description}}</td>
+	        </tr>
+	        {% endfor %}
+	    </table>
+	    -->
+    </div>
+    <div class="col-md-4" style="padding-top: 30px;">
+
+
+         <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#tab1" role="tab">Statystyki</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab2" role="tab">Ulubione</a>
+              </li>
+             <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab3" role="tab">Zarządzanie</a>
+              </li>
+
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+
+                <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+                    <table>
+                        <tr>
+                            <th>Liczba parafii</th>
+                            <td>{{ stats.parish_count }}</td>
+                        </tr>
+                        <tr>
+                            <th>Liczba zbiorów archiwalnych</th>
+                            <td>{{ stats.source_count }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="tab-pane fade" id="tab2" role="tabpanel">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Parafia</th>
+                                <th class="text-right">Miejsowość</th>
+                                <th class="text-right">Powiat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for parish_user in favorite_list %}
+                            <tr>
+                                <td>
+                                <a href="/parish/{{parish_user.parish.id}}">{{parish_user.parish.name}} ({{parish_user.parish.year}})</a>
+                                </td>
+                                <td class="text-right">{{parish_user.parish.place}}</td>
+                                <td class="text-right">{{ parish_user.parish.county.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tab-pane fade" id="tab3" role="tabpanel">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Parafia</th>
+                                <th class="text-right">Miejsowość</th>
+                                <th class="text-right">Powiat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for parish_user in manager_list %}
+                            <tr>
+                                <td>
+                                <a href="/parish/{{parish_user.parish.id}}">{{parish_user.parish.name}} ({{parish_user.parish.year}})</a>
+                                </td>
+                                <td class="text-right">{{parish_user.parish.place}}</td>
+                                <td class="text-right">{{ parish_user.parish.county.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+    </div>
+
+
+{% endblock %}

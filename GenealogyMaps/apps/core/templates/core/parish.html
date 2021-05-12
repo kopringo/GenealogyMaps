@@ -169,6 +169,10 @@
         <li class="nav-item">
             <a class="nav-link " id="tab-documents" data-toggle="tab" href="#tab-sources" role="tab" aria-selected="true">Źródła</a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link " id="tab-documents4" data-toggle="tab" href="#tab-objects" role="tab" aria-selected="true">Obiekty</a>
+        </li>
     </ul>
 
     <div class="tab-content" id="myTabContent">
@@ -200,6 +204,10 @@
             {% endif %}
         </div>
 
+        <div class="tab-pane fade" id="tab-objects" role="tabpanel">
+            Obiekty związane z parafią
+        </div>
+
 
 
     </div>
@@ -210,7 +218,7 @@
         <p>Lista opiekunów (info dla administratora)</p>
         <ul>
         {% for p_manager in managers %}
-            <li><a href="/a/users/{{p_manager.user.id}}" target="_blank">{{p_manager.user.first_name}} {{p_manager.user.last_name}}</a>
+	        <li><a href="/a/users/{{p_manager.user.id}}" target="_blank">{{p_manager.user.first_name}} {{p_manager.user.last_name}}</a>
         {% endfor %}
         </ul>
     </div>
@@ -249,13 +257,15 @@
             //markers[{{parish.id}}].filtered = true
             //pruneCluster.ProcessView();
 
-            console.log('ok {{parish.id}}');
         }
 
         $(document).on('change', '#source_type', function(){
             if( $(this).val() == 'PAR' ){
                 $('#select-source').hide();
                 $('#select-source-parish').show();
+            } else if( $(this).val() == 'PAR_LOC' ){
+                $('#select-source').hide();
+                $('#select-source-parish').hide();
             } else {
                 $('#select-source').show();
                 $('#select-source-parish').hide();

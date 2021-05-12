@@ -59,6 +59,8 @@ def parish(request, parish_id):
         'subtitle': parish.place,
         'SOURCE_GROUP': SOURCE_GROUP,
 
+        'limit_parish_on_the_map': '?lt=parish&lv={}'.format(parish_id)
+
     })
 
     return render(request, 'core/parish.html', data)
@@ -130,7 +132,27 @@ def parish_message(request, parish_id):
 
 
 def parish_list_json(request):
-    _items = list(Parish.objects.filter(visible=True).values('id', 'name', 'geo_lat', 'geo_lng', 'province__id', 'county__id', 'place', 'address'))
+
+    parish_list = Parish.objects.filter(visible=True).values('id', 'name', 'geo_lat', 'geo_lng', 'province__id', 'county__id', 'place', 'address')
+
+    limit_type = request.GET.get('lt', None)
+    limit_value = request.GET.get('lv', '')
+    limit_value = int(limit_value) if limit_value.isdigit() else None
+
+    if (limit_type is not None) and (limit_value is not None):
+        if limit_type == 'province':
+            parish_list = parish_list.filter(province=limit_value)
+        if limit_type == 'county':
+            parish_list = parish_list.filter(county=limit_value)
+        if limit_type == 'parish':
+            try:
+                parish = Parish.objects.get(pk=limit_value)
+                parish_list = parish_list.filter(geo_lat__gt=parish.geo_lat-0.2, geo_lat__lt=parish.geo_lat+0.2,  geo_lng__gt=parish.geo_lng-0.2, geo_lng__lt=parish.geo_lng+0.2)
+            except Exception as e:
+                print(e)
+                pass
+
+    _items = list(parish_list)
     items = {}
     for _item in _items:
         items[_item['id']] = _item
@@ -161,11 +183,16 @@ def document_add(request, parish_id):
     if request.method == 'POST':
         post = request.POST.copy()
         par = False
-        # hack, jesli wybieramy archiwum parafialne to ustawiamy na sztywno source jeden
+
+        # hack, jesli wybieramy archiwum parafialne to ustawiamy na sztywno source jako wpis techniczny z bazy
         # i relacja idzie do parish
         if post.get('source_type', None) == 'PAR':
             par = True
             post['source'] = Source.objects.filter(group='PAR')[0].id
+
+        # jesli wybieramy "parafia na miejscu" tj PAR_LOC to jw.
+        if post.get('source_type', None) == 'PAR_LOC':
+            post['source'] = Source.objects.filter(group='PAR_LOC')[0].id
 
         form = ParishSourceForm(post, instance=document_group)
 

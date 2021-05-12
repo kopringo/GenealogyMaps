@@ -2,52 +2,8 @@
 
 {% block content %}
 
-{% if not country %}
-    
-    
-    <div class="col-md-6" style="padding-top: 30px;">
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th>Okres</th>
-                    <th>Kraj</th>
-                    <th>Opis</th>
-                </tr>
-            </thead>
-	        {% for country in countries %}
-	        <tr>
-                <td>
-                    {% if country.historical_period == 1 %}I RP, 966-1772{% endif %}
-                    {% if country.historical_period == 2 %}II RP, 1918-1944{% endif %}
-                    {% if country.historical_period == 3 %}III RP, 1945-{% endif %}
-                </td>
-	            <td><a href="?country={{country.code}}">{{country.name}}</a></td>
-	            <td>{{country.description}}</td>
-	        </tr>
-	        {% endfor %}
-	    </table>
-    </div>
-    <div class="col-md-6" style="padding-top: 30px;">
-        <table>
-            <tr>
-                <th>Liczba parafii</th>
-                <td>{{ stats.parish_count }}</td>
-            </tr>
-            <tr>
-                <th>Liczba zbiorów archiwalnych</th>
-                <td>{{ stats.source_count }}</td>
-            </tr>
-        </table>
-    </div>
-    
-    
-	
-    
-{% else %}
 
-<div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map" xmlns="http://www.w3.org/1999/html">
-  <div id="mapid"></div>
-</div>
+
 <div class="col-md-8 col-lg-7 col-xl-6" id="main-col-content">
     <div class="row" style="display:none;">
         <div class="col-md-12">
@@ -101,129 +57,50 @@
                     <li class="breadcrumb-item active">{{ country.name_with_period }}</li>
                 </ol>
             </nav>
-        
 
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link active" id="tab1a" data-toggle="tab" href="#tab1" role="tab">Województwa</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" id="tab2a" data-toggle="tab" href="#tab2" role="tab">Diecezje</a>
-              </li>
-                <!--
-              <li class="nav-item">
-                <a class="nav-link" id="tab3a" data-toggle="tab" href="#tab3" role="tab">Ziemie I RP</a>
-              </li>-->
-              <li class="nav-item">
-                <a class="nav-link" id="tab4a" data-toggle="tab" href="#tab4" role="tab">Twoje parafie</a>
-              </li>
-            </ul>
+            {% if provinces %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Powiaty</th>
+                            <th>Parafie</th>
+                        </tr>
+                    </thead>
+                    {% for wojewodztwo in provinces %}
+                        {% if wojewodztwo.name %}
+                        <tr>
+                            <td><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a></td>
+                            <td><span title="powiaty">{{ wojewodztwo.county_number}}</span></td>
+                            <td><span title="parafie">{{wojewodztwo.parish_number}}</span></td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+                {% endif %}
 
-            <div class="tab-content" id="myTabContent">
-
-                <div class="tab-pane fade show active" id="tab1" role="tabpanel">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Powiaty</th>
-                                <th>Parafie</th>
-                            </tr>
-                        </thead>
-                        {% for wojewodztwo in country.get_provinces %}
-                            {% if wojewodztwo.name %}
-                            <tr>
-                                <td><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a></td>
-                                <td><span title="powiaty">{{ wojewodztwo.county_number}}</span></td>
-                                <td><span title="parafie">{{wojewodztwo.parish_number}}</span></td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </table>
-                </div>
-
-                <div class="tab-pane fade" id="tab2" role="tabpanel">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Dekanaty</th>
-                                <th>Parafie</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for diecezja in country.get_dioceses %}
-                            {% if diecezja.name %}
-                            <tr>
-                                <td><a href="/area/diocese/{{ diecezja.id }}">{{ diecezja.name }}</a></td>
-                                <td>{{ diecezja.deanery_number }}</td>
-                                <td>{{ diecezja.parish_number }}</td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="tab-pane fade" id="tab3" role="tabpanel">
-                </div>
-
-                <div class="tab-pane fade" id="tab4" role="tabpanel">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h3>Ulubione</h3>
-                            <table class="table table-sm">
-				                <thead>
-				                    <tr>
-				                        <th>Parafia</th>
-				                        <th class="text-right">Miejsowość</th>
-				                        <th class="text-right">Powiat</th>
-				                    </tr>
-				                </thead>
-				                <tbody>
-				                	{% for parish_user in favorite_list %}
-				                	<tr>
-				                		<td>
-				                		<a href="/parish/{{parish_user.parish.id}}">{{parish_user.parish.name}} ({{parish_user.parish.year}})</a>
-				                		</td>
-				                		<td class="text-right">{{parish_user.parish.place}}</td>
-				                		<td class="text-right">{{ parish_user.parish.county.name }}</td>
-				                	</tr>
-	                            	{% endfor %}
-	                            </tbody>
-				            </table>
-                            
-                        </div>
-                        <div class="col-md-12">
-                            <h3>Dostęp do edycji</h3>
-                            <table class="table table-sm">
-				                <thead>
-				                    <tr>
-				                        <th>Parafia</th>
-				                        <th class="text-right">Miejsowość</th>
-				                        <th class="text-right">Powiat</th>
-				                    </tr>
-				                </thead>
-				                <tbody>
-				                	{% for parish_user in manager_list %}
-				                	<tr>
-				                		<td>
-				                		<a href="/parish/{{parish_user.parish.id}}">{{parish_user.parish.name}} ({{parish_user.parish.year}})</a>
-				                		</td>
-				                		<td class="text-right">{{parish_user.parish.place}}</td>
-				                		<td class="text-right">{{ parish_user.parish.county.name }}</td>
-				                	</tr>
-	                            	{% endfor %}
-	                            </tbody>
-				            </table>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-
-
+                {% if dioceses %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Dekanaty</th>
+                            <th>Parafie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for diecezja in dioceses %}
+                        {% if diecezja.name %}
+                        <tr>
+                            <td><a href="/area/diocese/{{ diecezja.id }}">{{ diecezja.name }}</a></td>
+                            <td>{{ diecezja.deanery_number }}</td>
+                            <td>{{ diecezja.parish_number }}</td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
 
         </div>
     </div>
@@ -240,6 +117,8 @@ https://github.com/SINTEF-9012/PruneCluster
 https://github.com/Leaflet/Leaflet.markercluster
 -->
 </div>
-{% endif %}
+<div class="col-md-4 col-lg-5 col-xl-6" id="main-col-map" xmlns="http://www.w3.org/1999/html">
+  <div id="mapid"></div>
+</div>
 
 {% endblock %}

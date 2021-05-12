@@ -5,7 +5,7 @@ from django.urls import path, re_path
 from django.conf.urls import url, include
 from django.views.generic.base import TemplateView
 
-from . import views, views_courts, views_account, views_search, views_admin, views_ajax, views_parish, views_area
+from . import views, views_courts, views_account, views_search, views_admin, views_ajax, views_parish, views_area, views_tools
 
 urlpatterns = [
 
@@ -80,5 +80,8 @@ urlpatterns = [
         name='registration_complete'),
 
     path('login-validation-required', views.validation_required),
+
+    # narzedzia
+    path('tools/names', views_tools.names),
 
 ]

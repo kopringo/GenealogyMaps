@@ -102,6 +102,17 @@
               -o-transform: scale(1.5); /* Opera */
               margin-right: 5px;
         }
+
+        {% if mapid_fixed %}
+        #mapid {
+          position: fixed;
+          width: calc(380px + 100% / 2 - 1140px / 2);
+          display: block;
+          right: 0px;
+          height: 80%;
+        }
+        {% endif %}
+
     </style>
     {% block content_css %}{% endblock %}
     {% if request.session.theme != 'light' %}
@@ -255,7 +266,7 @@
 });
         
         $.ajax({
-            url: '/parish/list.json{% if limit_parish_on_the_map %}{{ limit_parish_on_the_map }}{% endif %}',
+            url: '/parish/list.json{% if limit_parish_on_the_map %}{{ limit_parish_on_the_map|safe }}{% endif %}',
             dataType: 'json'
         }).done(function(data){
             for(parish_key in data){
@@ -297,7 +308,7 @@
             // bindPopup can override it, but it's faster to update the content instead
             if (leafletMarker.getPopup()) {
                 //leafletMarker.setPopupContent(data.name);
-alert('!');
+
                 leafletMarker.setIcon(L.icon({
                     iconUrl: '/static/img/marker-icon2.png',
                     iconSize: [38, 38], // size of the icon

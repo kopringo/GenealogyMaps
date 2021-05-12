@@ -6,9 +6,8 @@ services:
       args:
         buildno: 1
     image: gen_maps:0.3
-#    command: /bin/run_fpm
     ports:
-      - "7000:7000"
+      - "8000:8000"
     container_name: gen_maps
     working_dir: /var/www/app
     env_file: env_file

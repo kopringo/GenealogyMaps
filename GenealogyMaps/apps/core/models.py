@@ -85,8 +85,10 @@ class Country(models.Model):
     def get_provinces(self):
         return Province.objects.filter(country=self, public=True)
 
-    def get_dioceses(self):
-        return Diocese.objects.filter(country=self, public=True)
+    def get_dioceses(self, religion=None):
+        if religion is None:
+            return Diocese.objects.filter(country=self, public=True)
+        return Diocese.objects.filter(country=self, public=True, religion=religion)
 
     def __str__(self):
         return u'%d. %s (%s)' % (self.id, self.name, country_hp_to_name(self.historical_period))
@@ -236,7 +238,8 @@ SOURCE_GROUP__OTHER='Other'
 SOURCE_GROUP = (
     ('AP', 'Archiwa Państwowe (PL)'),
     ('AD', 'Archiwa Kościelne (PL)'),
-    ('PAR', 'Archiwum Parafialne (ALL)'),
+    ('PAR_LOC', 'Archiwum Parafialne - na miejscu'),
+    ('PAR', 'Archiwum Parafialne - Inne'),
 
 #    ('BIB', 'Biblioteki'),
 #    ('USC', 'Urzędy Stanu Cywilnego'),
@@ -348,7 +351,7 @@ class Parish(models.Model):
     # lokalizacja
     country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
     province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING, help_text='Województwo (R3)')
-    county = models.ForeignKey(County, on_delete=models.DO_NOTHING, help_text='Powiat (R3)', limit_choices_to=Q(province__country__historical_period=3))
+    county = models.ForeignKey(County, null=True, on_delete=models.DO_NOTHING, help_text='Powiat (R3)', limit_choices_to=Q(province__country__historical_period=3))
     place = models.CharField(max_length=32, help_text='Miejscowość')
     place2 = models.CharField(max_length=32, help_text='Miejscowość, nazwa historyczna', blank=True)
     postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')

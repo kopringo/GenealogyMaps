@@ -12,6 +12,16 @@ class ParishMessageForm(forms.Form):
     body.widget.attrs['class'] = 'form-control'
 
 
+
+class ParishEditBasicForm(forms.ModelForm):
+    pass
+
+class ParishEditPeriodsForm(forms.ModelForm):
+    pass
+
+class ParishEditGeoForm:
+    pass
+
 class ParishEditForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):

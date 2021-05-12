@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 import numpy as np
 
 # Create your views here.
-from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP
+from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP, RELIGION_TYPE
 from .forms import ParishSourceForm, ParishEditForm, ParishMessageForm
 from .decorators import group_required
 
@@ -28,30 +28,83 @@ def set_param(request):
     return redirect(next_url)
 
 
-def home(request):
-    data = __prepare_common_params()
-    data.update(_load_root_items())
+def get_religion_area(hp):
+    ret = []
+    for country in Country.objects.filter(historical_period=hp, public=True):
+        for RL in RELIGION_TYPE:
+            if Diocese.objects.filter(country=country, religion=RL[0]).count() > 0:
+                ret.append([country.code, RL[0], RL[1]])
+    return ret
 
-    points = np.array([[51.44502, 20.294522], [51.448337, 20.339841], [51.432501, 20.298299], [51.415481, 20.309285], [51.417944, 20.330228]])
-    hull = np.array(convex_hull(points))
-    data['test_ch'] = hull
 
+def home0(request, data):
     # favourite
     if request.user.is_authenticated:
-        data['favorite_list'] = ParishUser.objects.filter(user=request.user, favorite=True).select_related('parish').all()
-        data['manager_list'] = ParishUser.objects.filter(user=request.user, manager=True).select_related('parish').all()
+        data['favorite_list'] = ParishUser.objects.filter(user=request.user, favorite=True).select_related(
+            'parish').all()
+        data['manager_list'] = ParishUser.objects.filter(user=request.user, manager=True).select_related(
+            'parish').all()
 
-    try:
-        data['country'] = Country.objects.get(code=request.GET.get('country', None))
-    except:
-        pass
+    periods = []
+
+    periods.append([
+        1, 'I Rzeczpospolita (1569-1795)',
+        Country.objects.filter(public=True, historical_period=1),
+        get_religion_area(1),
+    ])
+
+    periods.append([
+        2, 'II Rzeczpospolita (1918-1945)',
+        Country.objects.filter(public=True, historical_period=2),
+        get_religion_area(2),
+    ])
+
+    periods.append([
+        3, 'III Rzeczpospolita (1945-)',
+        Country.objects.filter(public=True, historical_period=3),
+        get_religion_area(3),
+    ])
+
+    data['periods'] = periods
 
     data['stats'] = {
         'parish_count': Parish.objects.count(),
         'source_count': ParishSource.objects.count(),
     }
 
-    return render(request, 'core/home.html', data)
+    return render(request, 'core/home0.html', data)
+
+
+def home(request):
+    data = __prepare_common_params()
+    data.update(_load_root_items())
+
+    # points = np.array([[51.44502, 20.294522], [51.448337, 20.339841], [51.432501, 20.298299], [51.415481, 20.309285], [51.417944, 20.330228]])
+    # hull = np.array(convex_hull(points))
+    # data['test_ch'] = hull
+
+    try:
+        country = Country.objects.get(code=request.GET.get('country', None))
+    except:
+        country = None
+
+    if country is None:
+        return home0(request, data)
+
+    else:
+        try:
+            data['country'] = country
+            religion = request.GET.get('religion', None)
+
+            if religion is not None:
+                data['dioceses'] = country.get_dioceses(religion)
+            else:
+                data['provinces'] = country.get_provinces()
+
+        except:
+            pass
+
+        return render(request, 'core/home.html', data)
 
 
 def validation_required(request):
@@ -77,12 +130,14 @@ def __get_convex_hull(items):
     try:
         points = []
         for item in items:
-            points.append([item['geo_lat'], item['geo_lng']])
+            if (item['geo_lat'] is not None) and (['geo_lng'] is not None):
+                points.append([item['geo_lat'], item['geo_lng']])
     
         points = np.array(points)
         hull = np.array(convex_hull(points))
         return hull
-    except:
+    except Exception as e:
+        print(e)
         return np.array([])
 
 ####
