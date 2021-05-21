@@ -75,6 +75,7 @@ class ParishResource(resources.ModelResource):
                 wyznanie_id = inverted_RELIGION_TYPE_SHORT[wyznanie.upper()]
             row['wyznanie'] = int(wyznanie_id)
         except Exception as e:
+            print(e)
             pass
 
         try:
