@@ -135,7 +135,7 @@ class ParishResource(resources.ModelResource):
 
 
         # pola ktore moga byc puste nie moga byc nullami
-        for field in ['postal_code', 'postal_place', 'place2', 'nazwa', 'wiek', ]:
+        for field in ['postal_code', 'postal_place', 'place', 'place2', 'nazwa', 'wiek', ]:
             val = row.get(field, None)
             if val is None:
                 row[field] = ''
