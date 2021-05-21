@@ -61,7 +61,7 @@ class ParishResource(resources.ModelResource):
             row['rok'] = 0
 
         try:
-            wyznanie = row.get('wyznanie')
+            wyznanie = row.get('wyznanie', 'rk')
             wyznanie_id = wyznanie
 
             if wyznanie == 'grekokatolickie':
