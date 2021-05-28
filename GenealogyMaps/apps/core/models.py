@@ -354,8 +354,8 @@ class Parish(models.Model):
     county = models.ForeignKey(County, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Powiat (R3)', limit_choices_to=Q(province__country__historical_period=3))
     place = models.CharField(max_length=32, help_text='Miejscowość')
     place2 = models.CharField(max_length=32, help_text='Miejscowość, nazwa historyczna', blank=True)
-    postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')
-    postal_place = models.CharField(max_length=32, help_text='Poczta')
+    postal_code = models.CharField(max_length=16, help_text='Kod pocztowy', blank=True)
+    postal_place = models.CharField(max_length=32, help_text='Poczta', blank=True)
     address = models.CharField(max_length=64, help_text='Adres, ulica i numer', blank=True, null=True)
 
 #    R1 966-1772
