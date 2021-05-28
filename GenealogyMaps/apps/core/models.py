@@ -350,8 +350,8 @@ class Parish(models.Model):
 
     # lokalizacja
     country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
-    province = models.ForeignKey(Province, null=True, on_delete=models.DO_NOTHING, help_text='Województwo (R3)')
-    county = models.ForeignKey(County, null=True, on_delete=models.DO_NOTHING, help_text='Powiat (R3)', limit_choices_to=Q(province__country__historical_period=3))
+    province = models.ForeignKey(Province, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Województwo (R3)')
+    county = models.ForeignKey(County, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Powiat (R3)', limit_choices_to=Q(province__country__historical_period=3))
     place = models.CharField(max_length=32, help_text='Miejscowość')
     place2 = models.CharField(max_length=32, help_text='Miejscowość, nazwa historyczna', blank=True)
     postal_code = models.CharField(max_length=16, help_text='Kod pocztowy')
