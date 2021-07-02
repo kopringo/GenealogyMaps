@@ -98,6 +98,8 @@ def home(request):
         return home0(request, data)
 
     else:
+        data['limit_parish_on_the_map'] = '?lt=country&lv={}'.format(country.id)
+
         try:
             data['country'] = country
             religion = request.GET.get('religion', None)

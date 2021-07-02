@@ -133,7 +133,7 @@ def parish_message(request, parish_id):
 
 def parish_list_json(request):
 
-    parish_list = Parish.objects.filter(visible=True).values('id', 'name', 'geo_lat', 'geo_lng', 'province__id', 'county__id', 'county_r1__id', 'county_r2__id', 'county_rz__id', 'deanery_r1__id', 'deanery_r2__id', 'deanery_rz__id', 'deanery__id', 'place', 'address')
+    parish_list = Parish.objects.filter(visible=True).values('id', 'name', 'geo_lat', 'geo_lng', 'province__id', 'county__id', 'county_r1__id', 'county_r2__id', 'county_rz__id', 'deanery_r1__id', 'deanery_r2__id', 'deanery_rz__id', 'deanery__id', 'place', 'address', 'country')
 
     limit_type = request.GET.get('lt', None)
     limit_value = request.GET.get('lv', '')
@@ -169,6 +169,9 @@ def parish_list_json(request):
                 parish_list = parish_list.filter(deanery__r2=limit_value)
             if limit_hp == 4:
                 parish_list = parish_list.filter(deanery__rz=limit_value)
+
+        if limit_type == 'country':
+            parish_list = parish_list.filter(country=limit_value)
 
         # wyswietla parafie w okolicy
         if limit_type == 'parish':
