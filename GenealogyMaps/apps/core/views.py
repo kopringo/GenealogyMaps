@@ -65,6 +65,12 @@ def home0(request, data):
         get_religion_area(3),
     ])
 
+    periods.append([
+        4, 'Okres zaborów',
+        Country.objects.filter(public=True, historical_period=4),
+        get_religion_area(4),
+    ])
+
     data['periods'] = periods
 
     data['stats'] = {
