@@ -133,17 +133,44 @@ def parish_message(request, parish_id):
 
 def parish_list_json(request):
 
-    parish_list = Parish.objects.filter(visible=True).values('id', 'name', 'geo_lat', 'geo_lng', 'province__id', 'county__id', 'place', 'address')
+    parish_list = Parish.objects.filter(visible=True).values('id', 'name', 'geo_lat', 'geo_lng', 'province__id', 'county__id', 'county_r1__id', 'county_r2__id', 'county_rz__id', 'deanery_r1__id', 'deanery_r2__id', 'deanery_rz__id', 'deanery__id', 'place', 'address')
 
     limit_type = request.GET.get('lt', None)
     limit_value = request.GET.get('lv', '')
     limit_value = int(limit_value) if limit_value.isdigit() else None
+    limit_hp = request.GET.get('lhp', '')
+    limit_hp = int(limit_hp) if limit_hp.isdigit() else 3
 
     if (limit_type is not None) and (limit_value is not None):
         if limit_type == 'province':
-            parish_list = parish_list.filter(province=limit_value)
+            if limit_hp == 3:
+                parish_list = parish_list.filter(province=limit_value)
+
         if limit_type == 'county':
-            parish_list = parish_list.filter(county=limit_value)
+            if limit_hp == 3:
+                parish_list = parish_list.filter(county=limit_value)
+            if limit_hp == 1:
+                parish_list = parish_list.filter(county__r1=limit_value)
+            if limit_hp == 2:
+                parish_list = parish_list.filter(county__r2=limit_value)
+            if limit_hp == 4:
+                parish_list = parish_list.filter(county__rz=limit_value)
+
+        if limit_type == 'diocese':
+            if limit_hp == 3:
+                parish_list = parish_list.filter(diocese=limit_value)
+
+        if limit_type == 'deanery':
+            if limit_hp == 3:
+                parish_list = parish_list.filter(deanery=limit_value)
+            if limit_hp == 1:
+                parish_list = parish_list.filter(deanery__r1=limit_value)
+            if limit_hp == 2:
+                parish_list = parish_list.filter(deanery__r2=limit_value)
+            if limit_hp == 4:
+                parish_list = parish_list.filter(deanery__rz=limit_value)
+
+        # wyswietla parafie w okolicy
         if limit_type == 'parish':
             try:
                 parish = Parish.objects.get(pk=limit_value)

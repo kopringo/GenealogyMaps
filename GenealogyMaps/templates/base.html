@@ -237,7 +237,11 @@
     var markers = {};
     var pruneCluster = null;
     $(function(){
+        {% if country and country.historical_period != 3 %}
+        map = L.map('mapid').setView([51.95, 24.08], 5);
+        {% else %}
         map = L.map('mapid').setView([51.95, 19.08], 6);
+        {% endif %}
         map.on('moveend', function() {
             //console.log('a');
         });

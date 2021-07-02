@@ -48,7 +48,8 @@ def diocese(request, d_id):
         'diocese': diocese,
         'deaneries': deaneries,
         'items': items,
-        'convex_hull': convex_hull
+        'convex_hull': convex_hull,
+        'limit_parish_on_the_map': '?lt=diocese&lv={}&lhp={}'.format(d_id, diocese.country.historical_period),
     })
 
     return render(request, 'core/diocese.html', data)
@@ -79,7 +80,8 @@ def deanery(request, d_id):
     data.update({
         'items': items,
         'deanery': deanery,
-        'convex_hull': convex_hull
+        'convex_hull': convex_hull,
+        'limit_parish_on_the_map': '?lt=deanery&lv={}&lhp={}'.format(d_id, deanery.diocese.country.historical_period),
     })
     return render(request, 'core/deanery.html', data)
 
@@ -115,7 +117,7 @@ def province(request, p_id):
         'items': items,
         'province': province,
         'convex_hull': convex_hull,
-        'limit_parish_on_the_map': '?lt=province&lv={}'.format(p_id),
+        'limit_parish_on_the_map': '?lt=province&lv={}&lhp={}'.format(p_id, province.country.historical_period),
         'mapid_fixed': True
     })
     return render(request, 'core/province.html', data)
@@ -145,7 +147,7 @@ def county(request, c_id):
         'items': items,
         'county': county,
         'convex_hull': convex_hull,
-        'limit_parish_on_the_map': '?lt=county&lv={}'.format(c_id),
+        'limit_parish_on_the_map': '?lt=county&lv={}&lhp={}'.format(c_id, county.province.country.historical_period),
     })
     return render(request, 'core/county.html', data)
 
