@@ -31,7 +31,15 @@ def diocese(request, d_id):
         return redirect('home')
 
     deaneries = list(map(lambda x: {'name': x.name, 'link': '/area/deanery/%d' % x.id}, Deanery.objects.filter(diocese=diocese).order_by('name')))
-    items = __get_parish_list(diocese=diocese)
+    if diocese.country.historical_period == 1:
+        items = __get_parish_list(deanery_r1__diocese=diocese)
+    if diocese.country.historical_period == 2:
+        items = __get_parish_list(deanery_r2__diocese=diocese)
+    if diocese.country.historical_period == 3: # 3 rp
+        items = __get_parish_list(diocese=diocese)
+    if diocese.country.historical_period == 4:
+        items = __get_parish_list(deanery_rz__diocese=diocese)
+
 
     convex_hull = __get_convex_hull(items)
 
@@ -56,8 +64,15 @@ def deanery(request, d_id):
     except Deanery.DoesNotExist:
         pass
 
-    #items = list(map(lambda x: {'name': '%s, %s' % (x.place, x.name), 'link': '/parish/%d' % x.id}, Parish.objects.filter(deanery=deanery)))
-    items = __get_parish_list(deanery=deanery)
+    if deanery.diocese.country.historical_period == 1:
+        items = __get_parish_list(deanery_r1=deanery)
+    if deanery.diocese.country.historical_period == 2:
+        items = __get_parish_list(deanery_r2=deanery)
+    if deanery.diocese.country.historical_period == 3: # 3 rp
+        items = __get_parish_list(deanery=deanery)
+    if deanery.diocese.country.historical_period == 4:
+        items = __get_parish_list(deanery_rz=deanery)
+
     convex_hull = __get_convex_hull(items)
 
     data = __prepare_common_params()
@@ -83,7 +98,14 @@ def province(request, p_id):
         return redirect('home')
 
     counties = list(map(lambda x: {'name': x.name, 'link': '/area/county/%d' % x.id}, County.objects.filter(province=province).order_by('name')))
-    items = __get_parish_list(province=province)
+    if province.country.historical_period == 1:
+        items = __get_parish_list(county_r1__province=province)
+    if province.country.historical_period == 2:
+        items = __get_parish_list(county_r2__province=province)
+    if province.country.historical_period == 3: # 3 rp
+        items = __get_parish_list(province=province)
+    if province.country.historical_period == 4:
+        items = __get_parish_list(county_rz__province=province)
 
     convex_hull = __get_convex_hull(items)
 
@@ -106,8 +128,16 @@ def county(request, c_id):
         county = County.objects.get(pk=c_id)
     except County.DoesNotExist:
         return redirect('home')
+    if county.province.country.historical_period == 1:
+        items = __get_parish_list(county_r1=county)
+    if county.province.country.historical_period == 2:
+        items = __get_parish_list(county_r2=county)
+    if county.province.country.historical_period == 3: # 3 rp
+        items = __get_parish_list(county=county)
+    if county.province.country.historical_period == 4:
+        items = __get_parish_list(county_rz=county)
 
-    items = __get_parish_list(county=county)
+
     convex_hull = __get_convex_hull(items)
 
     data = __prepare_common_params()
