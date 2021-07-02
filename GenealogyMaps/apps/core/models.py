@@ -115,7 +115,15 @@ class Province(models.Model):
         return u'%s' % str(County.objects.filter(province=self).count())
 
     def parish_number(self):
-        return u'%s' % str(Parish.objects.filter(province=self).count())
+        if self.country.historical_period == 1:
+            ilosc = Parish.objects.filter(county_r1__province=self).count()
+        if self.country.historical_period == 2:
+            ilosc = Parish.objects.filter(county_r2__province=self).count()
+        if self.country.historical_period == 3:
+            ilosc = Parish.objects.filter(province=self).count()
+        if self.country.historical_period == 4:
+            ilosc = Parish.objects.filter(county_rz__province=self).count()
+        return u'%s' % str(ilosc)
 
     def __unicode__(self):
         return '{} -> {}. {}'.format(self.country, self.id, self.name)
@@ -162,7 +170,18 @@ class Diocese(models.Model):
         return u'%s' % str(Deanery.objects.filter(diocese=self).count())
 
     def parish_number(self):
-        return u'%s' % str(Parish.objects.filter(diocese=self).count())
+        if self.country.historical_period == 1:
+            ilosc = Parish.objects.filter(deanery_r1__diocese=self).count()
+        if self.country.historical_period == 2:
+            ilosc = Parish.objects.filter(deanery_r2__diocese=self).count()
+        if self.country.historical_period == 3:
+            ilosc = Parish.objects.filter(diocese=self).count()
+        if self.country.historical_period == 4:
+            ilosc = Parish.objects.filter(deanery_rz__diocese=self).count()
+        return u'%s' % str(ilosc)
+
+
+        return u'%s' % str(ilosc)
 
     def __str__(self):
         return '{} -> {}. {}'.format(self.country, self.id, self.name)
