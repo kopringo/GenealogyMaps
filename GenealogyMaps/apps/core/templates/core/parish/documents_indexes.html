@@ -8,7 +8,6 @@
     <thead>
         <tr>
             <th>Baza</th>
-            <th>Typ</th>
             <th>Zakres roczników</th>
         </tr>
     </thead>
@@ -16,8 +15,18 @@
         {% for index in documents_indexes %}
         <tr>
             <td><a href="{{ index.url }}" target="_blank">{{ index.project_name }}</a></td>
-            <td></td>
-            <td></td>
+            <td>{% for row in index.indexes %}
+                <strong>{{ row.0 }}</strong>:
+                    {% for r in row.1 %}
+                        {% if r.0 %}
+                            {{r.0}} - {{r.1}}
+                        {% else %}
+                            {{ r }}
+                        {% endif %},
+                    {% endfor %}<br/>
+                {% endfor %}
+
+            </td>
         </tr>
         {% endfor %}
 

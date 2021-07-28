@@ -78,15 +78,54 @@ def parish_edit(request, parish_id):
     form = ParishEditForm(instance=parish)
 
     if request.method == 'POST':
-        form = ParishEditForm(request.POST, instance=parish)
-        if form.is_valid():
-            form.save()
+        if request.POST.get('form_no', None) == '1':
+            form = ParishEditForm(request.POST, instance=parish)
+            if form.is_valid():
+                form.save()
+                return redirect('/parish/%d' % parish.id)
+
+        if request.POST.get('form_no', None) == '2':
+            has_indexes = False
+            for k in request.POST.keys():
+                if k[0:13] == 'index_source_':
+                    project = k[13:]
+                    val = request.POST[k]
+
+                    if val != '':
+                        try:
+                            obj = ParishIndexSource.objects.get(parish=parish, project=int(project))
+
+                            # jezeli zmieniamy adres to trzeba wyczyscic stare dane
+                            if obj.url != val:
+                                obj.checked_date = None
+                                obj.raw_data = ''
+
+                            obj.url = val
+                        except ParishIndexSource.DoesNotExist:
+                            obj = ParishIndexSource(parish=parish, project=int(project), url=val)
+                        obj.save()
+
+                        has_indexes = True
+
+            parish.has_indexes = has_indexes
+            parish.save()
 
             return redirect('/parish/%d' % parish.id)
 
+    index_sources = []
+    for pis in ParishIndexSource.PARISH_INDEX_SOURCE:
+        if pis[0] == 0:
+            continue
+        try:
+            obj = ParishIndexSource.objects.get(parish=parish, project=pis[0])
+        except:
+            obj = None
+        index_sources.append([pis[0], pis[1], obj])
+
     data.update({
         'parish': parish,
-        'form': form
+        'form': form,
+        'parish_index_source': index_sources
     })
 
     return render(request, 'core/parish_edit.html', data)
@@ -258,7 +297,7 @@ def document_add(request, parish_id):
     }
     return render(request, 'parts/document_add.html', data)
 
-
+# @deprecated
 def documents(request, parish_id):
     parish = Parish.objects.get(pk=parish_id)
     documents = ParishSource.objects.filter(parish=parish).order_by('date_from')

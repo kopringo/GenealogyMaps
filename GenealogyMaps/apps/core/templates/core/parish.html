@@ -10,6 +10,7 @@
             <li class="breadcrumb-item"><a href="/area/county/{{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
         </ol>
 
+        {% comment %}
         {% if parish.county_r1 %}
         <ol class="breadcrumb" style="padding: 0px;">
             <li class="breadcrumb-item"><a href="/?country={{ parish.county_r1.province.country.code }}">{{ parish.county_r1.province.country.name_with_period }}</a></li>
@@ -41,6 +42,7 @@
             <li class="breadcrumb-item"><a href="/area/county/{{ parish.deanery_r2.id }}" class="ajax_link">{{ parish.deanery_r2.name }}</a></li>
         </ol>
         {% endif %}
+        {% endcomment %}
 
     </nav>
 </div>
@@ -289,6 +291,15 @@
             }
         }
 
+        var filter_rows2 = function(btn){
+            var filter_sumarisze = $( ".filter-type3" ).val();
+            if( ! $(btn).is(':checked') ){
+                $('#tab-years span').show();
+            } else {
+                $('#tab-years span:not(.copy_type_Księga).copy_type_Sumariusz').hide();
+            }
+        };
+
         $(function(){
             $(document).on('click', '.filter-type', function(){
                 filter_rows();
@@ -297,6 +308,10 @@
             $(document).on('click', '.filter-type2', function(){
                 filter_rows();
 
+            });
+
+            $(document).on('click', '.filter-type3', function(){
+                filter_rows2(this);
             });
         });
 

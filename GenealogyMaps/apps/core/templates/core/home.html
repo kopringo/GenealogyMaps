@@ -59,48 +59,50 @@
             </nav>
 
             {% if provinces %}
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Powiaty</th>
-                            <th>Parafie</th>
-                        </tr>
-                    </thead>
-                    {% for wojewodztwo in provinces %}
-                        {% if wojewodztwo.name %}
-                        <tr>
-                            <td><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a></td>
-                            <td><span title="powiaty">{{ wojewodztwo.county_number}}</span></td>
-                            <td><span title="parafie">{{wojewodztwo.parish_number}}</span></td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
-                </table>
-                {% endif %}
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Powiaty</th>
+                        <th>Parafie</th>
+                    </tr>
+                </thead>
+                {% for wojewodztwo in provinces %}
+                    {% if wojewodztwo.name %}
+                    <tr>
+                        <td><a href="/area/province/{{ wojewodztwo.id }}">{{ wojewodztwo.name }}</a></td>
+                        <td><span title="powiaty">{{ wojewodztwo.county_number}}</span></td>
+                        <td><span title="parafie">{{wojewodztwo.parish_number}}</span></td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+            {% endif %}
 
-                {% if dioceses %}
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Dekanaty</th>
-                            <th>Parafie</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for diecezja in dioceses %}
-                        {% if diecezja.name %}
-                        <tr>
-                            <td><a href="/area/diocese/{{ diecezja.id }}">{{ diecezja.name }}</a></td>
-                            <td>{{ diecezja.deanery_number }}</td>
-                            <td>{{ diecezja.parish_number }}</td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
-                    </tbody>
-                </table>
-                {% endif %}
+            {% if dioceses %}
+            <p>Podział kościelny: {{ religion_description }}</p>
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Dekanaty</th>
+                        <th>Parafie</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for diecezja in dioceses %}
+                    {% if diecezja.name %}
+                    <tr>
+                        <td><a href="/area/diocese/{{ diecezja.id }}">{{ diecezja.name }}</a></td>
+                        <td>{{ diecezja.deanery_number }}</td>
+                        <td>{{ diecezja.parish_number }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
 
         </div>
     </div>

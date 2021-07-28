@@ -1,4 +1,6 @@
 
+import json
+
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User, Group
@@ -38,6 +40,14 @@ RELIGION_TYPE_SHORT = {
     RELIGION_TYPE__GK: 'GK',
 }
 
+
+def religion_id_to_description(_id):
+    try:
+        return RELIGION_TYPE[_id - 1][1]
+    except Exception as e:
+        return ''
+
+
 PARISH_ACCESS__OPEN = 0
 PARISH_ACCESS__CLOSED = 1
 PARISH_ACCESS = (
@@ -51,11 +61,14 @@ COUNTRY_HP = (
     (3, 'III RP'),
     (4, 'RZ'),
 )
+
+
 def country_hp_to_name(number):
     for CHP in COUNTRY_HP:
         if number == CHP[0]:
             return CHP[1]
     return ''
+
 
 def my_year_validator(value):
     if value < 1000 or value > 2100:
@@ -412,6 +425,7 @@ class Parish(models.Model):
     fs_catalog_id = models.CharField(blank=True, max_length=64)
     partial_done = models.BooleanField(default=False, help_text='Częściowo wypełniona, tj. są księgi jakieś wpisane.')
     all_done = models.BooleanField(default=False, help_text='Oznacza parafię całkowicie uzuepłnioną (wg wiedzy opiekunów). To pole nadpisuje pole częściowego wypełnienia.')
+    has_indexes = models.BooleanField(default=False, help_text='Flaga oznacza, że parafia ma dodane zewnętrzne indexy')
 
     places = models.TextField(help_text='Lista miejscowości', blank=True)
     main_parish = models.ForeignKey('Parish', blank=True, null=True, on_delete=models.SET_NULL, related_name='main_parish2', \
@@ -425,10 +439,7 @@ class Parish(models.Model):
         return u'%s. %s' % (str(self.id), self.name)
 
     def get_religion_description(self):
-        try:
-            return RELIGION_TYPE[self.religion-1][1]
-        except:
-            return ''
+        return religion_id_to_description(self.religion)
 
     def get_religion_short(self):
         try:
@@ -484,7 +495,11 @@ class Parish(models.Model):
         if (self.year is not None) and (self.year >= 1946):
             all_done = '<span class="span-icon text-success fa fa-check-circle" title="Parafia erygowana po 1946"></span>'
 
-        return u'%s%s%s%s' % (all_done, geo_str, missing_sth, not_exists)
+        has_indexes = '';
+        if self.has_indexes:
+            has_indexes = '<span class="span-icon text-success fa fa-info" title="Parafia ma indexy"></span>'
+
+        return u'%s%s%s%s%s' % (all_done, geo_str, missing_sth, not_exists, has_indexes)
 
     def has_user_manage_permission(self, user):
 
@@ -619,8 +634,20 @@ class ParishIndexSource(models.Model):
     checked_date = models.DateTimeField(blank=True, null=True)
     raw_data = models.TextField(blank=True)
 
-    def project_name(self):
+    def indexes(self):
+        try:
+            data = []
+            _data = json.loads(self.raw_data)
+            if _data['format'] == '1':
+                for _type in _data['indexes'].keys():
+                    data.append([_type, _data['indexes'][_type]])
 
+        except Exception as e:
+            print(e)
+            data = ''
+        return data
+
+    def project_name(self):
         return ParishIndexSource.PARISH_INDEX_SOURCE[self.project][1]
 
 

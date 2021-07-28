@@ -26,6 +26,8 @@
     <div class="row">
         <div class="col-md-12">
 
+
+
             <form method="post">
                 {% if form.errors %}
                     {% for field in form %}
@@ -41,6 +43,11 @@
                         </div>
                     {% endfor %}
                 {% endif %}
+
+                <div class="alert alert-info">
+                Poniższe pola (R3) powinny określać współczesną lokalizację parafii, niezależnie od tego czy parafia istnieje czy nie.
+                    Jeżeli parafia istniała w poprzednich strukturach administracyjnych to należy wskazać je w dalszej części formularza.
+                </div>
 
                 <div class="form-row">
                     <div class="col-md-6">
@@ -66,15 +73,15 @@
 
                 <div class="form-row">
                     <div class="col-md-3">
-                        <label>Kraj <span class="text-danger">*</span></label>
+                        <label>Kraj R3<span class="text-danger">*</span></label>
                         {{form.country}}
                     </div>
                     <div class="col-md-5">
-                        <label>Województwo <span class="text-danger">*</span></label>
+                        <label>Województwo R3<span class="text-danger">*</span></label>
                         {{form.province}}
                     </div>
                     <div class="col-md-4">
-                        <label>Powiat <span class="text-danger">*</span></label>
+                        <label>Powiat R3<span class="text-danger">*</span></label>
                         {{form.county}}
                     </div>
                 </div>
@@ -109,11 +116,11 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-4">
-                        <label>Diecezja</label>
+                        <label>Diecezja R3</label>
                         {{form.diocese}}
                     </div>
                     <div class="col-md-4">
-                        <label>Dekanat</label>
+                        <label>Dekanat R3</label>
                         {{form.deanery}}
                     </div>
                     <div class="col-md-4">
@@ -234,6 +241,7 @@
                 </div>
 
                 {% csrf_token %}
+                <input type="hidden" name="form_no" value="1"/>
 
                 <div class="form-row">
                     <div class="col-md-12 text-right">
@@ -245,6 +253,35 @@
             </form>
 			<br/><br/>
 
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Integracja z zewnętrznymi systemami</h3>
+            <form method="post">
+
+                {% for pis in parish_index_source %}
+
+
+                    <div class="row">
+
+                        <div class="col-md-9">
+                            <label>{{ pis.1 }}</label>
+                            <input type="text" name="index_source_{{pis.0}}" value="{% if pis.2 %}{{ pis.2.url}}{% endif %}" class="form-control" placeholder="Adres parafii w zewnętrznym systemie"/>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% csrf_token %}
+                <input type="hidden" name="form_no" value="2"/>
+
+                <div class="form-row">
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

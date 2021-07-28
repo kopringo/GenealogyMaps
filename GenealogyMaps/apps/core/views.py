@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 import numpy as np
 
 # Create your views here.
-from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP, RELIGION_TYPE
+from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP, RELIGION_TYPE, religion_id_to_description
 from .forms import ParishSourceForm, ParishEditForm, ParishMessageForm
 from .decorators import group_required
 
@@ -102,10 +102,14 @@ def home(request):
 
         try:
             data['country'] = country
-            religion = request.GET.get('religion', None)
+            try:
+                religion = int(request.GET.get('religion', None))
+            except:
+                religion = None
 
             if religion is not None:
                 data['dioceses'] = country.get_dioceses(religion)
+                data['religion_description'] = religion_id_to_description(religion)
             else:
                 data['provinces'] = country.get_provinces()
 

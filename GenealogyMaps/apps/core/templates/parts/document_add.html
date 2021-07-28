@@ -7,22 +7,39 @@
 
 	<script type="text/javascript">
 	$(function(){
-		
-		
+
 		$.ajax({
-            url: '/parish/{{parish.id}}/documents',
+            url: '/parish/{{parish.id}}',
             dataType: 'html'
         }).done(function(data){
         	
-            $('#tab-documents-content').html(data);
+            //$('#tab-documents-content').html(data);
+            console.log($(data).find("#tab-summary")[0].innerHTML);
+            $('#tab-summary').html($(data).find("#tab-summary")[0].innerHTML);
+            $('#tab-years').html($(data).find("#tab-years")[0].innerHTML);
+            $('#tab-indexes').html($(data).find("#tab-indexes")[0].innerHTML);
+            $('#tab-sources').html($(data).find("#tab-sources")[0].innerHTML);
+            $('#tab-objects').html($(data).find("#tab-objects")[0].innerHTML);
+
+            $.toast({
+                heading: 'Success',
+                text: 'Informacje zostały zapisane.',
+                showHideTransition: 'slide',
+                icon: 'success'
+            });
 
             $("#exampleModal").modal('hide');
-            //var $toast = $('<div class="toast" id="toast"><div class="toast-header">Komunikat</div><div class="toast-body">Dane zapisane</div></div>');
-            //$toast.append( $("body"));
-            //$toast.toast({delay: 1500}).toast('show');
-            //$('#toast').toast('show');
+
         }).fail(function(jqXHR, textStatus){
-            console.log('loading /parish/{{ parish.id }}/documents error')
+            console.log('loading /parish/{{ parish.id }}/documents error');
+
+            $.toast({
+                heading: 'Error',
+                text: 'Wystąpił błąd przy zapisie. Spróbuj ponownie, a w przypadku błędu skontaktuj się z administratorem.',
+                showHideTransition: 'fade',
+                icon: 'error'
+            })
+
         });
 		
 	});
