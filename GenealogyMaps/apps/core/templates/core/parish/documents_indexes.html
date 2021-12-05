@@ -7,8 +7,8 @@
     </colgroup>
     <thead>
         <tr>
-            <th>Baza</th>
-            <th>Zakres roczników</th>
+            <th>Baza indeksów</th>
+            <th>Zakres opracowanych roczników</th>
         </tr>
     </thead>
     <tbody>
@@ -27,6 +27,13 @@
                 {% endfor %}
 
             </td>
+        </tr>
+        {% endfor %}
+
+        {% for remote_item in remote_items %}
+        <tr>
+            <td>{{remote_item.system.name}}</td>
+            <td>{{remote_item.raw_data}}</td>
         </tr>
         {% endfor %}
 

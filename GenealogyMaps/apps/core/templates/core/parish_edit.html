@@ -26,7 +26,22 @@
     <div class="row">
         <div class="col-md-12">
 
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Dane podstawowe</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit2">Okresy historyczne</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit3">Zewnętrzne dane</a>
+              </li>
 
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit4">Obiekty</a>
+              </li>
+            </ul>
+            <br/>
 
             <form method="post">
                 {% if form.errors %}
@@ -123,10 +138,6 @@
                         <label>Dekanat R3</label>
                         {{form.deanery}}
                     </div>
-                    <div class="col-md-4">
-                        <label>Ziema I RP</label>
-                        {{form.ziemia_i_rp}}
-                    </div>
                 </div>
                 {% csrf_token %}
 
@@ -138,68 +149,6 @@
 
 
 
-
-                <br/><br/><br/>
-                
-                <div class="form-row">
-
-                    <div class="col-md-12">
-                        <strong>Okres II RP</strong>
-                    </div>
-                    <div class="col-md-3">
-                        <label>kraj</label>
-                    </div>
-                    <div class="col-md-3">
-                        <label>województwo</label>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Powiat</label>
-                        {{form.county_r2}}
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="col-md-12">
-                        <strong>Okres Zaborów</strong>
-                    </div>
-                    <div class="col-md-3">
-                        <label>kraj</label>
-                    </div>
-                    <div class="col-md-3">
-                        <label>województwo</label>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Powiat</label>
-                        {{form.county_rz}}
-                    </div>
-                </div>
-                
-                <div class="form-row" style="border: 1px solid black; margin-top: 10px;">
-                    <div class="col-md-12">
-                        <strong>Okres I RP</strong>
-                    </div>
-                    <div class="col-md-3">
-                        <label>kraj</label>
-                    </div>
-                    <div class="col-md-3">
-                        <label>województwo</label>
-                        <span>{% if form.county_r1 %}{{form.county_r1.province.name}}{% endif %}</span>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Powiat</label>
-                        {{form.county_r1}}
-                    </div>
-                </div>
-
-                {% csrf_token %}
-
-                <div class="form-row">
-                    <div class="col-md-12 text-right">
-                        <button type="submit" class="btn btn-primary">Zapisz</button>
-                    </div>
-                </div>
-
-                <br/><br/><br/>
 
                 <div class="form-row">
                     <div class="col-md-6">
@@ -214,6 +163,7 @@
                                 <label class="form-check-label">{{form.geo_validated}} Pozycja parafii na mapie poprawna</label>
                             </div>
                             <div class="col-md-12">
+                                <br/>
                                 <label>Lista miejscowości należących do parafii</label>
                                 {{ form.places }}
                                 <br/>
@@ -256,34 +206,6 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Integracja z zewnętrznymi systemami</h3>
-            <form method="post">
-
-                {% for pis in parish_index_source %}
-
-
-                    <div class="row">
-
-                        <div class="col-md-9">
-                            <label>{{ pis.1 }}</label>
-                            <input type="text" name="index_source_{{pis.0}}" value="{% if pis.2 %}{{ pis.2.url}}{% endif %}" class="form-control" placeholder="Adres parafii w zewnętrznym systemie"/>
-                        </div>
-                    </div>
-                {% endfor %}
-
-                {% csrf_token %}
-                <input type="hidden" name="form_no" value="2"/>
-
-                <div class="form-row">
-                    <div class="col-md-12 text-right">
-                        <button type="submit" class="btn btn-primary">Zapisz</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 <div class="col-md-4 col-lg-5 col-xl-6" >

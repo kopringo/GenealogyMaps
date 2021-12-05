@@ -315,6 +315,7 @@ COURT_BOOK_TYPE = (
     ('inne', 'Inne'),
 )
 
+
 class SourceRef(models.Model):
 
     copy_type = models.IntegerField(default=DOCUMENT_GROUP__COPY_TYPE__KSIEGA, choices=DOCUMENT_GROUP__COPY_TYPE)
@@ -339,6 +340,7 @@ class SourceRef(models.Model):
 
     class Meta:
         abstract = True
+
 
 class Source(models.Model):
 
@@ -382,7 +384,7 @@ class Parish(models.Model):
 
     # lokalizacja
     country = models.ForeignKey(Country, null=True, on_delete=models.DO_NOTHING)
-    province = models.ForeignKey(Province, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Województwo (R3)')
+    province = models.ForeignKey(Province, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Województwo (R3)', limit_choices_to=Q(country__historical_period=3))
     county = models.ForeignKey(County, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Powiat (R3)', limit_choices_to=Q(province__country__historical_period=3))
     place = models.CharField(max_length=32, help_text='Miejscowość')
     place2 = models.CharField(max_length=32, help_text='Miejscowość, nazwa historyczna', blank=True)
@@ -406,7 +408,7 @@ class Parish(models.Model):
     not_exist_anymore = models.BooleanField(default=False, help_text='Parafia już nie istnieje')
 
     # podzial administracyjny koscielny
-    diocese = models.ForeignKey(Diocese, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Diecezja')
+    diocese = models.ForeignKey(Diocese, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Diecezja', limit_choices_to=Q(country__historical_period=3))
     deanery = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat', limit_choices_to=Q(diocese__country__historical_period=3))
 
     deanery_r1 = models.ForeignKey(Deanery, null=True, blank=True, on_delete=models.DO_NOTHING, help_text='Dekanat w R1', related_name='deanery_r1', limit_choices_to=Q(diocese__country__historical_period=1))
@@ -420,9 +422,11 @@ class Parish(models.Model):
     phone = models.CharField(max_length=32, help_text=16, blank=True)
     link = models.URLField(blank=True)
 
-    gen_id = models.IntegerField(unique=True, blank=True, null=True)
-    szwa_id = models.CharField(blank=True, max_length=64)  # 53/1847/0
-    fs_catalog_id = models.CharField(blank=True, max_length=64)
+    # relacje do zewn. systemow
+    gen_id = models.IntegerField(unique=True, blank=True, null=True, help_text='ID w genetece')
+    szwa_id = models.CharField(blank=True, max_length=64, help_text='Zespół archiwalny xx/xxxx/x')  # 53/1847/0
+    fs_catalog_id = models.CharField(blank=True, max_length=64, help_text='IDs w katalogu FamilySearch, rozdzielone spacjami')
+
     partial_done = models.BooleanField(default=False, help_text='Częściowo wypełniona, tj. są księgi jakieś wpisane.')
     all_done = models.BooleanField(default=False, help_text='Oznacza parafię całkowicie uzuepłnioną (wg wiedzy opiekunów). To pole nadpisuje pole częściowego wypełnienia.')
     has_indexes = models.BooleanField(default=False, help_text='Flaga oznacza, że parafia ma dodane zewnętrzne indexy')
@@ -499,7 +503,11 @@ class Parish(models.Model):
         if self.has_indexes:
             has_indexes = '<span class="span-icon text-success fa fa-info" title="Parafia ma indexy"></span>'
 
-        return u'%s%s%s%s%s' % (all_done, geo_str, missing_sth, not_exists, has_indexes)
+        has_places = ''
+        if self.places:
+            has_places = '<span class="span-icon text-success fa fa-building" title="Parafia ma miejscowości"></span>'
+
+        return u'%s%s%s%s%s%s' % (all_done, geo_str, missing_sth, not_exists, has_indexes, has_places)
 
     def has_user_manage_permission(self, user):
 
@@ -558,17 +566,25 @@ class ParishPlace(models.Model):
 
     PLACE_TYPE__OTHER = 0
     PLACE_TYPE__CEMETERY = 1
+    PLACE_TYPE__PLACE = 2
     PLACE_TYPE = (
         (PLACE_TYPE__OTHER, 'Inny'),
         (PLACE_TYPE__CEMETERY, 'Cmentarz'),
+        (PLACE_TYPE__PLACE, 'Miejscowość'),
     )
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING)
-    name = models.CharField(max_length=32, help_text='Opis')
+    name = models.CharField(max_length=32, help_text='Nazwa')
+    note = models.TextField(blank=True, help_text='Notatka')
     type = models.IntegerField(choices=PLACE_TYPE, default=1)
-    geo_lat = models.FloatField(blank=True)
-    geo_lng = models.FloatField(blank=True)
+    geo_lat = models.FloatField(blank=True, null=True)
+    geo_lng = models.FloatField(blank=True, null=True)
     existing = models.BooleanField(default=True, help_text='Obiekt istniejący')
+
+    def get_type_name(self):
+        for row in ParishPlace.PLACE_TYPE:
+            if row[0] == self.type:
+                return row[1]
 
 
 class ParishComment(models.Model):
@@ -611,14 +627,19 @@ class ParishSource(SourceRef):
 
 
 class ParishSourceExt(models.Model):
+    """
+    Linki do zewnętrznych stron
+    """
 
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
-
     name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów', blank=True)
     url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
 
 
 class ParishIndexSource(models.Model):
+    """
+    Encja reprezentujaca parafię w zewnętrznym systemie, ktory posiada informacje o indexach
+    """
 
     PARISH_INDEX_SOURCE__TEST = 0
     PARISH_INDEX_SOURCE__PP = 1
@@ -649,6 +670,91 @@ class ParishIndexSource(models.Model):
 
     def project_name(self):
         return ParishIndexSource.PARISH_INDEX_SOURCE[self.project][1]
+
+
+class RemoteSystems(models.Model):
+    """
+    Encja reprezentujaca zewnętrzny zbiór danych, np. baza indexów dla zbioru parafii
+    """
+
+    DATABASE_TYPE__INDEX = 0
+    DATABASE_TYPE__IMAGES = 1
+    DATABASE_TYPE = (
+        (DATABASE_TYPE__INDEX, 'Indeksy'),
+        (DATABASE_TYPE__IMAGES, 'Skany'),
+    )
+
+    """
+    https://www.genealodzy.czestochowa.pl/ -> bedzie json/xml
+    
+    projektwarmia -> 
+        https://projektwarmia.pl/wyszukiwarka/php/getdata.php?im=&naz=&miejsc=&rok1=&rok2=&inne=&malz=&naz_malz=&ojc=&mat=&naz_mat=&pag=1&sort1=2&sort2=1&sort3=0&metr=&dokl=000000000000&metod=1&rodz=1&zasob=1
+    swietogen ->
+        https://serwer1735115.home.pl/wyszukiwarka_swietokrzyskie/php/getdata.php?im=&naz=&miejsc=&rok1=&rok2=&inne=&malz=&naz_malz=&ojc=&mat=&naz_mat=&pag=1&sort1=2&sort2=1&sort3=0&metr=&dokl=000000000000&metod=1&rodz=1&zasob=1
+    pomerania ->
+        https://serwer1735115.home.pl/wyszukiwarka/php/getdata.php?im=&naz=&miejsc=&rok1=&rok2=&inne=&malz=&naz_malz=&ojc=&mat=&naz_mat=&pag=1&sort1=2&sort2=1&sort3=0&metr=&dokl=000000000000&metod=1&rodz=1&zasob=1
+    geneteka ->
+        https://geneteka.genealodzy.pl/rejestry.php?lang=pol
+        
+    http://projektkurpie.pl/
+    """
+
+    DATABASE_FORMAT__TEST = 0
+    DATABASE_FORMAT__WYSZUKIWARKA_PHP = 1   # Wyszukiwarka autorstwa MB https://projektwarmia.pl/wyszukiwarka/php/getdata.php?im=&naz=&miejsc=&rok1=&rok2=&inne=&malz=&naz_malz=&ojc=&mat=&naz_mat=&pag=1&sort1=2&sort2=1&sort3=0&metr=&dokl=000000000000&metod=1&rodz=1&zasob=1
+    DATABASE_FORMAT__GENETEKA = 2           # https://geneteka.genealodzy.pl/rejestry.php?lang=pol
+    DATABASE_FORMAT__TGZC = 3               # https://www.genealodzy.czestochowa.pl/
+    DATABASE_FORMAT__SZWA = 4               # SZwA
+    DATABASE_FORMAT__LUBGENS = 5            # Lubgens
+    DATABASE_FORMAT__POZNAN = 6             # http: // poznan - project.psnc.pl /
+    DATABASE_FORMAT__BASIA = 7              # http: // basia.famula.pl / content - all.php?lang = pl
+    DATABASE_FORMAT = (
+        (DATABASE_FORMAT__TEST, 'Test'),
+        (DATABASE_FORMAT__WYSZUKIWARKA_PHP, 'Wyszukiwarka PHP by MB'),
+        (DATABASE_FORMAT__GENETEKA, 'Geneteka (@TODO)'),
+        (DATABASE_FORMAT__TGZC, 'TGZC'),
+        (DATABASE_FORMAT__SZWA, 'SZwA (@TODO)'),
+        (DATABASE_FORMAT__LUBGENS, 'Lubgens'),
+        (DATABASE_FORMAT__POZNAN, 'Poznan (@TODO)'),
+        (DATABASE_FORMAT__BASIA, 'Basia (@TODO)'),
+    )
+
+    database_type = models.IntegerField(default=DATABASE_TYPE__INDEX, choices=DATABASE_TYPE)
+    database_format = models.IntegerField(choices=DATABASE_FORMAT)
+
+    name = models.TextField(help_text='Nazwa bazy')
+    url = models.URLField(blank=True)
+    check_date = models.DateTimeField(blank=True, null=True)
+    check_interval = models.IntegerField(default=1, help_text='Co ile dni sprawdzać zmiany')
+    raw_data = models.TextField(blank=True)
+
+    active = models.BooleanField(default=False, help_text='Czy integracja ma być aktywna')
+
+    def __str__(self):
+        return '{}'.format(self.name)
+
+
+class RemoteSystemItem(models.Model):
+
+    system = models.ForeignKey(RemoteSystems, on_delete=models.DO_NOTHING)
+    key = models.CharField(max_length=64, help_text='Nazwa obiektu, np. nazwa parafii')
+    raw_data = models.TextField(blank=True)
+    extra_url = models.URLField(blank=True)
+
+    parish = models.ForeignKey(Parish, on_delete=models.SET_NULL, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('system', 'key', )
+
+
+class ParishNobility(models.Model):
+
+    parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
+    name = models.CharField(max_length=64, help_text='Nazwisko')
+    nest = models.CharField(max_length=64, help_text='Gniazdo rodowe')
+    farmstead = models.CharField(max_length=64, help_text='PRZYSIÓŁEK')
+    arms = models.CharField(max_length=64, help_text='Herb')
+    geo_lat = models.FloatField(blank=True, null=True)
+    geo_lng = models.FloatField(blank=True, null=True)
 
 
 ###############################################################################

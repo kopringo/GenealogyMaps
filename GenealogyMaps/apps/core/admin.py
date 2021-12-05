@@ -459,8 +459,14 @@ class ParishUserAdmin(admin.ModelAdmin):
 
 
 class ParishSourceExtAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'url', 'parish']
 
+class RemoteSystemsAdmin(admin.ModelAdmin):
+    list_display = ['name', 'url', 'check_date', 'active']
+
+class RemoteSystemItemAdmin(admin.ModelAdmin):
+    list_display = ['key', 'system', 'parish']
+    list_filter = ['system']
 
 ##########################################################
 
@@ -583,6 +589,9 @@ admin.site.register(CourtBook, CourtBookAdmin)
 admin.site.register(CourtBookSource, CourtBookSourceAdmin)
 
 admin.site.register(Source, SourceAdmin)
+
+admin.site.register(RemoteSystems, RemoteSystemsAdmin)
+admin.site.register(RemoteSystemItem, RemoteSystemItemAdmin)
 
 # user profile
 

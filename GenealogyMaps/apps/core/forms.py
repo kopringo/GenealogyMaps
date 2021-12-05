@@ -1,7 +1,7 @@
 
 from django import forms
 
-from .models import ParishSource, CourtBook, Parish
+from .models import ParishSource, CourtBook, Parish, ParishPlace, ParishSourceExt
 
 
 class ParishMessageForm(forms.Form):
@@ -22,6 +22,7 @@ class ParishEditPeriodsForm(forms.ModelForm):
 class ParishEditGeoForm:
     pass
 
+
 class ParishEditForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -40,15 +41,9 @@ class ParishEditForm(forms.ModelForm):
             'country',
             'province',
             'county',
-            
-            'county_r2',
-            'county_r1',
-            'county_rz',
 
             'diocese',
             'deanery',
-
-            'ziemia_i_rp',
 
             'place',
             'place2',
@@ -62,6 +57,39 @@ class ParishEditForm(forms.ModelForm):
 
             'places'
         ]
+
+
+class ParishEditForm2(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ParishEditForm2, self).__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            if field_name not in ['not_exist_anymore', 'all_done', 'geo_validated']:
+                field.widget.attrs['class'] = 'form-control'
+
+    class Meta:
+        model = Parish
+        fields = [
+
+            'county_r2',
+            'county_r1',
+            'county_rz',
+            'ziemia_i_rp',
+
+        ]
+
+
+class ParishPlaceForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ParishPlaceForm, self).__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+    class Meta:
+        model = ParishPlace
+        fields = ['name', 'note', 'type', 'geo_lat', 'geo_lng', 'existing', ]
 
 
 class ParishSourceForm(forms.ModelForm):
@@ -98,6 +126,12 @@ class ParishSourceForm(forms.ModelForm):
         fields = ['type_b', 'type_d', 'type_m', 'type_a', 'type_zap', 'type_sum_only', 'date_from', 'date_to', 'note', 'source', 'copy_type', ]
 
     error_css_class = 'is-invalid3'
+
+
+class ParishSourceExtForm(forms.ModelForm):
+    class Meta:
+        model = ParishSourceExt
+        fields = ['name', 'url']
 
 
 class CommentForm(forms.Form):

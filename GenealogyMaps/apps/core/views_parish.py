@@ -8,8 +8,8 @@ from django.contrib.auth.models import User
 import numpy as np
 
 # Create your views here.
-from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP, ParishIndexSource
-from .forms import ParishSourceForm, ParishEditForm, ParishMessageForm
+from .models import Parish, Diocese, Province, County, Deanery, Source, ParishSource, ParishUser, Country, SOURCE_GROUP, ParishIndexSource, ParishPlace, RemoteSystemItem
+from .forms import ParishSourceForm, ParishEditForm, ParishMessageForm, ParishEditForm2, ParishPlaceForm
 from .decorators import group_required
 
 def __prepare_common_params():
@@ -58,6 +58,8 @@ def parish(request, parish_id):
         'manager_exists': manager_exists,
         'subtitle': parish.place,
         'SOURCE_GROUP': SOURCE_GROUP,
+        'places': ParishPlace.objects.filter(parish=parish),
+        'remote_items': RemoteSystemItem.objects.filter(parish=parish),
 
         'limit_parish_on_the_map': '?lt=parish&lv={}'.format(parish_id)
 
@@ -84,51 +86,104 @@ def parish_edit(request, parish_id):
                 form.save()
                 return redirect('/parish/%d' % parish.id)
 
-        if request.POST.get('form_no', None) == '2':
-            has_indexes = False
-            for k in request.POST.keys():
-                if k[0:13] == 'index_source_':
-                    project = k[13:]
-                    val = request.POST[k]
+    data.update({
+        'parish': parish,
+        'form': form,
+    })
 
-                    if val != '':
-                        try:
-                            obj = ParishIndexSource.objects.get(parish=parish, project=int(project))
+    return render(request, 'core/parish_edit.html', data)
 
-                            # jezeli zmieniamy adres to trzeba wyczyscic stare dane
-                            if obj.url != val:
-                                obj.checked_date = None
-                                obj.raw_data = ''
 
-                            obj.url = val
-                        except ParishIndexSource.DoesNotExist:
-                            obj = ParishIndexSource(parish=parish, project=int(project), url=val)
-                        obj.save()
+@login_required
+def parish_edit2(request, parish_id):
+    """ Panel edycji parafii dla opiekuna """
+    data = {}
 
-                        has_indexes = True
+    parish = Parish.objects.get(pk=parish_id)
+    if not parish.has_user_manage_permission(request.user):
+        return redirect('/?error=access-denied')
 
-            parish.has_indexes = has_indexes
-            parish.save()
-
-            return redirect('/parish/%d' % parish.id)
-
-    index_sources = []
-    for pis in ParishIndexSource.PARISH_INDEX_SOURCE:
-        if pis[0] == 0:
-            continue
-        try:
-            obj = ParishIndexSource.objects.get(parish=parish, project=pis[0])
-        except:
-            obj = None
-        index_sources.append([pis[0], pis[1], obj])
+    form = ParishEditForm2(instance=parish)
+    if request.method == 'POST':
+        if request.POST.get('form_no', None) == '1':
+            form = ParishEditForm2(request.POST, instance=parish)
+            if form.is_valid():
+                form.save()
+                return redirect('/parish/%d' % parish.id)
 
     data.update({
         'parish': parish,
         'form': form,
-        'parish_index_source': index_sources
     })
 
-    return render(request, 'core/parish_edit.html', data)
+    return render(request, 'core/parish_edit2.html', data)
+
+
+@login_required
+def parish_edit3(request, parish_id):
+    """ Panel edycji parafii dla opiekuna """
+    data = {}
+
+    parish = Parish.objects.get(pk=parish_id)
+    if not parish.has_user_manage_permission(request.user):
+        return redirect('/?error=access-denied')
+
+    if request.method == 'POST':
+        item = request.POST.get('item')
+        try:
+            rsi = RemoteSystemItem.objects.get(pk=int(item))
+            rsi.parish = parish
+            rsi.save()
+        except:
+            pass
+
+        return redirect('/parish/%d/edit3?message=ok' % parish.id)
+
+    remote_items = RemoteSystemItem.objects.filter(parish=parish)
+    remote_items_all = RemoteSystemItem.objects.filter(parish=None).select_related().order_by('key')
+
+    data.update({
+        'parish': parish,
+        'remote_items': remote_items,
+        'remote_items_all': remote_items_all
+    })
+
+    return render(request, 'core/parish_edit3.html', data)
+
+
+@login_required
+def parish_edit4(request, parish_id):
+    """ Panel edycji parafii dla opiekuna """
+    data = {}
+
+    parish = Parish.objects.get(pk=parish_id)
+    if not parish.has_user_manage_permission(request.user):
+        return redirect('/?error=access-denied')
+
+    form = ParishPlaceForm()
+    obj_id = request.GET.get('obj', None)
+    obj = None
+    try:
+        obj = ParishPlace.objects.get(parish=parish, pk=int(obj_id))
+        form = ParishPlaceForm(instance=obj)
+    except:
+        pass
+    if request.method == 'POST':
+        form = ParishPlaceForm(request.POST, instance=obj)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.parish = parish
+            obj.save()
+            return redirect('/parish/%d/edit4?message=ok' % parish.id)
+
+    places = ParishPlace.objects.filter(parish=parish)
+    data.update({
+        'parish': parish,
+        'form': form,
+        'places': places
+    })
+
+    return render(request, 'core/parish_edit4.html', data)
 
 
 @login_required

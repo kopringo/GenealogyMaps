@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .form-row{
+        margin-bottom: 1em;
+    }
+</style>
+
+<div class="col-md-12">
+    <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+                    <li class="breadcrumb-item"><a href="/area/province/{{ parish.province.id }}" class="ajax_link">Województwo {{ parish.province.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/area/county/{{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/parish/{{ parish.id }}">{{ parish.name }}</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Edycja</li>
+                </ol>
+
+            </nav>
+</div>
+
+<div class="col-md-12" id="main-col-content">
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/parish/{{ parish.id }}/edit">Dane podstawowe</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit2">Okresy historyczne</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit3">Zewnętrzne dane</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link active" href="">Obiekty</a>
+              </li>
+            </ul>
+            <br/>
+
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nazwa obiektu</th>
+                        <th>Czy istnieje</th>
+                        <th>Lokalizacja</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if not places %}
+                        <tr>
+                            <td colspan="4">Brak obiektów</td>
+                        </tr>
+                    {% else %}
+                        {% for place in places %}
+                        <tr>
+                            <td>{{place.name}} ({{place.get_type_name}})</td>
+                            <td>{% if place.existing %}TAK{% else %}NIE{% endif %}</td>
+                            <td>{% if place.geo_lat %}{{place.geo_lat}} {{place.geo_lng}}{% endif %}</td>
+                            <td><a href="/parish/{{parish.id}}/edit4?obj={{place.id}}">Edytuj</a></td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+
+            </table>
+
+            <hr>
+            <br/><br/>
+            <h4>Dodawanie nowego obiektu</h4>
+            <form method="post">
+
+                <div class="form-row">
+                    <div class="col-md-8">
+                        <label>Nazwa obiektu</label>
+                        {{form.name}}
+                    </div>
+                    <div class="col-md-4">
+                        <label>Typ</label>
+                        {{form.type}}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-4">
+                                <label>GEO LAT</label>
+                                {{ form.geo_lat }}
+                            </div>
+                            <div class="col-md-4">
+                                <label>GEO LNG</label>
+                                {{ form.geo_lng }}
+                            </div>
+                    <div class="col-md-4">
+                        <label>Czy istnieje nadal?</label>
+                        {{ form.existing }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label>Notatki</label>
+                        {{ form.note }}
+                    </div>
+                </div>
+
+
+                {% csrf_token %}
+                <input type="hidden" name="form_no" value="2"/>
+
+                <div class="form-row">
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4 col-lg-5 col-xl-6" >
+
+</div>
+
+
+{% endblock %}
+
+{% block content_js %}
+<script type="text/javascript">
+    $(function(){
+        //var map = L.map('mapid');
+        if(typeof map !== "undefined"){
+            map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}], 12);
+
+            // create custom icon
+            var firefoxIcon2 = L.icon({
+                iconUrl: '/static/img/marker-icon2.png',
+                iconSize: [38, 38], // size of the icon
+            });
+            //console.log(firefoxIcon);
+
+            function createIcon(data, category) {
+                return L.icon({
+                    iconUrl: '/static/img/marker-icon2.png',
+                    iconSize: [38, 38], // size of the icon
+                });
+            };
+
+            //console.log(markers[{{parish.id}}]);
+            //markers[{{parish.id}}].data.icon = createIcon;
+            //markers[{{parish.id}}].data.forceIconRedraw = true;
+
+            //markers[{{parish.id}}].filtered = true
+            //pruneCluster.ProcessView();
+
+            console.log('ok {{parish.id}}');
+        }
+
+        $(document).on('change', '#source_type', function(){
+
+        });
+
+    });
+</script>
+{% endblock %}

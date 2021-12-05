@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .form-row{
+        margin-bottom: 1em;
+    }
+</style>
+
+<div class="col-md-12">
+    <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+                    <li class="breadcrumb-item"><a href="/area/province/{{ parish.province.id }}" class="ajax_link">Województwo {{ parish.province.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/area/county/{{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/parish/{{ parish.id }}">{{ parish.name }}</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Edycja</li>
+                </ol>
+
+            </nav>
+</div>
+
+<div class="col-md-12" id="main-col-content">
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/parish/{{ parish.id }}/edit">Dane podstawowe</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="#">Okresy historyczne</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit3">Zewnętrzne dane</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit4">Obiekty</a>
+              </li>
+            </ul>
+            <br/>
+
+            <form method="post">
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+
+                {% csrf_token %}
+
+                
+                <div class="form-row">
+
+                    <div class="col-md-12">
+                        <strong>Okres II RP</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <label>kraj</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label>województwo</label>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Powiat</label>
+                        {{form.county_r2}}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <strong>Okres Zaborów</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <label>kraj</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label>województwo</label>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Powiat</label>
+                        {{form.county_rz}}
+                    </div>
+                </div>
+                
+                <div class="form-row" style="border: 1px solid black; margin-top: 10px;">
+                    <div class="col-md-12">
+                        <strong>Okres I RP</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <label>kraj</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label>województwo</label>
+                        <span>{% if form.county_r1 %}{{form.county_r1.province.name}}{% endif %}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Powiat</label>
+                        {{form.county_r1}}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-4">
+                        <label>Ziema I RP</label>
+                        {{form.ziemia_i_rp}}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                    </div>
+                </div>
+
+
+
+            </form>
+			<br/><br/>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="col-md-4 col-lg-5 col-xl-6" >
+
+</div>
+
+
+{% endblock %}
+
+{% block content_js %}
+<script type="text/javascript">
+    $(function(){
+        //var map = L.map('mapid');
+        if(typeof map !== "undefined"){
+            map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}], 12);
+
+            // create custom icon
+            var firefoxIcon2 = L.icon({
+                iconUrl: '/static/img/marker-icon2.png',
+                iconSize: [38, 38], // size of the icon
+            });
+            //console.log(firefoxIcon);
+
+            function createIcon(data, category) {
+                return L.icon({
+                    iconUrl: '/static/img/marker-icon2.png',
+                    iconSize: [38, 38], // size of the icon
+                });
+            };
+
+            //console.log(markers[{{parish.id}}]);
+            //markers[{{parish.id}}].data.icon = createIcon;
+            //markers[{{parish.id}}].data.forceIconRedraw = true;
+
+            //markers[{{parish.id}}].filtered = true
+            //pruneCluster.ProcessView();
+
+            console.log('ok {{parish.id}}');
+        }
+
+        $(document).on('change', '#source_type', function(){
+
+        });
+
+    });
+</script>
+{% endblock %}

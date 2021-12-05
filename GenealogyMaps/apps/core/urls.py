@@ -30,6 +30,9 @@ urlpatterns = [
     path('parish/<int:parish_id>/favourite', views_parish.parish_favourite, name='parish_favourite'),
     path('parish/<int:parish_id>/request-access', views_parish.parish_request_access, name='parish_request_access'),
     path('parish/<int:parish_id>/edit', views_parish.parish_edit),
+    path('parish/<int:parish_id>/edit2', views_parish.parish_edit2),
+    path('parish/<int:parish_id>/edit3', views_parish.parish_edit3),
+    path('parish/<int:parish_id>/edit4', views_parish.parish_edit4),
     path('parish/<int:parish_id>/message', views_parish.parish_message),
     path('parish/list.json', views_parish.parish_list_json),
 

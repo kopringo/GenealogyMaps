@@ -65,6 +65,10 @@
     </div>
     <div class="col-md-12">
 
-        
+        {% if parish.year >= 1945 %}
+        <div class="alert alert-info">
+            Księgi UMZ dla parafi utworzonych po 1945 dostępne w archiwum parafialnym.
+        </div>
+        {% endif %}
     </div>
 </div>

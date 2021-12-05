@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .form-row{
+        margin-bottom: 1em;
+    }
+</style>
+
+<div class="col-md-12">
+    <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+                    <li class="breadcrumb-item"><a href="/area/province/{{ parish.province.id }}" class="ajax_link">Województwo {{ parish.province.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/area/county/{{ parish.county.id }}" class="ajax_link">{{ parish.county.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="/parish/{{ parish.id }}">{{ parish.name }}</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Edycja</li>
+                </ol>
+
+            </nav>
+</div>
+
+<div class="col-md-12" id="main-col-content">
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/parish/{{ parish.id }}/edit">Dane podstawowe</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit2">Okresy historyczne</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="">Zewnętrzne dane</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="/parish/{{ parish.id }}/edit4">Obiekty</a>
+              </li>
+            </ul>
+            <br/>
+
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Integracja z zewnętrznymi systemami</h4>
+
+            <div class="alert alert-info">Integracja z https://indeksy.projektpodlasie.pl/ realizowana jest przez panel głównego administratora.</div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Zewnętrzny system</th>
+                    <th>Parafia</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for row in remote_items %}
+                    <tr>
+                        <td>{{ row.system.name }}</td>
+                        <td>{{ row.key }}</td>
+                        <td><a href="/parish/{{parish.id}}/edit3?delete={{row.id}}">Usuń</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <form method="post">
+
+                <select name="item" class="form-control">
+                    {% for obj in remote_items_all %}
+                    <option value="{{obj.id}}">{{obj.key}} ({{obj.system.name}})</option>
+                    {% endfor %}
+                </select>
+
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-primary">Dodaj relację</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4 col-lg-5 col-xl-6" >
+
+</div>
+
+
+{% endblock %}
