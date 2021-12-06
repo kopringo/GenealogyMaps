@@ -134,6 +134,9 @@ def parish_edit3(request, parish_id):
             rsi = RemoteSystemItem.objects.get(pk=int(item))
             rsi.parish = parish
             rsi.save()
+
+            parish.has_indexes = True
+            parish.save()
         except:
             pass
 

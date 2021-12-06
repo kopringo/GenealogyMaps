@@ -499,7 +499,7 @@ class Parish(models.Model):
         if (self.year is not None) and (self.year >= 1946):
             all_done = '<span class="span-icon text-success fa fa-check-circle" title="Parafia erygowana po 1946"></span>'
 
-        has_indexes = '';
+        has_indexes = ''
         if self.has_indexes:
             has_indexes = '<span class="span-icon text-success fa fa-info" title="Parafia ma indexy"></span>'
 
