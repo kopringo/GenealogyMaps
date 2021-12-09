@@ -105,11 +105,10 @@ def parish_edit2(request, parish_id):
 
     form = ParishEditForm2(instance=parish)
     if request.method == 'POST':
-        if request.POST.get('form_no', None) == '1':
-            form = ParishEditForm2(request.POST, instance=parish)
-            if form.is_valid():
-                form.save()
-                return redirect('/parish/%d' % parish.id)
+        form = ParishEditForm2(request.POST, instance=parish)
+        if form.is_valid():
+            form.save()
+            return redirect('/parish/%d' % parish.id)
 
     data.update({
         'parish': parish,
@@ -141,6 +140,17 @@ def parish_edit3(request, parish_id):
             pass
 
         return redirect('/parish/%d/edit3?message=ok' % parish.id)
+    else:
+        delete_id = request.GET.get('delete', None)
+        if delete_id is not None:
+            try:
+                rsi = RemoteSystemItem.objects.get(pk=int(delete_id), parish=parish)
+                rsi.parish = None
+                rsi.save()
+                return redirect('/parish/%d/edit3?message=ok' % parish.id)
+            except:
+                return redirect('/parish/%d/edit3?message=error' % parish.id)
+
 
     remote_items = RemoteSystemItem.objects.filter(parish=parish)
     remote_items_all = RemoteSystemItem.objects.filter(parish=None).select_related().order_by('key')

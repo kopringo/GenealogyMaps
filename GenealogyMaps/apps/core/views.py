@@ -83,6 +83,7 @@ def home0(request, data):
 
 def home(request):
     data = __prepare_common_params()
+    data['load_full_map'] = True
     data.update(_load_root_items())
 
     # points = np.array([[51.44502, 20.294522], [51.448337, 20.339841], [51.432501, 20.298299], [51.415481, 20.309285], [51.417944, 20.330228]])

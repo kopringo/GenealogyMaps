@@ -264,6 +264,7 @@
         //var map = L.map('mapid');
         if(typeof map !== "undefined"){
             map.setView([{{ parish.geo_lat }}, {{ parish.geo_lng }}], 12);
+            L.marker([{{parish.geo_lat}}, {{parish.geo_lng}}]).addTo(map);
 
             // create custom icon
             var firefoxIcon2 = L.icon({
@@ -341,6 +342,20 @@
                 filter_rows2(this);
             });
         });
+
+
+
+        var cemeteryIcon = L.icon({
+            iconUrl: '/static/graveyard.png',
+            iconSize:     [40, 40], // size of the icon
+        });
+        {% for place in places %}
+            {% if place.type == 1 %}
+                {% if place.geo_lat %}
+                L.marker([{{place.geo_lat}}, {{place.geo_lng}}], {icon: cemeteryIcon}).addTo(map);
+                {% endif %}
+            {% endif %}
+        {% endfor %}
 
     });
 </script>

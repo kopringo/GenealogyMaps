@@ -31,6 +31,9 @@ class ParishEditForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field_name not in ['not_exist_anymore', 'all_done', 'geo_validated']:
                 field.widget.attrs['class'] = 'form-control'
+            if field_name in ['geo_lat', 'geo_lng']:
+                field.widget.attrs['readonly'] = '1'
+                field.widget.attrs['style'] = 'background: #ccc;'
 
     class Meta:
         model = Parish
@@ -86,6 +89,9 @@ class ParishPlaceForm(forms.ModelForm):
 
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+            if field_name in ['geo_lat', 'geo_lng']:
+                field.widget.attrs['readonly'] = '1'
+                field.widget.attrs['style'] = 'background: #ccc;'
 
     class Meta:
         model = ParishPlace
@@ -131,7 +137,7 @@ class ParishSourceForm(forms.ModelForm):
 class ParishSourceExtForm(forms.ModelForm):
     class Meta:
         model = ParishSourceExt
-        fields = ['name', 'url']
+        fields = ['name', 'url', 'database_type', 'note']
 
 
 class CommentForm(forms.Form):

@@ -626,6 +626,14 @@ class ParishSource(SourceRef):
         verbose_name_plural = 'Parafie - zbiory danych'#_("countries")
 
 
+DATABASE_TYPE__INDEX = 0
+DATABASE_TYPE__IMAGES = 1
+DATABASE_TYPE = (
+    (DATABASE_TYPE__INDEX, 'Indeksy'),
+    (DATABASE_TYPE__IMAGES, 'Skany'),
+)
+
+
 class ParishSourceExt(models.Model):
     """
     Linki do zewnętrznych stron
@@ -634,6 +642,9 @@ class ParishSourceExt(models.Model):
     parish = models.ForeignKey(Parish, on_delete=models.DO_NOTHING, help_text='Parafia')
     name = models.CharField(max_length=32, help_text='Nazwa grupy dokumentów', blank=True)
     url = models.URLField(blank=True, help_text='Adres url pod którym dokumenty są dostępne')
+
+    database_type = models.IntegerField(default=DATABASE_TYPE__INDEX, choices=DATABASE_TYPE)
+    note = models.TextField(blank=True, help_text='Opis dokumentów')
 
 
 class ParishIndexSource(models.Model):
@@ -677,12 +688,7 @@ class RemoteSystems(models.Model):
     Encja reprezentujaca zewnętrzny zbiór danych, np. baza indexów dla zbioru parafii
     """
 
-    DATABASE_TYPE__INDEX = 0
-    DATABASE_TYPE__IMAGES = 1
-    DATABASE_TYPE = (
-        (DATABASE_TYPE__INDEX, 'Indeksy'),
-        (DATABASE_TYPE__IMAGES, 'Skany'),
-    )
+
 
     """
     https://www.genealodzy.czestochowa.pl/ -> bedzie json/xml

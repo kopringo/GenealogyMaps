@@ -268,19 +268,17 @@
 
         pruneCluster = new PruneClusterForLeaflet(100);
 
-        //var marker2 = new PruneCluster.Marker(52.8400, 19.1800);
-        //pruneCluster.RegisterMarker(marker2);
-
         var icon2 = L.icon({
-    iconUrl: '/static/img/marker-icon2.png',
-    iconSize: [38, 95],
-    iconAnchor: [22, 94],
-    popupAnchor: [-3, -76],
-    shadowUrl: 'my-icon-shadow.png',
-    shadowSize: [68, 95],
-    shadowAnchor: [22, 94]
-});
-        
+            iconUrl: '/static/img/marker-icon2.png',
+            iconSize: [38, 95],
+            iconAnchor: [22, 94],
+            popupAnchor: [-3, -76],
+            shadowUrl: 'my-icon-shadow.png',
+            shadowSize: [68, 95],
+            shadowAnchor: [22, 94]
+        });
+
+        {% if load_full_map %}
         $.ajax({
             url: '/parish/list.json{% if limit_parish_on_the_map %}{{ limit_parish_on_the_map|safe }}{% endif %}',
             dataType: 'json'
@@ -305,6 +303,7 @@
         }).fail(function(jqXHR, textStatus){
             alert('ajax error');
         });
+        {% endif %}
 
         pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
 

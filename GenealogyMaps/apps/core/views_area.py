@@ -44,6 +44,7 @@ def diocese(request, d_id):
     convex_hull = __get_convex_hull(items)
 
     data = __prepare_common_params()
+    data['load_full_map'] = True
     data.update({
         'diocese': diocese,
         'deaneries': deaneries,
@@ -77,6 +78,7 @@ def deanery(request, d_id):
     convex_hull = __get_convex_hull(items)
 
     data = __prepare_common_params()
+    data['load_full_map'] = True
     data.update({
         'items': items,
         'deanery': deanery,
@@ -112,6 +114,7 @@ def province(request, p_id):
     convex_hull = __get_convex_hull(items)
 
     data = __prepare_common_params()
+    data['load_full_map'] = True
     data.update({
         'counties': counties,
         'items': items,
@@ -143,6 +146,7 @@ def county(request, c_id):
     convex_hull = __get_convex_hull(items)
 
     data = __prepare_common_params()
+    data['load_full_map'] = True
     data.update({
         'items': items,
         'county': county,

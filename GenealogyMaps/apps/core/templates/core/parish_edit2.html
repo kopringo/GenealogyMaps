@@ -69,10 +69,12 @@
                         <strong>Okres II RP</strong>
                     </div>
                     <div class="col-md-3">
-                        <label>kraj</label>
+                        <label>kraj</label><br/>
+                        {% if parish.county_r2 %}{{parish.county_r2.province.country.name}}{% else %}-{% endif %}
                     </div>
                     <div class="col-md-3">
-                        <label>województwo</label>
+                        <label>województwo</label><br/>
+                        {% if parish.county_r2 %}{{parish.county_r2.province.name}}{% else %}-{% endif %}
                     </div>
                     <div class="col-md-6">
                         <label>Powiat</label>
@@ -85,10 +87,12 @@
                         <strong>Okres Zaborów</strong>
                     </div>
                     <div class="col-md-3">
-                        <label>kraj</label>
+                        <label>kraj</label><br/>
+                        {% if parish.county_rz %}{{parish.county_rz.province.country.name}}{% else %}-{% endif %}
                     </div>
                     <div class="col-md-3">
-                        <label>województwo</label>
+                        <label>województwo</label><br/>
+                        {% if parish.county_rz %}{{parish.county_rz.province.name}}{% else %}-{% endif %}
                     </div>
                     <div class="col-md-6">
                         <label>Powiat</label>
@@ -101,11 +105,12 @@
                         <strong>Okres I RP</strong>
                     </div>
                     <div class="col-md-3">
-                        <label>kraj</label>
+                        <label>kraj</label><br/>
+                        {% if parish.county_r1 %}{{parish.county_r1.province.country.name}}{% else %}-{% endif %}
                     </div>
                     <div class="col-md-3">
-                        <label>województwo</label>
-                        <span>{% if form.county_r1 %}{{form.county_r1.province.name}}{% endif %}</span>
+                        <label>województwo</label><br/>
+                        {% if parish.county_r1 %}{{parish.county_r1.province.name}}{% else %}-{% endif %}
                     </div>
                     <div class="col-md-6">
                         <label>Powiat</label>

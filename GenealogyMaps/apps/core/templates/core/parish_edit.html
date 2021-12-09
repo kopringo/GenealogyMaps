@@ -177,6 +177,10 @@
                                 <div id="mapid"></div>
                             </div>
 
+                            <div class="col-md-12">
+                            <p>Aby zmienić położenie parafii kliknij w nowe miejsce na mapie.</p>
+                            </div>
+
                             <div class="col-md-6">
                                 <label>GEO LAT</label>
                                 {{ form.geo_lat }}
@@ -236,14 +240,19 @@
                 });
             };
 
-            //console.log(markers[{{parish.id}}]);
-            //markers[{{parish.id}}].data.icon = createIcon;
-            //markers[{{parish.id}}].data.forceIconRedraw = true;
 
-            //markers[{{parish.id}}].filtered = true
-            //pruneCluster.ProcessView();
 
-            console.log('ok {{parish.id}}');
+            var marker = L.marker([{{ parish.geo_lat }}, {{ parish.geo_lng }}]);
+            marker.addTo(map);
+
+            function onClick(e) {
+                //console.log();
+
+                marker.setLatLng([e.latlng.lat, e.latlng.lng]);
+                $("#id_geo_lat").val(e.latlng.lat);
+                $("#id_geo_lng").val(e.latlng.lng);
+            }
+            map.on('click', onClick);
         }
 
         $(document).on('change', '#source_type', function(){

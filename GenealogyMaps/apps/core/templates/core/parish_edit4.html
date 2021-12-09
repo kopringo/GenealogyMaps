@@ -86,34 +86,45 @@
 
                 <div class="form-row">
                     <div class="col-md-8">
-                        <label>Nazwa obiektu</label>
-                        {{form.name}}
-                    </div>
-                    <div class="col-md-4">
-                        <label>Typ</label>
-                        {{form.type}}
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-4">
-                                <label>GEO LAT</label>
-                                {{ form.geo_lat }}
+                        <div class="form-row">
+                            <div class="col-md-8">
+                                <label>Nazwa obiektu</label>
+                                {{form.name}}
                             </div>
                             <div class="col-md-4">
-                                <label>GEO LNG</label>
-                                {{ form.geo_lng }}
+                                <label>Typ</label>
+                                {{form.type}}
                             </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                        <label>GEO LAT</label>
+                                        {{ form.geo_lat }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>GEO LNG</label>
+                                        {{ form.geo_lng }}
+                                    </div>
+                            <div class="col-md-4">
+                                <label>Czy istnieje nadal?</label>
+                                {{ form.existing }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <label>Notatki</label>
+                                {{ form.note }}
+                            </div>
+                        </div>
+
+                    </div>
+
                     <div class="col-md-4">
-                        <label>Czy istnieje nadal?</label>
-                        {{ form.existing }}
+                        <div id="mapid"></div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="col-md-12">
-                        <label>Notatki</label>
-                        {{ form.note }}
-                    </div>
-                </div>
+
+
 
 
                 {% csrf_token %}
@@ -164,7 +175,30 @@
             //markers[{{parish.id}}].filtered = true
             //pruneCluster.ProcessView();
 
-            console.log('ok {{parish.id}}');
+
+            var lat = 0;
+            var lng = 0;
+            {% if form.geo_lat.value %}lat={{form.geo_lat.value}};{% endif %}
+            {% if form.geo_lat.value %}lng={{form.geo_lng.value}};{% endif %}
+            var marker = L.marker([lat, lng]);
+            var added = false;
+
+            {% if form.geo_lat.value %}
+            marker.addTo(map);
+            added = true;
+            {% endif %}
+
+            function onClick(e) {
+                marker.setLatLng([e.latlng.lat, e.latlng.lng]);
+                if(!added){
+                    marker.addTo(map);
+                    added = true;
+                }
+
+                $("#id_geo_lat").val(e.latlng.lat);
+                $("#id_geo_lng").val(e.latlng.lng);
+            }
+            map.on('click', onClick);
         }
 
         $(document).on('change', '#source_type', function(){
