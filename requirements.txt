@@ -1,7 +1,7 @@
 django~=2.2
 mysqlclient==2.0.3
 numpy==1.15.4
-django-registration==3.0
+django-registration==3.1.2
 django-import-export==2.5.0
 raven
 #git+git://github.com/kopringo/django-messages.git@0.5.3-django2.2
