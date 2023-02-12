@@ -1,3 +1,4 @@
+import jwt
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -199,3 +200,17 @@ class CustomAuthenticationForm(AuthenticationForm):
                 _("Konto czeka na aktywację przez administratora."),
                 code='inactive',
             )
+
+
+def sso(request):
+    ssoJwt = request.POST.get('ssoJwt', None)
+
+    try:
+        token = jwt.decode(ssoJwt, settings.JWT_SECRET, audience=settings.JWT_AUD, algorithms=[settings.JWT_ALGO])
+    except Exception as e:
+        token = None
+
+    data = {
+        'token': token
+    }
+    return JsonResponse(data)

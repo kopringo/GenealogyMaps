@@ -87,4 +87,6 @@ urlpatterns = [
     # narzedzia
     path('tools/names', views_tools.names),
 
+    path('sso', views_account.sso)
+
 ]
