@@ -9,6 +9,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import Signal
 from django.core.mail import send_mail
+from django.views.decorators.csrf import csrf_exempt
 
 
 from . import validators
@@ -201,7 +202,7 @@ class CustomAuthenticationForm(AuthenticationForm):
                 code='inactive',
             )
 
-
+@csrf_exempt
 def sso(request):
     ssoJwt = request.POST.get('ssoJwt', None)
 
