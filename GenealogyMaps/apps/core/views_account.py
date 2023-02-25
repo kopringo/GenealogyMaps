@@ -218,7 +218,7 @@ def sso(request):
     if email is None:
         raise HttpResponseBadRequest('Invalid request #2.')
     try:
-        user = User.objects.get(email=email)
+        user = User.objects.get(username=email)
     except User.DoesNotExist:
         user = User()
         user.username = email
