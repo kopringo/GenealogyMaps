@@ -1,7 +1,10 @@
 import jwt
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
 from django.http import JsonResponse
+from django.core.exceptions import BadRequest
 from datetime import datetime
 
 from django import forms
@@ -208,10 +211,26 @@ def sso(request):
 
     try:
         token = jwt.decode(ssoJwt, settings.JWT_SECRET, audience=settings.JWT_AUD, algorithms=[settings.JWT_ALGO])
+        token_data = json.loads(token)
     except Exception as e:
         token = None
+        raise BadRequest('Invalid request.')
 
-    data = {
-        'token': token
-    }
-    return JsonResponse(data)
+    email = token_data['email']
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        user = User()
+        user.username = email
+        user.email = email
+        # skoro jest zalogowany na indexach to zakladamy, ze tam konto jest juz potwierdzone
+        user.is_active = True
+        user.save()
+
+    login(request, user)
+    return HttpResponseRedirect('/')
+
+    #data = {
+    #    'token': token
+    #}
+    #return JsonResponse(data)
