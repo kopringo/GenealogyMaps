@@ -3,8 +3,7 @@ import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from django.http import JsonResponse
-from django.core.exceptions import BadRequest
+from django.http import JsonResponse, HttpResponseBadRequest
 from datetime import datetime
 
 from django import forms
@@ -214,7 +213,7 @@ def sso(request):
         token_data = json.loads(token)
     except Exception as e:
         token = None
-        raise BadRequest('Invalid request.')
+        raise HttpResponseBadRequest('Invalid request.')
 
     email = token_data['email']
     try:
