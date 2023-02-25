@@ -41,7 +41,11 @@
                     <td>{% if document_group.source.group == 'PAR' %}
                             Archiwum parafialne: <strong>{{ document_group.source_parish.name }}, {{ document_group.source_parish.place }}</strong>
                         {% else %}
-                            {{ document_group.source }}
+                            {% if document_group.source.group == 'PAR_LOC' %}
+                                Archiwum Parafialne - na miejscu
+                            {% else %}
+                                {{ document_group.source }}
+                            {% endif %}
                         {% endif %}
                     </td>
 
