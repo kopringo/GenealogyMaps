@@ -210,12 +210,13 @@ def sso(request):
 
     try:
         token = jwt.decode(ssoJwt, settings.JWT_SECRET, audience=settings.JWT_AUD, algorithms=[settings.JWT_ALGO])
-        #token_data = json.loads(token)
     except Exception as e:
         token = None
         raise HttpResponseBadRequest('Invalid request.')
 
     email = token['email']
+    if email is None:
+        raise HttpResponseBadRequest('Invalid request #2.')
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
