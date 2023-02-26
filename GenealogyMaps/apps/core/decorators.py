@@ -9,4 +9,4 @@ def group_required(*group_names):
            if bool(u.groups.filter(name__in=group_names)) | u.is_superuser:
                return True
        return False
-   return user_passes_test(in_groups, '/login-validation-required')
+   return user_passes_test(in_groups, '/accounts/login/')

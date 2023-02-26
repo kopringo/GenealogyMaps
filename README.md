@@ -2,6 +2,8 @@ Virtualenv setup
 ================
 
 ```bash
+apt install libmysqlclient-dev
+
 python3 -m venv .env
 source .env/bin/activate
 ```
