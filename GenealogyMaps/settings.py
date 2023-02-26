@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'GenealogyMaps.apps.core',
 
     'import_export',
-    'django_messages',
     'raven.contrib.django.raven_compat',
 
     'debug_toolbar',
@@ -97,7 +96,6 @@ DATABASES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

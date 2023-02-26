@@ -22,7 +22,6 @@ import debug_toolbar
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pages/', include('django.contrib.flatpages.urls')),
-    path('messages/', include('django_messages.urls')),
 
     path('debug_panel/', include(debug_toolbar.urls)),
 

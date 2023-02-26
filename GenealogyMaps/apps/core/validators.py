@@ -6,9 +6,8 @@ import unicodedata
 
 from confusable_homoglyphs import confusables
 from django.core.exceptions import ValidationError
-from django.utils import six
 from django.utils.deconstruct import deconstructible
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy as _
 
 
 CONFUSABLE = _(u"This name cannot be registered. "
@@ -198,7 +197,7 @@ class ReservedNameValidator(object):
     def __call__(self, value):
         # GH issue 82: this validator only makes sense when the
         # username field is a string type.
-        if not isinstance(value, six.text_type):
+        if not isinstance(value, str):
             return
         if value in self.reserved_names or \
            value.startswith('.well-known'):
@@ -222,7 +221,7 @@ class CaseInsensitiveUnique(object):
 
     def __call__(self, value):
         # Only run if the username is a string.
-        if not isinstance(value, six.text_type):
+        if not isinstance(value, str):
             return
         value = unicodedata.normalize('NFKC', value)
         if hasattr(value, 'casefold'):
@@ -246,7 +245,7 @@ def validate_confusables(value):
     Unicode 'Script' property) and contains one or more characters
     appearing in the Unicode Visually Confusable Characters file.
     """
-    if not isinstance(value, six.text_type):
+    if not isinstance(value, str):
         return
     if confusables.is_dangerous(value):
         raise ValidationError(CONFUSABLE, code='invalid')

@@ -8,7 +8,7 @@ from datetime import datetime
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext as _
 from django.dispatch import Signal
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
@@ -33,13 +33,9 @@ User = get_user_model()
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-
-
-signals_user_registered = Signal(providing_args=["user", "request"])
-user_activated = Signal(providing_args=["user", "request"])
 
 
 class RegistrationForm(UserCreationForm):
@@ -115,7 +111,7 @@ class BaseRegistrationView(FormView):
         dispatch or do other processing.
         """
         if not self.registration_allowed():
-            return HttpResponseRedirect(force_text(self.disallowed_url))
+            return HttpResponseRedirect(force_str(self.disallowed_url))
         return super(BaseRegistrationView, self).dispatch(*args, **kwargs)
 
     def get_success_url(self, user=None):
@@ -173,26 +169,21 @@ class RegistrationView(BaseRegistrationView):
             #    'password': form.cleaned_data['password1']
             #})
             # login(self.request, new_user)
-            signals_user_registered.send(
-                sender=self.__class__,
-                user=new_user,
-                request=self.request
-            )
+
+            after_registration(new_user, self.request)
+
             return new_user
         except:
             return None
 
 
-def after_registration(sender, user, request, **kwargs):
+def after_registration(user, request, **kwargs):
     # mail d admina
     subject = '[katalog] Nowe konto'
     url = 'https://katalog.projektpodlasie.pl/a/users'
     message = u'Nowe konto do akceptacji %s %s.\n%s' % (user.first_name, user.last_name, url, )
     for stf in User.objects.filter(is_staff=True):
         send_mail(subject, message, 'info@parafie.k37.ovh', (stf.email,) )
-
-
-signals_user_registered.connect(after_registration)
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -212,11 +203,11 @@ def sso(request):
         token = jwt.decode(ssoJwt, settings.JWT_SECRET, audience=settings.JWT_AUD, algorithms=[settings.JWT_ALGO])
     except Exception as e:
         token = None
-        raise HttpResponseBadRequest('Invalid request.')
+        return HttpResponseBadRequest('Invalid request.')
 
     email = token['email']
     if email is None:
-        raise HttpResponseBadRequest('Invalid request #2.')
+        return HttpResponseBadRequest('Invalid request #2.')
     try:
         user = User.objects.get(username=email)
     except User.DoesNotExist:

@@ -2,14 +2,11 @@
 from django.contrib.auth import views as auth_view
 
 from django.urls import path, re_path
-from django.conf.urls import url, include
 from django.views.generic.base import TemplateView
 
 from . import views, views_courts, views_account, views_search, views_admin, views_ajax, views_parish, views_area, views_tools
 
 urlpatterns = [
-
-    #url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     # strona glowna
     path('', views.home, name='home'),
@@ -70,13 +67,13 @@ urlpatterns = [
     path('accounts/reset/done/', auth_view.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     #path('accounts/register/', views_account.register),
-    url(r'^accounts/register/$', views_account.RegistrationView.as_view(), name='registration_register'),
-    url(r'^accounts/register/closed/$',
+    path(r'^accounts/register/$', views_account.RegistrationView.as_view(), name='registration_register'),
+    path(r'^accounts/register/closed/$',
         TemplateView.as_view(
             template_name='django_registration/registration_closed.html'
         ),
         name='registration_disallowed'),
-    url(r'^accounts/register/complete/$',
+    path(r'^accounts/register/complete/$',
         TemplateView.as_view(
             template_name='django_registration/registration_complete.html'
         ),

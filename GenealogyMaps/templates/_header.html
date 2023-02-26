@@ -52,11 +52,6 @@
         <a class="nav-link {% if main_menu == 'courts' %}active{% endif %}" href="/courts">Księgi sądowe</a>
       </li>
        -->
-      {% if request.user.is_superuser or user|has_group:"DATA_ACCESS" %}
-      <li class="nav-item">
-        <a class="nav-link {% if main_menu == 'messages' %}active{% endif %}" href="/messages">Wiadomości{% if inbox_count %}({% inbox_count %}){% endif %}</a>
-      </li>
-      {% endif %}
 
       <!--
       <li class="nav-item">
