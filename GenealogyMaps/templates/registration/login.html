@@ -5,6 +5,23 @@
 <div class="container">
     <br/>
     <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <p>Aby zalogować się do systemu należy posiadać konto na platformie <a
+                    href="https://indeksy.projektpodlasie.pl/"
+                    target="blank"><strong>indeksy.projektpodlasie.pl</strong></a>
+                - Jeżeli nie posiadasz konta, <a href="https://indeksy.projektpodlasie.pl/rejestracja"
+                                                 target="blank"><strong>Zarejestruj się</strong></a>.</p>
+
+            <p>
+                <center>
+                    <a href="https://indeksy.projektpodlasie.pl/katalog-ksiag-metrykalnych-sso"
+                       class="btn btn-primary">Logowanie przez Projekt Podlasie</a>
+                </center>
+            </p>
+
+        </div>
+
+        {% comment %}
         <div class="col-md-4">
 
             {% if form.errors and not form.non_field_errors %}
@@ -57,9 +74,8 @@
             <br/>
             {# Assumes you setup the password_reset view in your URLconf #}
             <p><a href="{% url 'password_reset' %}">Zgubione hasło?</a> <a href="/accounts/register/"><strong>Rejestracja</strong></a></p>
-            <p><a href="https://indeksy.projektpodlasie.pl/katalog-ksiag-metrykalnych-sso">Logowanie przez
-                Projekt Podlasie</a></p>
         </div>
+        {% endcomment %}
     </div>
 </div>
 

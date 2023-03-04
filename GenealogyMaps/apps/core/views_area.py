@@ -111,7 +111,7 @@ def province(request, p_id):
     if province.country.historical_period == 4:
         items = __get_parish_list(county_rz__province=province)
 
-    convex_hull = __get_convex_hull(items)
+    convex_hull = None#__get_convex_hull(items)
 
     data = __prepare_common_params()
     data['load_full_map'] = True
