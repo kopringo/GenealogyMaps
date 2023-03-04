@@ -19,7 +19,7 @@ def __prepare_common_params():
     }
 
 
-@group_required('DATA_ACCESS')
+@login_required
 def parish(request, parish_id):
     """ Widok parafii """
     try:
